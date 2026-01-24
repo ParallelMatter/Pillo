@@ -1,0 +1,1059 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 70;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4F2104522F234F9400ECE341 /* DayData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2104512F234F9400ECE341 /* DayData.swift */; };
+		4F21045A2F2351B100ECE341 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F2104592F2351B100ECE341 /* WidgetKit.framework */; };
+		4F21045C2F2351B100ECE341 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F21045B2F2351B100ECE341 /* SwiftUI.framework */; };
+		4F21046D2F2351B200ECE341 /* widgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4F2104572F2351B100ECE341 /* widgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4FCF18482F249C72007C5ED8 /* SlotEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF18472F249C72007C5ED8 /* SlotEditSheet.swift */; };
+		4FCF184A2F249C81007C5ED8 /* ScheduleFrequencyPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF18492F249C81007C5ED8 /* ScheduleFrequencyPicker.swift */; };
+		CA1000000000000000000001 /* CalendarSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000001 /* CalendarSheet.swift */; };
+		CA1000000000000000000002 /* MonthCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000002 /* MonthCalendarView.swift */; };
+		CA1000000000000000000003 /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000003 /* CalendarDayCell.swift */; };
+		CA1000000000000000000004 /* DayDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000004 /* DayDetailSheet.swift */; };
+		E10000000000000000000001 /* PilloApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000001 /* PilloApp.swift */; };
+		E10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000002 /* ContentView.swift */; };
+		E10000000000000000000003 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000003 /* Theme.swift */; };
+		E10000000000000000000004 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000004 /* Constants.swift */; };
+		E10000000000000000000005 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000005 /* User.swift */; };
+		E10000000000000000000006 /* Supplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000006 /* Supplement.swift */; };
+		E10000000000000000000007 /* ScheduleSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000007 /* ScheduleSlot.swift */; };
+		E10000000000000000000008 /* IntakeLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000008 /* IntakeLog.swift */; };
+		E10000000000000000000009 /* SupplementReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000009 /* SupplementReference.swift */; };
+		E10000000000000000000010 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000010 /* Goal.swift */; };
+		E10000000000000000000011 /* SupplementDatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000011 /* SupplementDatabaseService.swift */; };
+		E10000000000000000000012 /* SchedulingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000012 /* SchedulingService.swift */; };
+		E10000000000000000000013 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000013 /* NotificationService.swift */; };
+		E10000000000000000000014 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000014 /* OnboardingViewModel.swift */; };
+		E10000000000000000000015 /* TodayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000015 /* TodayViewModel.swift */; };
+		E10000000000000000000016 /* VitaminsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000016 /* VitaminsViewModel.swift */; };
+		E10000000000000000000017 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000017 /* MainTabView.swift */; };
+		E10000000000000000000018 /* OnboardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000018 /* OnboardingContainerView.swift */; };
+		E10000000000000000000019 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000019 /* WelcomeView.swift */; };
+		E10000000000000000000020 /* AddVitaminsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000020 /* AddVitaminsView.swift */; };
+		E10000000000000000000021 /* MealTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000021 /* MealTimesView.swift */; };
+		E10000000000000000000022 /* GoalsSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000022 /* GoalsSelectionView.swift */; };
+		E10000000000000000000023 /* GeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000023 /* GeneratingView.swift */; };
+		E10000000000000000000024 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000024 /* TodayView.swift */; };
+		E10000000000000000000025 /* TimeSlotCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000025 /* TimeSlotCard.swift */; };
+		E10000000000000000000026 /* VitaminsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000026 /* VitaminsListView.swift */; };
+		E10000000000000000000027 /* AddSupplementSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000027 /* AddSupplementSheet.swift */; };
+		E10000000000000000000028 /* VitaminDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000028 /* VitaminDetailSheet.swift */; };
+		E10000000000000000000029 /* GoalsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000029 /* GoalsListView.swift */; };
+		E10000000000000000000030 /* LearnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000030 /* LearnView.swift */; };
+		E10000000000000000000031 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000031 /* SettingsView.swift */; };
+		E10000000000000000000032 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000032 /* Assets.xcassets */; };
+		E10000000000000000000033 /* supplement_database.json in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000033 /* supplement_database.json */; };
+		E10000000000000000000050 /* PilloTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000050 /* PilloTests.swift */; };
+		E10000000000000000000051 /* SchedulingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000051 /* SchedulingServiceTests.swift */; };
+		E10000000000000000000052 /* SupplementDatabaseServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000052 /* SupplementDatabaseServiceTests.swift */; };
+		E10000000000000000000060 /* PilloUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000060 /* PilloUITests.swift */; };
+		F11000000000000000000001 /* StreakService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000001 /* StreakService.swift */; };
+		F11000000000000000000002 /* BarcodeScannerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000002 /* BarcodeScannerService.swift */; };
+		F11000000000000000000003 /* StreakCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000003 /* StreakCard.swift */; };
+		F11000000000000000000004 /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000004 /* BarcodeScannerView.swift */; };
+		F11000000000000000000005 /* OpenFoodFactsProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000005 /* OpenFoodFactsProduct.swift */; };
+		F11000000000000000000006 /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000006 /* SharedContainer.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4F21046B2F2351B200ECE341 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E40000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F2104562F2351B100ECE341;
+			remoteInfo = widgetExtension;
+		};
+		E30000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E40000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E50000000000000000000001;
+			remoteInfo = Pillo;
+		};
+		E30000000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E40000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E50000000000000000000001;
+			remoteInfo = Pillo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4F21046E2F2351B200ECE341 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4F21046D2F2351B200ECE341 /* widgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		4F2104512F234F9400ECE341 /* DayData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayData.swift; sourceTree = "<group>"; };
+		4F2104572F2351B100ECE341 /* widgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = widgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F2104592F2351B100ECE341 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		4F21045B2F2351B100ECE341 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4F2104732F2352B200ECE341 /* Pillo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Pillo.entitlements; sourceTree = "<group>"; };
+		4F2104742F2352FA00ECE341 /* widgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widgetExtension.entitlements; sourceTree = "<group>"; };
+		4FCF18472F249C72007C5ED8 /* SlotEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotEditSheet.swift; sourceTree = "<group>"; };
+		4FCF18492F249C81007C5ED8 /* ScheduleFrequencyPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFrequencyPicker.swift; sourceTree = "<group>"; };
+		CA2000000000000000000001 /* CalendarSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSheet.swift; sourceTree = "<group>"; };
+		CA2000000000000000000002 /* MonthCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCalendarView.swift; sourceTree = "<group>"; };
+		CA2000000000000000000003 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
+		CA2000000000000000000004 /* DayDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDetailSheet.swift; sourceTree = "<group>"; };
+		E20000000000000000000001 /* PilloApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilloApp.swift; sourceTree = "<group>"; };
+		E20000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E20000000000000000000003 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		E20000000000000000000004 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		E20000000000000000000005 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		E20000000000000000000006 /* Supplement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supplement.swift; sourceTree = "<group>"; };
+		E20000000000000000000007 /* ScheduleSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleSlot.swift; sourceTree = "<group>"; };
+		E20000000000000000000008 /* IntakeLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntakeLog.swift; sourceTree = "<group>"; };
+		E20000000000000000000009 /* SupplementReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementReference.swift; sourceTree = "<group>"; };
+		E20000000000000000000010 /* Goal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Goal.swift; sourceTree = "<group>"; };
+		E20000000000000000000011 /* SupplementDatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementDatabaseService.swift; sourceTree = "<group>"; };
+		E20000000000000000000012 /* SchedulingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingService.swift; sourceTree = "<group>"; };
+		E20000000000000000000013 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		E20000000000000000000014 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
+		E20000000000000000000015 /* TodayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewModel.swift; sourceTree = "<group>"; };
+		E20000000000000000000016 /* VitaminsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VitaminsViewModel.swift; sourceTree = "<group>"; };
+		E20000000000000000000017 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		E20000000000000000000018 /* OnboardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContainerView.swift; sourceTree = "<group>"; };
+		E20000000000000000000019 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		E20000000000000000000020 /* AddVitaminsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddVitaminsView.swift; sourceTree = "<group>"; };
+		E20000000000000000000021 /* MealTimesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimesView.swift; sourceTree = "<group>"; };
+		E20000000000000000000022 /* GoalsSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsSelectionView.swift; sourceTree = "<group>"; };
+		E20000000000000000000023 /* GeneratingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratingView.swift; sourceTree = "<group>"; };
+		E20000000000000000000024 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		E20000000000000000000025 /* TimeSlotCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSlotCard.swift; sourceTree = "<group>"; };
+		E20000000000000000000026 /* VitaminsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VitaminsListView.swift; sourceTree = "<group>"; };
+		E20000000000000000000027 /* AddSupplementSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSupplementSheet.swift; sourceTree = "<group>"; };
+		E20000000000000000000028 /* VitaminDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VitaminDetailSheet.swift; sourceTree = "<group>"; };
+		E20000000000000000000029 /* GoalsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsListView.swift; sourceTree = "<group>"; };
+		E20000000000000000000030 /* LearnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnView.swift; sourceTree = "<group>"; };
+		E20000000000000000000031 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		E20000000000000000000032 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E20000000000000000000033 /* supplement_database.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = supplement_database.json; sourceTree = "<group>"; };
+		E20000000000000000000050 /* PilloTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilloTests.swift; sourceTree = "<group>"; };
+		E20000000000000000000051 /* SchedulingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingServiceTests.swift; sourceTree = "<group>"; };
+		E20000000000000000000052 /* SupplementDatabaseServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementDatabaseServiceTests.swift; sourceTree = "<group>"; };
+		E20000000000000000000060 /* PilloUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilloUITests.swift; sourceTree = "<group>"; };
+		F21000000000000000000001 /* StreakService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakService.swift; sourceTree = "<group>"; };
+		F21000000000000000000002 /* BarcodeScannerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerService.swift; sourceTree = "<group>"; };
+		F21000000000000000000003 /* StreakCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakCard.swift; sourceTree = "<group>"; };
+		F21000000000000000000004 /* BarcodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerView.swift; sourceTree = "<group>"; };
+		F21000000000000000000005 /* OpenFoodFactsProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFoodFactsProduct.swift; sourceTree = "<group>"; };
+		F21000000000000000000006 /* SharedContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedContainer.swift; sourceTree = "<group>"; };
+		F50000000000000000000001 /* Pillo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pillo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F50000000000000000000002 /* PilloTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PilloTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F50000000000000000000003 /* PilloUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PilloUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4F2104712F2351B200ECE341 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4F2104562F2351B100ECE341 /* widgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		4F21045D2F2351B100ECE341 /* widget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (4F2104712F2351B200ECE341 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = widget; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4F2104542F2351B100ECE341 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F21045C2F2351B100ECE341 /* SwiftUI.framework in Frameworks */,
+				4F21045A2F2351B100ECE341 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E60000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E60000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E60000000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4F2104582F2351B100ECE341 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4F2104592F2351B100ECE341 /* WidgetKit.framework */,
+				4F21045B2F2351B100ECE341 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CA3000000000000000000001 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				CA2000000000000000000001 /* CalendarSheet.swift */,
+				CA2000000000000000000002 /* MonthCalendarView.swift */,
+				CA2000000000000000000003 /* CalendarDayCell.swift */,
+				CA2000000000000000000004 /* DayDetailSheet.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				4F2104742F2352FA00ECE341 /* widgetExtension.entitlements */,
+				E70000000000000000000002 /* Pillo */,
+				E70000000000000000000020 /* PilloTests */,
+				E70000000000000000000021 /* PilloUITests */,
+				4F21045D2F2351B100ECE341 /* widget */,
+				4F2104582F2351B100ECE341 /* Frameworks */,
+				E70000000000000000000030 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E70000000000000000000002 /* Pillo */ = {
+			isa = PBXGroup;
+			children = (
+				4F2104732F2352B200ECE341 /* Pillo.entitlements */,
+				E70000000000000000000003 /* App */,
+				E70000000000000000000004 /* Models */,
+				E70000000000000000000005 /* Views */,
+				E70000000000000000000006 /* ViewModels */,
+				E70000000000000000000007 /* Services */,
+				E70000000000000000000008 /* Utilities */,
+				E70000000000000000000009 /* Resources */,
+			);
+			path = Pillo;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000003 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000001 /* PilloApp.swift */,
+				E20000000000000000000002 /* ContentView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000004 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4F2104512F234F9400ECE341 /* DayData.swift */,
+				E20000000000000000000005 /* User.swift */,
+				E20000000000000000000006 /* Supplement.swift */,
+				E20000000000000000000007 /* ScheduleSlot.swift */,
+				E20000000000000000000008 /* IntakeLog.swift */,
+				E20000000000000000000009 /* SupplementReference.swift */,
+				E20000000000000000000010 /* Goal.swift */,
+				F21000000000000000000005 /* OpenFoodFactsProduct.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000005 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000017 /* MainTabView.swift */,
+				E70000000000000000000010 /* Onboarding */,
+				E70000000000000000000011 /* Today */,
+				E70000000000000000000012 /* Vitamins */,
+				E70000000000000000000013 /* Goals */,
+				E70000000000000000000014 /* Learn */,
+				E70000000000000000000015 /* Settings */,
+				F71000000000000000000001 /* Components */,
+				CA3000000000000000000001 /* Calendar */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000006 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000014 /* OnboardingViewModel.swift */,
+				E20000000000000000000015 /* TodayViewModel.swift */,
+				E20000000000000000000016 /* VitaminsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000007 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000011 /* SupplementDatabaseService.swift */,
+				E20000000000000000000012 /* SchedulingService.swift */,
+				E20000000000000000000013 /* NotificationService.swift */,
+				F21000000000000000000001 /* StreakService.swift */,
+				F21000000000000000000002 /* BarcodeScannerService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000008 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000003 /* Theme.swift */,
+				E20000000000000000000004 /* Constants.swift */,
+				F21000000000000000000006 /* SharedContainer.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000009 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000032 /* Assets.xcassets */,
+				E20000000000000000000033 /* supplement_database.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000010 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000018 /* OnboardingContainerView.swift */,
+				E20000000000000000000019 /* WelcomeView.swift */,
+				E20000000000000000000020 /* AddVitaminsView.swift */,
+				E20000000000000000000021 /* MealTimesView.swift */,
+				E20000000000000000000022 /* GoalsSelectionView.swift */,
+				E20000000000000000000023 /* GeneratingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000011 /* Today */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000024 /* TodayView.swift */,
+				E20000000000000000000025 /* TimeSlotCard.swift */,
+				F21000000000000000000003 /* StreakCard.swift */,
+			);
+			path = Today;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000012 /* Vitamins */ = {
+			isa = PBXGroup;
+			children = (
+				4FCF18472F249C72007C5ED8 /* SlotEditSheet.swift */,
+				E20000000000000000000026 /* VitaminsListView.swift */,
+				E20000000000000000000027 /* AddSupplementSheet.swift */,
+				E20000000000000000000028 /* VitaminDetailSheet.swift */,
+			);
+			path = Vitamins;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000013 /* Goals */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000029 /* GoalsListView.swift */,
+			);
+			path = Goals;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000014 /* Learn */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000030 /* LearnView.swift */,
+			);
+			path = Learn;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000015 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000031 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000020 /* PilloTests */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000050 /* PilloTests.swift */,
+				E20000000000000000000051 /* SchedulingServiceTests.swift */,
+				E20000000000000000000052 /* SupplementDatabaseServiceTests.swift */,
+			);
+			path = PilloTests;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000021 /* PilloUITests */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000060 /* PilloUITests.swift */,
+			);
+			path = PilloUITests;
+			sourceTree = "<group>";
+		};
+		E70000000000000000000030 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F50000000000000000000001 /* Pillo.app */,
+				F50000000000000000000002 /* PilloTests.xctest */,
+				F50000000000000000000003 /* PilloUITests.xctest */,
+				4F2104572F2351B100ECE341 /* widgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F71000000000000000000001 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4FCF18492F249C81007C5ED8 /* ScheduleFrequencyPicker.swift */,
+				F21000000000000000000004 /* BarcodeScannerView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4F2104562F2351B100ECE341 /* widgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F2104722F2351B200ECE341 /* Build configuration list for PBXNativeTarget "widgetExtension" */;
+			buildPhases = (
+				4F2104532F2351B100ECE341 /* Sources */,
+				4F2104542F2351B100ECE341 /* Frameworks */,
+				4F2104552F2351B100ECE341 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4F21045D2F2351B100ECE341 /* widget */,
+			);
+			name = widgetExtension;
+			packageProductDependencies = (
+			);
+			productName = widgetExtension;
+			productReference = 4F2104572F2351B100ECE341 /* widgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		E50000000000000000000001 /* Pillo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E80000000000000000000001 /* Build configuration list for PBXNativeTarget "Pillo" */;
+			buildPhases = (
+				E90000000000000000000001 /* Sources */,
+				E60000000000000000000001 /* Frameworks */,
+				EA0000000000000000000001 /* Resources */,
+				4F21046E2F2351B200ECE341 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4F21046C2F2351B200ECE341 /* PBXTargetDependency */,
+			);
+			name = Pillo;
+			productName = Pillo;
+			productReference = F50000000000000000000001 /* Pillo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E50000000000000000000010 /* PilloTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E80000000000000000000002 /* Build configuration list for PBXNativeTarget "PilloTests" */;
+			buildPhases = (
+				E90000000000000000000002 /* Sources */,
+				E60000000000000000000002 /* Frameworks */,
+				EA0000000000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E30000000000000000000010 /* PBXTargetDependency */,
+			);
+			name = PilloTests;
+			productName = PilloTests;
+			productReference = F50000000000000000000002 /* PilloTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E50000000000000000000020 /* PilloUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E80000000000000000000003 /* Build configuration list for PBXNativeTarget "PilloUITests" */;
+			buildPhases = (
+				E90000000000000000000003 /* Sources */,
+				E60000000000000000000003 /* Frameworks */,
+				EA0000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E30000000000000000000020 /* PBXTargetDependency */,
+			);
+			name = PilloUITests;
+			productName = PilloUITests;
+			productReference = F50000000000000000000003 /* PilloUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E40000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					4F2104562F2351B100ECE341 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					E50000000000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					E50000000000000000000010 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = E50000000000000000000001;
+					};
+					E50000000000000000000020 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = E50000000000000000000001;
+					};
+				};
+			};
+			buildConfigurationList = E80000000000000000000000 /* Build configuration list for PBXProject "Pillo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E70000000000000000000001;
+			productRefGroup = E70000000000000000000030 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E50000000000000000000001 /* Pillo */,
+				E50000000000000000000010 /* PilloTests */,
+				E50000000000000000000020 /* PilloUITests */,
+				4F2104562F2351B100ECE341 /* widgetExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4F2104552F2351B100ECE341 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA0000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E10000000000000000000032 /* Assets.xcassets in Resources */,
+				E10000000000000000000033 /* supplement_database.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA0000000000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA0000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4F2104532F2351B100ECE341 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E90000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F2104522F234F9400ECE341 /* DayData.swift in Sources */,
+				F11000000000000000000001 /* StreakService.swift in Sources */,
+				F11000000000000000000002 /* BarcodeScannerService.swift in Sources */,
+				F11000000000000000000003 /* StreakCard.swift in Sources */,
+				F11000000000000000000004 /* BarcodeScannerView.swift in Sources */,
+				F11000000000000000000005 /* OpenFoodFactsProduct.swift in Sources */,
+				F11000000000000000000006 /* SharedContainer.swift in Sources */,
+				E10000000000000000000001 /* PilloApp.swift in Sources */,
+				E10000000000000000000002 /* ContentView.swift in Sources */,
+				E10000000000000000000003 /* Theme.swift in Sources */,
+				E10000000000000000000004 /* Constants.swift in Sources */,
+				E10000000000000000000005 /* User.swift in Sources */,
+				E10000000000000000000006 /* Supplement.swift in Sources */,
+				E10000000000000000000007 /* ScheduleSlot.swift in Sources */,
+				E10000000000000000000008 /* IntakeLog.swift in Sources */,
+				E10000000000000000000009 /* SupplementReference.swift in Sources */,
+				E10000000000000000000010 /* Goal.swift in Sources */,
+				E10000000000000000000011 /* SupplementDatabaseService.swift in Sources */,
+				E10000000000000000000012 /* SchedulingService.swift in Sources */,
+				E10000000000000000000013 /* NotificationService.swift in Sources */,
+				E10000000000000000000014 /* OnboardingViewModel.swift in Sources */,
+				4FCF184A2F249C81007C5ED8 /* ScheduleFrequencyPicker.swift in Sources */,
+				E10000000000000000000015 /* TodayViewModel.swift in Sources */,
+				E10000000000000000000016 /* VitaminsViewModel.swift in Sources */,
+				E10000000000000000000017 /* MainTabView.swift in Sources */,
+				E10000000000000000000018 /* OnboardingContainerView.swift in Sources */,
+				E10000000000000000000019 /* WelcomeView.swift in Sources */,
+				E10000000000000000000020 /* AddVitaminsView.swift in Sources */,
+				E10000000000000000000021 /* MealTimesView.swift in Sources */,
+				E10000000000000000000022 /* GoalsSelectionView.swift in Sources */,
+				4FCF18482F249C72007C5ED8 /* SlotEditSheet.swift in Sources */,
+				E10000000000000000000023 /* GeneratingView.swift in Sources */,
+				E10000000000000000000024 /* TodayView.swift in Sources */,
+				E10000000000000000000025 /* TimeSlotCard.swift in Sources */,
+				E10000000000000000000026 /* VitaminsListView.swift in Sources */,
+				E10000000000000000000027 /* AddSupplementSheet.swift in Sources */,
+				E10000000000000000000028 /* VitaminDetailSheet.swift in Sources */,
+				E10000000000000000000029 /* GoalsListView.swift in Sources */,
+				E10000000000000000000030 /* LearnView.swift in Sources */,
+				E10000000000000000000031 /* SettingsView.swift in Sources */,
+				CA1000000000000000000001 /* CalendarSheet.swift in Sources */,
+				CA1000000000000000000002 /* MonthCalendarView.swift in Sources */,
+				CA1000000000000000000003 /* CalendarDayCell.swift in Sources */,
+				CA1000000000000000000004 /* DayDetailSheet.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E90000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E10000000000000000000050 /* PilloTests.swift in Sources */,
+				E10000000000000000000051 /* SchedulingServiceTests.swift in Sources */,
+				E10000000000000000000052 /* SupplementDatabaseServiceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E90000000000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E10000000000000000000060 /* PilloUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4F21046C2F2351B200ECE341 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F2104562F2351B100ECE341 /* widgetExtension */;
+			targetProxy = 4F21046B2F2351B200ECE341 /* PBXContainerItemProxy */;
+		};
+		E30000000000000000000010 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E50000000000000000000001 /* Pillo */;
+			targetProxy = E30000000000000000000001 /* PBXContainerItemProxy */;
+		};
+		E30000000000000000000020 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E50000000000000000000001 /* Pillo */;
+			targetProxy = E30000000000000000000002 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4F21046F2F2351B200ECE341 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = widgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WXRJ3J3884;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = widget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = widget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.suplo.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4F2104702F2351B200ECE341 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = widgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WXRJ3J3884;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = widget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = widget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.suplo.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EB0000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		EB0000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EB0000000000000000000011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Pillo/Pillo.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Pillo/Preview Content\"";
+				DEVELOPMENT_TEAM = WXRJ3J3884;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pillo uses the camera to scan supplement barcodes  ";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.suplo.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EB0000000000000000000012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Pillo/Pillo.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Pillo/Preview Content\"";
+				DEVELOPMENT_TEAM = WXRJ3J3884;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pillo uses the camera to scan supplement barcodes  ";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.suplo.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EB0000000000000000000021 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillo.PilloTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pillo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pillo";
+			};
+			name = Debug;
+		};
+		EB0000000000000000000022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillo.PilloTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pillo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pillo";
+			};
+			name = Release;
+		};
+		EB0000000000000000000031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillo.PilloUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Pillo;
+			};
+			name = Debug;
+		};
+		EB0000000000000000000032 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillo.PilloUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Pillo;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4F2104722F2351B200ECE341 /* Build configuration list for PBXNativeTarget "widgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F21046F2F2351B200ECE341 /* Debug */,
+				4F2104702F2351B200ECE341 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E80000000000000000000000 /* Build configuration list for PBXProject "Pillo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB0000000000000000000001 /* Debug */,
+				EB0000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E80000000000000000000001 /* Build configuration list for PBXNativeTarget "Pillo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB0000000000000000000011 /* Debug */,
+				EB0000000000000000000012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E80000000000000000000002 /* Build configuration list for PBXNativeTarget "PilloTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB0000000000000000000021 /* Debug */,
+				EB0000000000000000000022 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E80000000000000000000003 /* Build configuration list for PBXNativeTarget "PilloUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB0000000000000000000031 /* Debug */,
+				EB0000000000000000000032 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E40000000000000000000001 /* Project object */;
+}
