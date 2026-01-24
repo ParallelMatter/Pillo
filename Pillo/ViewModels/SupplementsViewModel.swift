@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftData
 
 @Observable
-class VitaminsViewModel {
+class SupplementsViewModel {
     var searchQuery: String = ""
     var showingAddSheet: Bool = false
     var selectedSupplement: Supplement?

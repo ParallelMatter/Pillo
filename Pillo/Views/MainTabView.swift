@@ -12,7 +12,7 @@ struct MainTabView: View {
                 }
                 .tag(0)
 
-            VitaminsListView()
+            SupplementsListView()
                 .tabItem {
                     Label("Routine", systemImage: "pill.fill")
                 }

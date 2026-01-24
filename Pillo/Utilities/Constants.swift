@@ -32,8 +32,8 @@ struct Constants {
         static let welcomeSubtitle = "The difference between taking supplements\nand absorbing them."
         static let getStarted = "Get Started"
 
-        static let addVitaminsTitle = "WHAT DO YOU TAKE?"
-        static let addVitaminsSubtitle = "We'll make it all work. At the right time."
+        static let addSupplementsTitle = "WHAT DO YOU TAKE?"
+        static let addSupplementsSubtitle = "We'll make it all work. At the right time."
 
         static let mealTimesTitle = "WHEN DO YOU EAT?"
         static let mealTimesSubtitle = "Roughly. We're not counting calories."

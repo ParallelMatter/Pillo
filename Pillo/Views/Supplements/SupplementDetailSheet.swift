@@ -1,9 +1,9 @@
 import SwiftUI
 import SwiftData
 
-struct VitaminDetailSheet: View {
+struct SupplementDetailSheet: View {
     let supplement: Supplement
-    @Bindable var viewModel: VitaminsViewModel
+    @Bindable var viewModel: SupplementsViewModel
     let user: User
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -337,7 +337,7 @@ struct FlowLayout: Layout {
 
 struct EditSupplementSheet: View {
     let supplement: Supplement
-    @Bindable var viewModel: VitaminsViewModel
+    @Bindable var viewModel: SupplementsViewModel
     let modelContext: ModelContext
     @Environment(\.dismiss) private var dismiss
 

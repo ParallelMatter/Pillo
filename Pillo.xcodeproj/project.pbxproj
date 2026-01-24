@@ -32,19 +32,19 @@
 		E10000000000000000000013 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000013 /* NotificationService.swift */; };
 		E10000000000000000000014 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000014 /* OnboardingViewModel.swift */; };
 		E10000000000000000000015 /* TodayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000015 /* TodayViewModel.swift */; };
-		E10000000000000000000016 /* VitaminsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000016 /* VitaminsViewModel.swift */; };
+		E10000000000000000000016 /* SupplementsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000016 /* SupplementsViewModel.swift */; };
 		E10000000000000000000017 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000017 /* MainTabView.swift */; };
 		E10000000000000000000018 /* OnboardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000018 /* OnboardingContainerView.swift */; };
 		E10000000000000000000019 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000019 /* WelcomeView.swift */; };
-		E10000000000000000000020 /* AddVitaminsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000020 /* AddVitaminsView.swift */; };
+		E10000000000000000000020 /* AddSupplementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000020 /* AddSupplementsView.swift */; };
 		E10000000000000000000021 /* MealTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000021 /* MealTimesView.swift */; };
 		E10000000000000000000022 /* GoalsSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000022 /* GoalsSelectionView.swift */; };
 		E10000000000000000000023 /* GeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000023 /* GeneratingView.swift */; };
 		E10000000000000000000024 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000024 /* TodayView.swift */; };
 		E10000000000000000000025 /* TimeSlotCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000025 /* TimeSlotCard.swift */; };
-		E10000000000000000000026 /* VitaminsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000026 /* VitaminsListView.swift */; };
+		E10000000000000000000026 /* SupplementsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000026 /* SupplementsListView.swift */; };
 		E10000000000000000000027 /* AddSupplementSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000027 /* AddSupplementSheet.swift */; };
-		E10000000000000000000028 /* VitaminDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000028 /* VitaminDetailSheet.swift */; };
+		E10000000000000000000028 /* SupplementDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000028 /* SupplementDetailSheet.swift */; };
 		E10000000000000000000029 /* GoalsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000029 /* GoalsListView.swift */; };
 		E10000000000000000000030 /* LearnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000030 /* LearnView.swift */; };
 		E10000000000000000000031 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000031 /* SettingsView.swift */; };
@@ -128,19 +128,19 @@
 		E20000000000000000000013 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		E20000000000000000000014 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		E20000000000000000000015 /* TodayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewModel.swift; sourceTree = "<group>"; };
-		E20000000000000000000016 /* VitaminsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VitaminsViewModel.swift; sourceTree = "<group>"; };
+		E20000000000000000000016 /* SupplementsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementsViewModel.swift; sourceTree = "<group>"; };
 		E20000000000000000000017 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		E20000000000000000000018 /* OnboardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContainerView.swift; sourceTree = "<group>"; };
 		E20000000000000000000019 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
-		E20000000000000000000020 /* AddVitaminsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddVitaminsView.swift; sourceTree = "<group>"; };
+		E20000000000000000000020 /* AddSupplementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSupplementsView.swift; sourceTree = "<group>"; };
 		E20000000000000000000021 /* MealTimesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimesView.swift; sourceTree = "<group>"; };
 		E20000000000000000000022 /* GoalsSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsSelectionView.swift; sourceTree = "<group>"; };
 		E20000000000000000000023 /* GeneratingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratingView.swift; sourceTree = "<group>"; };
 		E20000000000000000000024 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		E20000000000000000000025 /* TimeSlotCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSlotCard.swift; sourceTree = "<group>"; };
-		E20000000000000000000026 /* VitaminsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VitaminsListView.swift; sourceTree = "<group>"; };
+		E20000000000000000000026 /* SupplementsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementsListView.swift; sourceTree = "<group>"; };
 		E20000000000000000000027 /* AddSupplementSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSupplementSheet.swift; sourceTree = "<group>"; };
-		E20000000000000000000028 /* VitaminDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VitaminDetailSheet.swift; sourceTree = "<group>"; };
+		E20000000000000000000028 /* SupplementDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementDetailSheet.swift; sourceTree = "<group>"; };
 		E20000000000000000000029 /* GoalsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsListView.swift; sourceTree = "<group>"; };
 		E20000000000000000000030 /* LearnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnView.swift; sourceTree = "<group>"; };
 		E20000000000000000000031 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -287,7 +287,7 @@
 				E20000000000000000000017 /* MainTabView.swift */,
 				E70000000000000000000010 /* Onboarding */,
 				E70000000000000000000011 /* Today */,
-				E70000000000000000000012 /* Vitamins */,
+				E70000000000000000000012 /* Supplements */,
 				E70000000000000000000013 /* Goals */,
 				E70000000000000000000014 /* Learn */,
 				E70000000000000000000015 /* Settings */,
@@ -302,7 +302,7 @@
 			children = (
 				E20000000000000000000014 /* OnboardingViewModel.swift */,
 				E20000000000000000000015 /* TodayViewModel.swift */,
-				E20000000000000000000016 /* VitaminsViewModel.swift */,
+				E20000000000000000000016 /* SupplementsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -343,7 +343,7 @@
 			children = (
 				E20000000000000000000018 /* OnboardingContainerView.swift */,
 				E20000000000000000000019 /* WelcomeView.swift */,
-				E20000000000000000000020 /* AddVitaminsView.swift */,
+				E20000000000000000000020 /* AddSupplementsView.swift */,
 				E20000000000000000000021 /* MealTimesView.swift */,
 				E20000000000000000000022 /* GoalsSelectionView.swift */,
 				E20000000000000000000023 /* GeneratingView.swift */,
@@ -361,15 +361,15 @@
 			path = Today;
 			sourceTree = "<group>";
 		};
-		E70000000000000000000012 /* Vitamins */ = {
+		E70000000000000000000012 /* Supplements */ = {
 			isa = PBXGroup;
 			children = (
 				4FCF18472F249C72007C5ED8 /* SlotEditSheet.swift */,
-				E20000000000000000000026 /* VitaminsListView.swift */,
+				E20000000000000000000026 /* SupplementsListView.swift */,
 				E20000000000000000000027 /* AddSupplementSheet.swift */,
-				E20000000000000000000028 /* VitaminDetailSheet.swift */,
+				E20000000000000000000028 /* SupplementDetailSheet.swift */,
 			);
-			path = Vitamins;
+			path = Supplements;
 			sourceTree = "<group>";
 		};
 		E70000000000000000000013 /* Goals */ = {
@@ -629,20 +629,20 @@
 				E10000000000000000000014 /* OnboardingViewModel.swift in Sources */,
 				4FCF184A2F249C81007C5ED8 /* ScheduleFrequencyPicker.swift in Sources */,
 				E10000000000000000000015 /* TodayViewModel.swift in Sources */,
-				E10000000000000000000016 /* VitaminsViewModel.swift in Sources */,
+				E10000000000000000000016 /* SupplementsViewModel.swift in Sources */,
 				E10000000000000000000017 /* MainTabView.swift in Sources */,
 				E10000000000000000000018 /* OnboardingContainerView.swift in Sources */,
 				E10000000000000000000019 /* WelcomeView.swift in Sources */,
-				E10000000000000000000020 /* AddVitaminsView.swift in Sources */,
+				E10000000000000000000020 /* AddSupplementsView.swift in Sources */,
 				E10000000000000000000021 /* MealTimesView.swift in Sources */,
 				E10000000000000000000022 /* GoalsSelectionView.swift in Sources */,
 				4FCF18482F249C72007C5ED8 /* SlotEditSheet.swift in Sources */,
 				E10000000000000000000023 /* GeneratingView.swift in Sources */,
 				E10000000000000000000024 /* TodayView.swift in Sources */,
 				E10000000000000000000025 /* TimeSlotCard.swift in Sources */,
-				E10000000000000000000026 /* VitaminsListView.swift in Sources */,
+				E10000000000000000000026 /* SupplementsListView.swift in Sources */,
 				E10000000000000000000027 /* AddSupplementSheet.swift in Sources */,
-				E10000000000000000000028 /* VitaminDetailSheet.swift in Sources */,
+				E10000000000000000000028 /* SupplementDetailSheet.swift in Sources */,
 				E10000000000000000000029 /* GoalsListView.swift in Sources */,
 				E10000000000000000000030 /* LearnView.swift in Sources */,
 				E10000000000000000000031 /* SettingsView.swift in Sources */,

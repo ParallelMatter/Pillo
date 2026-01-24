@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct AddSupplementSheet: View {
-    @Bindable var viewModel: VitaminsViewModel
+    @Bindable var viewModel: SupplementsViewModel
     let user: User
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -184,7 +184,7 @@ struct AddSupplementSheet: View {
 }
 
 struct ManualEntrySheet: View {
-    @Bindable var viewModel: VitaminsViewModel
+    @Bindable var viewModel: SupplementsViewModel
     let user: User
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss

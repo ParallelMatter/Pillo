@@ -13,11 +13,27 @@ struct TodayView: View {
 
     private var user: User? { users.first }
     private var slots: [ScheduleSlot] {
-        // Filter out empty/archived slots and slots not active today
         let today = Date()
+        let todayString = IntakeLog.todayDateString()
+
         return (user?.scheduleSlots ?? [])
-            .filter { !$0.supplementIds.isEmpty && $0.isActiveOn(date: today) }
+            .filter { slot in
+                // Show if slot has active supplements scheduled today
+                if !slot.supplementIds.isEmpty && slot.isActiveOn(date: today) {
+                    return true
+                }
+                // Also show if slot has taken/skipped items today (archived supplements)
+                if let log = intakeLogs.first(where: { $0.scheduleSlotId == slot.id && $0.date == todayString }) {
+                    return !log.supplementIdsTaken.isEmpty || !log.supplementIdsSkipped.isEmpty
+                }
+                return false
+            }
             .sorted { $0.sortOrder < $1.sortOrder }
+    }
+
+    /// Set of archived supplement IDs
+    private var archivedSupplementIds: Set<UUID> {
+        Set(supplements.filter { $0.isArchived }.map { $0.id })
     }
 
     /// Get set of supplement IDs that are marked as taken for a slot today
@@ -75,7 +91,7 @@ struct TodayView: View {
                             // Timeline
                             VStack(spacing: Theme.spacingMD) {
                                 ForEach(slots) { slot in
-                                    let slotSupplements = viewModel.getSupplementsForSlot(slot, allSupplements: supplements)
+                                    let slotSupplements = viewModel.getSupplementsForSlot(slot, allSupplements: supplements, logs: intakeLogs)
                                     let supplementsTaken = getSupplementsTaken(for: slot)
                                     let supplementsSkipped = getSupplementsSkipped(for: slot)
 
@@ -85,6 +101,7 @@ struct TodayView: View {
                                         status: viewModel.getSlotStatus(slot: slot, logs: intakeLogs),
                                         supplementsTaken: supplementsTaken,
                                         supplementsSkipped: supplementsSkipped,
+                                        archivedSupplementIds: archivedSupplementIds,
                                         onSupplementToggle: { supplementId in
                                             withAnimation {
                                                 // Toggle: if taken, undo; if not taken, mark as taken

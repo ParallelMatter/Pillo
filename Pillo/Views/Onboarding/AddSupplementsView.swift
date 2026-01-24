@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct AddVitaminsView: View {
+struct AddSupplementsView: View {
     @Bindable var viewModel: OnboardingViewModel
     @State private var showingManualEntry = false
     @State private var showingBarcodeScanner = false
@@ -10,12 +10,12 @@ struct AddVitaminsView: View {
         VStack(spacing: 0) {
             // Header
             VStack(spacing: Theme.spacingSM) {
-                Text(Constants.Copy.addVitaminsTitle)
+                Text(Constants.Copy.addSupplementsTitle)
                     .font(Theme.headerFont)
                     .tracking(2)
                     .foregroundColor(Theme.textPrimary)
 
-                Text(Constants.Copy.addVitaminsSubtitle)
+                Text(Constants.Copy.addSupplementsSubtitle)
                     .font(Theme.captionFont)
                     .foregroundColor(Theme.textSecondary)
             }
@@ -72,7 +72,7 @@ struct AddVitaminsView: View {
 
             // Bottom Buttons
             VStack(spacing: Theme.spacingMD) {
-                if viewModel.canContinueFromVitamins {
+                if viewModel.canContinueFromSupplements {
                     Button(action: {
                         viewModel.nextStep()
                     }) {
@@ -354,6 +354,6 @@ struct ManualSupplementEntrySheet: View {
 #Preview {
     ZStack {
         Color.black.ignoresSafeArea()
-        AddVitaminsView(viewModel: OnboardingViewModel())
+        AddSupplementsView(viewModel: OnboardingViewModel())
     }
 }

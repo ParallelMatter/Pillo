@@ -1,11 +1,11 @@
 import SwiftUI
 import SwiftData
 
-struct VitaminsListView: View {
+struct SupplementsListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var users: [User]
     @Query private var supplements: [Supplement]
-    @State private var viewModel = VitaminsViewModel()
+    @State private var viewModel = SupplementsViewModel()
 
     private var user: User? { users.first }
     private var slots: [ScheduleSlot] {
@@ -77,7 +77,7 @@ struct VitaminsListView: View {
             }
             .sheet(item: $viewModel.selectedSupplement) { supplement in
                 if let user = user {
-                    VitaminDetailSheet(
+                    SupplementDetailSheet(
                         supplement: supplement,
                         viewModel: viewModel,
                         user: user
@@ -113,7 +113,7 @@ struct SearchBar: View {
 }
 
 struct SearchResultsSection: View {
-    @Bindable var viewModel: VitaminsViewModel
+    @Bindable var viewModel: SupplementsViewModel
     let user: User?
     let modelContext: ModelContext
 
@@ -160,7 +160,7 @@ struct SearchResultsSection: View {
 }
 
 struct GroupedSupplementsSection: View {
-    @Bindable var viewModel: VitaminsViewModel
+    @Bindable var viewModel: SupplementsViewModel
     let supplements: [Supplement]
     let slots: [ScheduleSlot]
     let user: User
@@ -238,7 +238,7 @@ struct GroupedSupplementsSection: View {
 }
 
 struct InteractionsSection: View {
-    @Bindable var viewModel: VitaminsViewModel
+    @Bindable var viewModel: SupplementsViewModel
     let supplements: [Supplement]
 
     var body: some View {
@@ -285,7 +285,7 @@ struct InteractionsSection: View {
 }
 
 #Preview {
-    VitaminsListView()
+    SupplementsListView()
         .preferredColorScheme(.dark)
         .modelContainer(for: [User.self, Supplement.self, ScheduleSlot.self, IntakeLog.self], inMemory: true)
 }

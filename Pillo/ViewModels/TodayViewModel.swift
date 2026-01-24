@@ -189,8 +189,17 @@ class TodayViewModel {
         return (takenSupplements, totalSupplements)
     }
 
-    func getSupplementsForSlot(_ slot: ScheduleSlot, allSupplements: [Supplement]) -> [Supplement] {
-        return allSupplements.filter { slot.supplementIds.contains($0.id) }
+    func getSupplementsForSlot(_ slot: ScheduleSlot, allSupplements: [Supplement], logs: [IntakeLog] = []) -> [Supplement] {
+        let todayString = IntakeLog.todayDateString()
+        var relevantIds = Set(slot.supplementIds)
+
+        // Include supplements taken/skipped today (handles archived supplements)
+        if let log = logs.first(where: { $0.scheduleSlotId == slot.id && $0.date == todayString }) {
+            relevantIds.formUnion(log.supplementIdsTaken)
+            relevantIds.formUnion(log.supplementIdsSkipped)
+        }
+
+        return allSupplements.filter { relevantIds.contains($0.id) }
     }
 
     // MARK: - Streak Methods

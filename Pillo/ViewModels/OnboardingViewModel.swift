@@ -4,7 +4,7 @@ import SwiftData
 
 enum OnboardingStep: Int, CaseIterable {
     case welcome
-    case addVitamins
+    case addSupplements
     case mealTimes
     case goals
     case generating
@@ -45,7 +45,7 @@ class OnboardingViewModel {
         databaseService.searchSupplementsWithContext(query: searchQuery)
     }
 
-    var canContinueFromVitamins: Bool {
+    var canContinueFromSupplements: Bool {
         !selectedSupplements.isEmpty
     }
 

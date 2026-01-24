@@ -6,6 +6,7 @@ struct TimeSlotCard: View {
     let status: SlotStatus
     let supplementsTaken: Set<UUID>    // Which supplements are marked taken
     let supplementsSkipped: Set<UUID>  // Which supplements are marked skipped
+    let archivedSupplementIds: Set<UUID>  // Which supplements have been deleted/archived
     let onSupplementToggle: (UUID) -> Void  // Toggle individual supplement
     let onMarkAllTaken: () -> Void
     let onMarkAllSkipped: () -> Void
@@ -52,6 +53,7 @@ struct TimeSlotCard: View {
                         supplement: supplement,
                         isTaken: supplementsTaken.contains(supplement.id),
                         isSkipped: supplementsSkipped.contains(supplement.id),
+                        isArchived: archivedSupplementIds.contains(supplement.id),
                         onToggle: { onSupplementToggle(supplement.id) }
                     )
                 }
@@ -170,6 +172,7 @@ struct SupplementRow: View {
     let supplement: Supplement
     let isTaken: Bool
     let isSkipped: Bool
+    let isArchived: Bool
     let onToggle: () -> Void
 
     var body: some View {
@@ -195,6 +198,7 @@ struct SupplementRow: View {
             }
         }
         .buttonStyle(.plain)
+        .disabled(isArchived)
     }
 }
 
@@ -218,6 +222,7 @@ struct SupplementRow: View {
                 status: .upcoming,
                 supplementsTaken: [],
                 supplementsSkipped: [],
+                archivedSupplementIds: [],
                 onSupplementToggle: { _ in },
                 onMarkAllTaken: {},
                 onMarkAllSkipped: {},
@@ -239,6 +244,7 @@ struct SupplementRow: View {
                 status: .partial,
                 supplementsTaken: [UUID()],  // One taken
                 supplementsSkipped: [],
+                archivedSupplementIds: [],
                 onSupplementToggle: { _ in },
                 onMarkAllTaken: {},
                 onMarkAllSkipped: {},
