@@ -53,6 +53,7 @@ final class Supplement {
     var createdAt: Date
     var referenceId: String?
     var customTime: String?  // HH:mm format - user-specified time for manual entries
+    var customFrequency: ScheduleFrequency?  // User-specified frequency for manual entries
 
     var user: User?
 
@@ -69,7 +70,8 @@ final class Supplement {
         archivedAt: Date? = nil,
         createdAt: Date = Date(),
         referenceId: String? = nil,
-        customTime: String? = nil
+        customTime: String? = nil,
+        customFrequency: ScheduleFrequency? = nil
     ) {
         self.id = id
         self.name = name
@@ -84,6 +86,7 @@ final class Supplement {
         self.createdAt = createdAt
         self.referenceId = referenceId
         self.customTime = customTime
+        self.customFrequency = customFrequency
     }
 
     var displayDosage: String {

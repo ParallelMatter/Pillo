@@ -15,6 +15,7 @@ class SchedulingService {
         let context: MealContext
         var supplements: [(Supplement, SupplementReference?)]
         var explanation: String
+        var frequency: ScheduleFrequency = .daily
 
         var sortOrder: Int {
             let formatter = DateFormatter()
@@ -59,18 +60,23 @@ class SchedulingService {
         assignments = resolveConflicts(assignments)
 
         // Create custom time slots for manually-timed supplements
+        // Group by both time AND frequency (different frequencies need separate slots)
         var customSlots: [TimeSlot] = []
         for supplement in customTimeSupplements {
             if let customTime = supplement.customTime {
-                // Check if a slot already exists at this time
-                if let existingIndex = customSlots.firstIndex(where: { $0.time == customTime }) {
+                let frequency = supplement.customFrequency ?? .daily
+                // Check if a slot already exists at this time with the same frequency
+                if let existingIndex = customSlots.firstIndex(where: {
+                    $0.time == customTime && $0.frequency == frequency
+                }) {
                     customSlots[existingIndex].supplements.append((supplement, nil))
                 } else {
                     customSlots.append(TimeSlot(
                         time: customTime,
                         context: .betweenMeals,  // Custom times use generic context
                         supplements: [(supplement, nil)],
-                        explanation: "Scheduled at your preferred time."
+                        explanation: "Scheduled at your preferred time.",
+                        frequency: frequency
                     ))
                 }
             }
@@ -325,7 +331,8 @@ class SchedulingService {
                     context: slot.context,
                     supplementIds: slot.supplements.map { $0.0.id },
                     explanation: explanation,
-                    sortOrder: index
+                    sortOrder: index,
+                    frequency: slot.frequency
                 )
             }
     }

@@ -7,11 +7,12 @@ struct AddSupplementSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
+    @State private var showingSearch = false
     @State private var searchQuery = ""
     @State private var showingManualEntry = false
     @State private var showingBarcodeScanner = false
-    @State private var scannedProductName: String?
     @State private var showDuplicateAlert = false
+    @State private var selectedReference: SupplementReference?
 
     var searchResults: [SupplementSearchResult] {
         SupplementDatabaseService.shared.searchSupplementsWithContext(query: searchQuery)
@@ -23,113 +24,12 @@ struct AddSupplementSheet: View {
                 Theme.background.ignoresSafeArea()
 
                 VStack(spacing: Theme.spacingMD) {
-                    // Search Bar with Barcode Button
-                    HStack(spacing: Theme.spacingSM) {
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(Theme.textSecondary)
-
-                            TextField("Search supplements", text: $searchQuery)
-                                .foregroundColor(Theme.textPrimary)
-
-                            if !searchQuery.isEmpty {
-                                Button(action: { searchQuery = "" }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundColor(Theme.textSecondary)
-                                }
-                            }
-                        }
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-
-                        // Barcode Scanner Button
-                        Button(action: {
-                            showingBarcodeScanner = true
-                        }) {
-                            Image(systemName: "barcode.viewfinder")
-                                .font(.system(size: 20))
-                                .foregroundColor(Theme.textPrimary)
-                                .frame(width: 48, height: 48)
-                                .background(Theme.surface)
-                                .cornerRadius(Theme.cornerRadiusSM)
-                        }
-                    }
-                    .padding(.horizontal, Theme.spacingLG)
-
-                    // Results
-                    ScrollView {
-                        LazyVStack(spacing: Theme.spacingSM) {
-                            ForEach(searchResults) { result in
-                                Button(action: {
-                                    let added = viewModel.addSupplement(
-                                        from: result.supplement,
-                                        dosage: result.supplement.defaultDosageMin,
-                                        dosageUnit: result.supplement.defaultDosageUnit,
-                                        form: nil,
-                                        to: user,
-                                        modelContext: modelContext
-                                    )
-                                    if added {
-                                        dismiss()
-                                    } else {
-                                        showDuplicateAlert = true
-                                    }
-                                }) {
-                                    HStack {
-                                        VStack(alignment: .leading, spacing: Theme.spacingXS) {
-                                            Text(result.supplement.primaryName)
-                                                .font(Theme.bodyFont)
-                                                .foregroundColor(Theme.textPrimary)
-
-                                            Text(result.supplement.supplementCategory.displayName)
-                                                .font(Theme.captionFont)
-                                                .foregroundColor(Theme.textSecondary)
-
-                                            // Show match context for keyword/goal matches
-                                            if !searchQuery.isEmpty && !result.matchedTerms.isEmpty && result.matchType != .exactName && result.matchType != .partialName {
-                                                Text("matches: \(result.matchedTerms.joined(separator: ", "))")
-                                                    .font(Theme.captionFont)
-                                                    .foregroundColor(Theme.accent)
-                                                    .italic()
-                                            }
-                                        }
-
-                                        Spacer()
-
-                                        Text(result.supplement.displayDosageRange)
-                                            .font(Theme.captionFont)
-                                            .foregroundColor(Theme.textSecondary)
-
-                                        Image(systemName: "plus.circle")
-                                            .foregroundColor(Theme.textPrimary)
-                                    }
-                                    .padding(Theme.spacingMD)
-                                    .background(Theme.surface)
-                                    .cornerRadius(Theme.cornerRadiusSM)
-                                }
-                            }
-
-                            // Manual Entry Option
-                            Button(action: {
-                                showingManualEntry = true
-                            }) {
-                                HStack {
-                                    Image(systemName: "square.and.pencil")
-                                        .foregroundColor(Theme.textSecondary)
-
-                                    Text("Add manually")
-                                        .font(Theme.bodyFont)
-                                        .foregroundColor(Theme.textSecondary)
-
-                                    Spacer()
-                                }
-                                .padding(Theme.spacingMD)
-                                .background(Theme.surface)
-                                .cornerRadius(Theme.cornerRadiusSM)
-                            }
-                        }
-                        .padding(.horizontal, Theme.spacingLG)
+                    if showingSearch {
+                        // Search Mode
+                        searchView
+                    } else {
+                        // Menu Mode - Show options
+                        menuView
                     }
                 }
             }
@@ -137,8 +37,13 @@ struct AddSupplementSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
+                    Button(showingSearch ? "Back" : "Cancel") {
+                        if showingSearch {
+                            showingSearch = false
+                            searchQuery = ""
+                        } else {
+                            dismiss()
+                        }
                     }
                     .foregroundColor(Theme.textSecondary)
                 }
@@ -165,8 +70,9 @@ struct AddSupplementSheet: View {
                                 showDuplicateAlert = true
                             }
                         } else {
-                            // Pre-fill search with scanned product name
+                            // Pre-fill search and show search view
                             searchQuery = product.displayTitle
+                            showingSearch = true
                         }
                     },
                     onManualEntry: { _ in
@@ -174,10 +80,231 @@ struct AddSupplementSheet: View {
                     }
                 )
             }
-            .alert("Already Added", isPresented: $showDuplicateAlert) {
+            .alert("Already added", isPresented: $showDuplicateAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text("This supplement is already in your routine.")
+            }
+            .sheet(item: $selectedReference) { reference in
+                SupplementReferenceDetailSheet(
+                    reference: reference,
+                    viewModel: viewModel,
+                    user: user,
+                    onAdd: { dismiss() }
+                )
+            }
+        }
+    }
+
+    // MARK: - Menu View
+
+    private var menuView: some View {
+        VStack(spacing: Theme.spacingSM) {
+            // Search supplements option
+            Button(action: {
+                showingSearch = true
+            }) {
+                HStack(spacing: Theme.spacingMD) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 20))
+                        .foregroundColor(Theme.accent)
+                        .frame(width: 32)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Search supplements")
+                            .font(Theme.bodyFont)
+                            .foregroundColor(Theme.textPrimary)
+
+                        Text("Browse our database of 199+ supplements")
+                            .font(Theme.captionFont)
+                            .foregroundColor(Theme.textSecondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(Theme.textSecondary)
+                }
+                .padding(Theme.spacingMD)
+                .background(Theme.surface)
+                .cornerRadius(Theme.cornerRadiusSM)
+            }
+
+            // Add personal item option
+            Button(action: {
+                showingManualEntry = true
+            }) {
+                HStack(spacing: Theme.spacingMD) {
+                    Image(systemName: "square.and.pencil")
+                        .font(.system(size: 20))
+                        .foregroundColor(Theme.accent)
+                        .frame(width: 32)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Add personal item")
+                            .font(Theme.bodyFont)
+                            .foregroundColor(Theme.textPrimary)
+
+                        Text("Create a custom supplement entry")
+                            .font(Theme.captionFont)
+                            .foregroundColor(Theme.textSecondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(Theme.textSecondary)
+                }
+                .padding(Theme.spacingMD)
+                .background(Theme.surface)
+                .cornerRadius(Theme.cornerRadiusSM)
+            }
+
+            // Scan barcode option
+            Button(action: {
+                showingBarcodeScanner = true
+            }) {
+                HStack(spacing: Theme.spacingMD) {
+                    Image(systemName: "barcode.viewfinder")
+                        .font(.system(size: 20))
+                        .foregroundColor(Theme.accent)
+                        .frame(width: 32)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Scan barcode")
+                            .font(Theme.bodyFont)
+                            .foregroundColor(Theme.textPrimary)
+
+                        Text("Identify supplements from packaging")
+                            .font(Theme.captionFont)
+                            .foregroundColor(Theme.textSecondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(Theme.textSecondary)
+                }
+                .padding(Theme.spacingMD)
+                .background(Theme.surface)
+                .cornerRadius(Theme.cornerRadiusSM)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, Theme.spacingLG)
+        .padding(.top, Theme.spacingMD)
+    }
+
+    // MARK: - Search View
+
+    private var searchView: some View {
+        VStack(spacing: Theme.spacingMD) {
+            // Search Bar
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(Theme.textSecondary)
+
+                TextField("Search supplements", text: $searchQuery)
+                    .foregroundColor(Theme.textPrimary)
+
+                if !searchQuery.isEmpty {
+                    Button(action: { searchQuery = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(Theme.textSecondary)
+                    }
+                }
+            }
+            .padding(Theme.spacingMD)
+            .background(Theme.surface)
+            .cornerRadius(Theme.cornerRadiusSM)
+            .padding(.horizontal, Theme.spacingLG)
+
+            // Results
+            ScrollView {
+                LazyVStack(spacing: Theme.spacingSM) {
+                    ForEach(searchResults) { result in
+                        HStack {
+                            // Main content - tap to open detail sheet
+                            Button(action: {
+                                selectedReference = result.supplement
+                            }) {
+                                VStack(alignment: .leading, spacing: Theme.spacingXS) {
+                                    Text(result.supplement.primaryName)
+                                        .font(Theme.bodyFont)
+                                        .foregroundColor(Theme.textPrimary)
+
+                                    Text(result.supplement.supplementCategory.displayName)
+                                        .font(Theme.captionFont)
+                                        .foregroundColor(Theme.textSecondary)
+
+                                    // Show match context for keyword/goal matches
+                                    if !searchQuery.isEmpty && !result.matchedTerms.isEmpty && result.matchType != .exactName && result.matchType != .partialName {
+                                        Text("matches: \(result.matchedTerms.joined(separator: ", "))")
+                                            .font(Theme.captionFont)
+                                            .foregroundColor(Theme.accent)
+                                            .italic()
+                                    }
+                                }
+                            }
+                            .buttonStyle(.plain)
+
+                            Spacer()
+
+                            Text(result.supplement.displayDosageRange)
+                                .font(Theme.captionFont)
+                                .foregroundColor(Theme.textSecondary)
+
+                            // Quick add button - separate tap target
+                            Button(action: {
+                                let added = viewModel.addSupplement(
+                                    from: result.supplement,
+                                    dosage: result.supplement.defaultDosageMin,
+                                    dosageUnit: result.supplement.defaultDosageUnit,
+                                    form: nil,
+                                    to: user,
+                                    modelContext: modelContext
+                                )
+                                if added {
+                                    dismiss()
+                                } else {
+                                    showDuplicateAlert = true
+                                }
+                            }) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(Theme.accent)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(Theme.spacingMD)
+                        .background(Theme.surface)
+                        .cornerRadius(Theme.cornerRadiusSM)
+                    }
+
+                    // Manual Entry Option at bottom of search results
+                    Button(action: {
+                        showingManualEntry = true
+                    }) {
+                        HStack {
+                            Image(systemName: "square.and.pencil")
+                                .foregroundColor(Theme.textSecondary)
+
+                            Text("Can't find it? Add manually")
+                                .font(Theme.bodyFont)
+                                .foregroundColor(Theme.textSecondary)
+
+                            Spacer()
+                        }
+                        .padding(Theme.spacingMD)
+                        .background(Theme.surface)
+                        .cornerRadius(Theme.cornerRadiusSM)
+                    }
+                }
+                .padding(.horizontal, Theme.spacingLG)
             }
         }
     }
@@ -197,12 +324,38 @@ struct ManualEntrySheet: View {
     @State private var showDuplicateAlert = false
     @State private var customTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
 
+    // Frequency state
+    @State private var frequencyType: FrequencyType = .daily
+    @State private var selectedWeekdays: Set<ScheduleFrequency.Weekday> = [.monday, .wednesday, .friday]
+    @State private var everyNDays: Int = 2
+    @State private var weeklyDay: ScheduleFrequency.Weekday = .monday
+
     let dosageUnits = ["mg", "mcg", "g", "IU", "ml"]
+
+    enum FrequencyType: String, CaseIterable {
+        case daily = "Daily"
+        case specificDays = "Specific days"
+        case everyNDays = "Every X days"
+        case weekly = "Weekly"
+    }
 
     private var customTimeString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: customTime)
+    }
+
+    private var customFrequency: ScheduleFrequency {
+        switch frequencyType {
+        case .daily:
+            return .daily
+        case .specificDays:
+            return .specificDays(selectedWeekdays)
+        case .everyNDays:
+            return .everyNDays(interval: everyNDays, startDate: Date())
+        case .weekly:
+            return .weekly(weeklyDay)
+        }
     }
 
     var body: some View {
@@ -316,6 +469,91 @@ struct ManualEntrySheet: View {
                         .cornerRadius(Theme.cornerRadiusSM)
                     }
 
+                    // Frequency
+                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                        Text("FREQUENCY")
+                            .font(Theme.headerFont)
+                            .tracking(1)
+                            .foregroundColor(Theme.textSecondary)
+
+                        Picker("Frequency", selection: $frequencyType) {
+                            ForEach(FrequencyType.allCases, id: \.self) { type in
+                                Text(type.rawValue).tag(type)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .tint(Theme.textPrimary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(Theme.spacingMD)
+                        .background(Theme.surface)
+                        .cornerRadius(Theme.cornerRadiusSM)
+
+                        // Conditional sub-pickers based on frequency type
+                        switch frequencyType {
+                        case .daily:
+                            EmptyView()
+
+                        case .specificDays:
+                            // Weekday selector
+                            HStack(spacing: Theme.spacingXS) {
+                                ForEach(ScheduleFrequency.Weekday.allCases, id: \.self) { day in
+                                    Button(action: {
+                                        if selectedWeekdays.contains(day) {
+                                            selectedWeekdays.remove(day)
+                                        } else {
+                                            selectedWeekdays.insert(day)
+                                        }
+                                    }) {
+                                        Text(day.initial)
+                                            .font(Theme.captionFont)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(selectedWeekdays.contains(day) ? Theme.background : Theme.textSecondary)
+                                            .frame(width: 36, height: 36)
+                                            .background(selectedWeekdays.contains(day) ? Theme.accent : Theme.surface)
+                                            .cornerRadius(18)
+                                    }
+                                }
+                            }
+
+                        case .everyNDays:
+                            // Interval picker
+                            HStack(spacing: Theme.spacingSM) {
+                                Text("Every")
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Picker("Days", selection: $everyNDays) {
+                                    ForEach(2...14, id: \.self) { n in
+                                        Text("\(n)").tag(n)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(Theme.textPrimary)
+                                .padding(.horizontal, Theme.spacingSM)
+                                .padding(.vertical, Theme.spacingXS)
+                                .background(Theme.surface)
+                                .cornerRadius(Theme.cornerRadiusSM)
+
+                                Text("days")
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textSecondary)
+                            }
+
+                        case .weekly:
+                            // Day of week picker
+                            Picker("Day", selection: $weeklyDay) {
+                                ForEach(ScheduleFrequency.Weekday.allCases, id: \.self) { day in
+                                    Text(day.fullName).tag(day)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .tint(Theme.textPrimary)
+                            .padding(Theme.spacingMD)
+                            .background(Theme.surface)
+                            .cornerRadius(Theme.cornerRadiusSM)
+                        }
+                    }
+
                     Spacer()
 
                     Button(action: {
@@ -327,6 +565,7 @@ struct ManualEntrySheet: View {
                             dosageUnit: dosage != nil ? dosageUnit : nil,
                             form: form,
                             customTime: customTimeString,
+                            customFrequency: customFrequency,
                             to: user,
                             modelContext: modelContext
                         )

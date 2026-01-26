@@ -7,6 +7,7 @@ class SupplementsViewModel {
     var searchQuery: String = ""
     var showingAddSheet: Bool = false
     var selectedSupplement: Supplement?
+    var selectedReference: SupplementReference?
 
     private let databaseService = SupplementDatabaseService.shared
     private let schedulingService = SchedulingService.shared
@@ -147,6 +148,7 @@ class SupplementsViewModel {
         dosageUnit: String?,
         form: SupplementForm?,
         customTime: String? = nil,
+        customFrequency: ScheduleFrequency? = nil,
         to user: User,
         modelContext: ModelContext
     ) -> Bool {
@@ -164,6 +166,7 @@ class SupplementsViewModel {
             archivedSupplement.dosageUnit = dosageUnit
             archivedSupplement.form = form
             archivedSupplement.customTime = customTime
+            archivedSupplement.customFrequency = customFrequency
             regenerateSchedule(for: user, modelContext: modelContext)
             return true
         }
@@ -174,7 +177,8 @@ class SupplementsViewModel {
             dosage: dosage,
             dosageUnit: dosageUnit,
             form: form,
-            customTime: customTime
+            customTime: customTime,
+            customFrequency: customFrequency
         )
         supplement.user = user
         modelContext.insert(supplement)

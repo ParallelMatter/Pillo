@@ -28,18 +28,7 @@ struct SupplementsListView: View {
                             .padding(.horizontal, Theme.spacingLG)
                             .padding(.top, Theme.spacingMD)
 
-                        // Search
-                        SearchBar(text: $viewModel.searchQuery)
-                            .padding(.horizontal, Theme.spacingLG)
-
-                        if !viewModel.searchQuery.isEmpty {
-                            // Search Results
-                            SearchResultsSection(
-                                viewModel: viewModel,
-                                user: user,
-                                modelContext: modelContext
-                            )
-                        } else if let user = user {
+                        if let user = user {
                             // Grouped Supplements
                             GroupedSupplementsSection(
                                 viewModel: viewModel,
@@ -84,86 +73,16 @@ struct SupplementsListView: View {
                     )
                 }
             }
-        }
-    }
-}
-
-struct SearchBar: View {
-    @Binding var text: String
-
-    var body: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(Theme.textSecondary)
-
-            TextField("Search supplements", text: $text)
-                .foregroundColor(Theme.textPrimary)
-
-            if !text.isEmpty {
-                Button(action: { text = "" }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(Theme.textSecondary)
+            .sheet(item: $viewModel.selectedReference) { reference in
+                if let user = user {
+                    SupplementReferenceDetailSheet(
+                        reference: reference,
+                        viewModel: viewModel,
+                        user: user
+                    )
                 }
             }
         }
-        .padding(Theme.spacingMD)
-        .background(Theme.surface)
-        .cornerRadius(Theme.cornerRadiusSM)
-    }
-}
-
-struct SearchResultsSection: View {
-    @Bindable var viewModel: SupplementsViewModel
-    let user: User?
-    let modelContext: ModelContext
-
-    var body: some View {
-        LazyVStack(spacing: Theme.spacingSM) {
-            ForEach(viewModel.searchResults) { result in
-                Button(action: {
-                    if let user = user {
-                        _ = viewModel.addSupplement(
-                            from: result.supplement,
-                            dosage: result.supplement.defaultDosageMin,
-                            dosageUnit: result.supplement.defaultDosageUnit,
-                            form: nil,
-                            to: user,
-                            modelContext: modelContext
-                        )
-                        viewModel.searchQuery = ""
-                    }
-                }) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: Theme.spacingXS) {
-                            Text(result.supplement.primaryName)
-                                .font(Theme.bodyFont)
-                                .foregroundColor(Theme.textPrimary)
-
-                            Text(result.supplement.supplementCategory.displayName)
-                                .font(Theme.captionFont)
-                                .foregroundColor(Theme.textSecondary)
-
-                            // Show match context for keyword/goal matches
-                            if !viewModel.searchQuery.isEmpty && !result.matchedTerms.isEmpty && result.matchType != .exactName && result.matchType != .partialName {
-                                Text("matches: \(result.matchedTerms.joined(separator: ", "))")
-                                    .font(Theme.captionFont)
-                                    .foregroundColor(Theme.accent)
-                                    .italic()
-                            }
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "plus.circle")
-                            .foregroundColor(Theme.textSecondary)
-                    }
-                    .padding(Theme.spacingMD)
-                    .background(Theme.surface)
-                    .cornerRadius(Theme.cornerRadiusSM)
-                }
-            }
-        }
-        .padding(.horizontal, Theme.spacingLG)
     }
 }
 
