@@ -5,9 +5,12 @@ import UserNotifications
 
 // MARK: - Notification Delegate
 class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
-    var onNotificationTapped: (() -> Void)?
-    var onMarkAsTaken: ((_ slotId: UUID, _ supplementIds: [UUID], _ date: String) -> Void)?
-    var onSnooze: ((_ slotId: UUID, _ supplementIds: [UUID], _ supplementNames: [String], _ minutes: Int) -> Void)?
+    private let modelContainer: ModelContainer
+
+    init(modelContainer: ModelContainer) {
+        self.modelContainer = modelContainer
+        super.init()
+    }
 
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
@@ -20,7 +23,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         guard let slotIdString = userInfo["slotId"] as? String,
               let slotId = UUID(uuidString: slotIdString) else {
             // No slot info, just navigate to Today tab
-            onNotificationTapped?()
+            NotificationCenter.default.post(name: .navigateToTodayTab, object: nil)
             completionHandler()
             return
         }
@@ -31,25 +34,31 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 
         switch response.actionIdentifier {
         case Constants.actionMarkAsTaken:
-            onMarkAsTaken?(slotId, supplementIds, date)
+            Task { @MainActor in
+                self.markSupplementsAsTaken(slotId: slotId, supplementIds: supplementIds, date: date)
+            }
 
         case Constants.actionSnooze15:
-            // We need supplement names for the snooze notification
-            // For now, pass empty array - will be filled in by the handler
-            onSnooze?(slotId, supplementIds, [], 15)
+            Task { @MainActor in
+                self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 15)
+            }
 
         case Constants.actionSnooze30:
-            onSnooze?(slotId, supplementIds, [], 30)
+            Task { @MainActor in
+                self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 30)
+            }
 
         case Constants.actionSnooze60:
-            onSnooze?(slotId, supplementIds, [], 60)
+            Task { @MainActor in
+                self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 60)
+            }
 
         case UNNotificationDefaultActionIdentifier:
             // User tapped the notification body
-            onNotificationTapped?()
+            NotificationCenter.default.post(name: .navigateToTodayTab, object: nil)
 
         default:
-            onNotificationTapped?()
+            NotificationCenter.default.post(name: .navigateToTodayTab, object: nil)
         }
 
         completionHandler()
@@ -62,82 +71,6 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     ) {
         // Show notification even when app is in foreground
         completionHandler([.banner, .sound])
-    }
-}
-
-@main
-struct PilloApp: App {
-    let modelContainer: ModelContainer
-    @State private var selectedTab = 0
-    @State private var themeManager = ThemeManager.shared
-    @State private var notificationDelegate = NotificationDelegate()
-    @Environment(\.scenePhase) private var scenePhase
-
-    init() {
-        do {
-            let schema = Schema([
-                User.self,
-                Supplement.self,
-                ScheduleSlot.self,
-                IntakeLog.self
-            ])
-            let modelConfiguration = ModelConfiguration(
-                schema: schema,
-                isStoredInMemoryOnly: false
-            )
-            modelContainer = try ModelContainer(
-                for: schema,
-                configurations: [modelConfiguration]
-            )
-        } catch {
-            fatalError("Could not initialize ModelContainer: \(error)")
-        }
-    }
-
-    var body: some Scene {
-        WindowGroup {
-            ContentView(selectedTab: $selectedTab)
-                .preferredColorScheme(themeManager.themeMode.colorScheme)
-                .onOpenURL { url in
-                    handleDeepLink(url)
-                }
-                .onAppear {
-                    setupNotificationDelegate()
-                    updateWidgetData()
-                }
-                .onChange(of: scenePhase) { oldPhase, newPhase in
-                    if newPhase == .active {
-                        NotificationCenter.default.post(name: .appDidBecomeActive, object: nil)
-                        WidgetCenter.shared.reloadAllTimelines()
-                        refreshEveryNDaysNotifications()
-                    }
-                }
-        }
-        .modelContainer(modelContainer)
-    }
-
-    // MARK: - Notification Setup
-    private func setupNotificationDelegate() {
-        // Register notification categories with action buttons
-        NotificationService.shared.registerNotificationCategories()
-
-        notificationDelegate.onNotificationTapped = {
-            selectedTab = 0  // Navigate to Today tab
-        }
-
-        notificationDelegate.onMarkAsTaken = { [self] slotId, supplementIds, date in
-            Task { @MainActor in
-                markSupplementsAsTaken(slotId: slotId, supplementIds: supplementIds, date: date)
-            }
-        }
-
-        notificationDelegate.onSnooze = { [self] slotId, supplementIds, _, minutes in
-            Task { @MainActor in
-                scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: minutes)
-            }
-        }
-
-        UNUserNotificationCenter.current().delegate = notificationDelegate
     }
 
     // MARK: - Notification Action Handlers
@@ -187,6 +120,9 @@ struct PilloApp: App {
         let matchingSupplements = supplements.filter { supplementIds.contains($0.id) }
         let names = matchingSupplements.map { $0.name }
 
+        // Guard against empty names to prevent crash
+        guard !names.isEmpty else { return }
+
         NotificationService.shared.scheduleSnoozeNotification(
             slotId: slotId,
             supplementNames: names,
@@ -194,6 +130,74 @@ struct PilloApp: App {
             snoozeMinutes: minutes,
             sound: user.notificationSound
         )
+    }
+}
+
+// MARK: - Notification Names
+extension Notification.Name {
+    static let navigateToTodayTab = Notification.Name("navigateToTodayTab")
+}
+
+@main
+struct PilloApp: App {
+    let modelContainer: ModelContainer
+    let notificationDelegate: NotificationDelegate
+    @State private var selectedTab = 0
+    @State private var themeManager = ThemeManager.shared
+    @Environment(\.scenePhase) private var scenePhase
+
+    init() {
+        // Initialize model container
+        let container: ModelContainer
+        do {
+            let schema = Schema([
+                User.self,
+                Supplement.self,
+                ScheduleSlot.self,
+                IntakeLog.self
+            ])
+            let modelConfiguration = ModelConfiguration(
+                schema: schema,
+                isStoredInMemoryOnly: false
+            )
+            container = try ModelContainer(
+                for: schema,
+                configurations: [modelConfiguration]
+            )
+        } catch {
+            fatalError("Could not initialize ModelContainer: \(error)")
+        }
+        modelContainer = container
+
+        // Set up notification delegate IMMEDIATELY so it's ready
+        // before iOS delivers any pending notification responses
+        notificationDelegate = NotificationDelegate(modelContainer: container)
+        NotificationService.shared.registerNotificationCategories()
+        UNUserNotificationCenter.current().delegate = notificationDelegate
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView(selectedTab: $selectedTab)
+                .preferredColorScheme(themeManager.themeMode.colorScheme)
+                .onOpenURL { url in
+                    handleDeepLink(url)
+                }
+                .onAppear {
+                    updateWidgetData()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .navigateToTodayTab)) { _ in
+                    selectedTab = 0
+                }
+                .onChange(of: scenePhase) { oldPhase, newPhase in
+                    if newPhase == .active {
+                        NotificationCenter.default.post(name: .appDidBecomeActive, object: nil)
+                        WidgetCenter.shared.reloadAllTimelines()
+                        refreshEveryNDaysNotifications()
+                    }
+                }
+        }
+        .modelContainer(modelContainer)
     }
 
     /// Refresh notifications for slots with everyNDays frequency
