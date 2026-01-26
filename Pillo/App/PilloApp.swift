@@ -279,7 +279,7 @@ extension TodayViewModel {
         SharedContainer.saveStreak(streak)
 
         // Update next dose
-        let nextSlot = findNextUpcomingSlot(slots: slots, logs: logs)
+        let nextSlot = findNextUpcomingSlot(slots: slots, supplements: supplements, logs: logs)
         if let slot = nextSlot {
             let slotSupplements = getSupplementsForSlot(slot, allSupplements: supplements)
             let supplementNames = slotSupplements.map { $0.name }
@@ -297,11 +297,12 @@ extension TodayViewModel {
     }
 
     /// Find the next upcoming slot that hasn't been taken
-    private func findNextUpcomingSlot(slots: [ScheduleSlot], logs: [IntakeLog]) -> ScheduleSlot? {
+    private func findNextUpcomingSlot(slots: [ScheduleSlot], supplements: [Supplement], logs: [IntakeLog]) -> ScheduleSlot? {
         let sortedSlots = slots.sorted { $0.sortOrder < $1.sortOrder }
 
         for slot in sortedSlots {
-            let status = getSlotStatus(slot: slot, logs: logs)
+            let slotSupplements = getSupplementsForSlot(slot, allSupplements: supplements, logs: logs)
+            let status = getSlotStatus(slot: slot, supplements: slotSupplements, logs: logs)
             if status == .upcoming {
                 return slot
             }
