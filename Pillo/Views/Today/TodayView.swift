@@ -167,6 +167,16 @@ struct TodayView: View {
                     viewModel.updateWidgetData(slots: slots, logs: intakeLogs, supplements: supplements)
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .openRemindMeSheet)) { notification in
+                guard let userInfo = notification.userInfo,
+                      let slotIdString = userInfo["slotId"] as? String,
+                      let slotId = UUID(uuidString: slotIdString) else { return }
+
+                if let slot = slots.first(where: { $0.id == slotId }) {
+                    selectedSlotForReminder = slot
+                    showingRemindMeSheet = true
+                }
+            }
             .sheet(isPresented: $showingRemindMeSheet) {
                 if let slot = selectedSlotForReminder, let user = user {
                     RemindMeSheet(

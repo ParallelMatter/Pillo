@@ -11,9 +11,9 @@ struct RemindMeSheet: View {
 
     private var presetOptions: [(label: String, minutes: Int)] {
         [
+            ("+15 min", 15),
             ("+30 min", 30),
-            ("+1 hr", 60),
-            ("+2 hr", 120)
+            ("+1 hr", 60)
         ]
     }
 

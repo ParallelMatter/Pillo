@@ -53,6 +53,16 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
                 self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 60)
             }
 
+        case Constants.actionPickTime:
+            NotificationCenter.default.post(name: .navigateToTodayTab, object: nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                NotificationCenter.default.post(
+                    name: .openRemindMeSheet,
+                    object: nil,
+                    userInfo: ["slotId": slotIdString]
+                )
+            }
+
         case UNNotificationDefaultActionIdentifier:
             // User tapped the notification body
             NotificationCenter.default.post(name: .navigateToTodayTab, object: nil)
@@ -136,6 +146,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 // MARK: - Notification Names
 extension Notification.Name {
     static let navigateToTodayTab = Notification.Name("navigateToTodayTab")
+    static let openRemindMeSheet = Notification.Name("openRemindMeSheet")
 }
 
 @main

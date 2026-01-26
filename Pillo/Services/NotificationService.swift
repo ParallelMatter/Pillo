@@ -33,9 +33,15 @@ class NotificationService {
             options: []
         )
 
+        let pickTimeAction = UNNotificationAction(
+            identifier: Constants.actionPickTime,
+            title: "Pick a time",
+            options: [.foreground]
+        )
+
         let category = UNNotificationCategory(
             identifier: Constants.notificationCategoryIdentifier,
-            actions: [markAsTakenAction, snooze15Action, snooze30Action, snooze60Action],
+            actions: [markAsTakenAction, snooze15Action, snooze30Action, snooze60Action, pickTimeAction],
             intentIdentifiers: [],
             options: []
         )

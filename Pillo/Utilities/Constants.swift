@@ -15,6 +15,7 @@ struct Constants {
     static let actionSnooze15 = "SNOOZE_15"
     static let actionSnooze30 = "SNOOZE_30"
     static let actionSnooze60 = "SNOOZE_60"
+    static let actionPickTime = "PICK_TIME"
 
     // MARK: - Interaction Spacing (in hours)
     static let mineralCompetitionSpacing = 2.0
