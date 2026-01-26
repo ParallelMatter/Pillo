@@ -260,7 +260,7 @@ struct MediumWidgetView: View {
                         Image(systemName: "flame.fill")
                             .font(.system(size: 12))
                             .foregroundColor(Color(hex: "FBBF24"))
-                        Text("\(entry.data.streak) days")
+                        Text("\(entry.data.streak) \(entry.data.streak == 1 ? "day" : "days")")
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(Color(hex: "FBBF24"))
                     }

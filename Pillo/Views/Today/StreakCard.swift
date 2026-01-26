@@ -14,7 +14,7 @@ struct StreakCard: View {
                         .font(.system(size: 28, weight: .semibold, design: .rounded))
                         .foregroundColor(Theme.warning)
 
-                    Text(streak == 1 ? "day streak" : "day streak")
+                    Text(streak == 1 ? "day streak" : "days streak")
                         .font(Theme.bodyFont)
                         .foregroundColor(Theme.textSecondary)
                 } else {
