@@ -10,6 +10,7 @@ final class IntakeLog {
     var supplementIdsSkipped: [UUID] = []  // Which supplements were skipped
     var takenAt: Date?
     var createdAt: Date
+    var rescheduledTime: Date?  // Today-only reschedule time for "Remind Me" feature
 
     var user: User?
 

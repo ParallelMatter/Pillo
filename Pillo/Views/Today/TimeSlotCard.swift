@@ -7,9 +7,10 @@ struct TimeSlotCard: View {
     let supplementsTaken: Set<UUID>    // Which supplements are marked taken
     let supplementsSkipped: Set<UUID>  // Which supplements are marked skipped
     let archivedSupplementIds: Set<UUID>  // Which supplements have been deleted/archived
+    let rescheduledTime: Date?  // Today-only reschedule time
     let onSupplementToggle: (UUID) -> Void  // Toggle individual supplement
     let onMarkAllTaken: () -> Void
-    let onMarkAllSkipped: () -> Void
+    let onRemindMe: () -> Void
     let onUndo: () -> Void
 
     @State private var isExpanded = true
@@ -27,9 +28,20 @@ struct TimeSlotCard: View {
         VStack(alignment: .leading, spacing: 0) {
             // Time Header
             HStack {
-                Text(slot.displayTime)
-                    .font(Theme.timeFont)
-                    .foregroundColor(Theme.textPrimary)
+                VStack(alignment: .leading, spacing: 2) {
+                    if let rescheduled = rescheduledTime, rescheduled > Date() {
+                        Text(formatTime(rescheduled))
+                            .font(Theme.timeFont)
+                            .foregroundColor(Theme.accent)
+                        Text("Rescheduled from \(slot.displayTime)")
+                            .font(Theme.captionFont)
+                            .foregroundColor(Theme.textSecondary)
+                    } else {
+                        Text(slot.displayTime)
+                            .font(Theme.timeFont)
+                            .foregroundColor(Theme.textPrimary)
+                    }
+                }
 
                 Spacer()
 
@@ -71,15 +83,24 @@ struct TimeSlotCard: View {
             }
 
             // Action Buttons
-            if status == .upcoming || status == .missed {
+            if status == .upcoming {
+                Button(action: onMarkAllTaken) {
+                    Text("All Taken")
+                }
+                .buttonStyle(PrimaryButtonStyle())
+                .padding(.top, Theme.spacingLG)
+            } else if status == .missed {
                 HStack(spacing: Theme.spacingMD) {
                     Button(action: onMarkAllTaken) {
-                        Text("Mark All as Taken")
+                        Text("All Taken")
                     }
                     .buttonStyle(PrimaryButtonStyle())
 
-                    Button(action: onMarkAllSkipped) {
-                        Text("Skip All")
+                    Button(action: onRemindMe) {
+                        HStack(spacing: Theme.spacingXS) {
+                            Image(systemName: "bell")
+                            Text("Remind Me")
+                        }
                     }
                     .buttonStyle(SecondaryButtonStyle())
                 }
@@ -89,7 +110,7 @@ struct TimeSlotCard: View {
                 VStack(spacing: Theme.spacingSM) {
                     HStack(spacing: Theme.spacingMD) {
                         Button(action: onMarkAllTaken) {
-                            Text("Mark Remaining")
+                            Text("Take Remaining")
                         }
                         .buttonStyle(PrimaryButtonStyle())
 
@@ -113,6 +134,12 @@ struct TimeSlotCard: View {
         .background(Theme.surface)
         .cornerRadius(Theme.cornerRadiusMD)
         .opacity(status == .taken || status == .skipped ? 0.6 : 1.0)
+    }
+
+    private func formatTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter.string(from: date)
     }
 }
 
@@ -223,13 +250,14 @@ struct SupplementRow: View {
                 supplementsTaken: [],
                 supplementsSkipped: [],
                 archivedSupplementIds: [],
+                rescheduledTime: nil,
                 onSupplementToggle: { _ in },
                 onMarkAllTaken: {},
-                onMarkAllSkipped: {},
+                onRemindMe: {},
                 onUndo: {}
             )
 
-            // Partial state
+            // Missed state
             TimeSlotCard(
                 slot: ScheduleSlot(
                     time: "12:00",
@@ -241,13 +269,14 @@ struct SupplementRow: View {
                     Supplement(name: "Vitamin D", category: .vitaminFatSoluble, dosage: 5000, dosageUnit: "IU"),
                     Supplement(name: "Omega-3", category: .omega, dosage: 1000, dosageUnit: "mg")
                 ],
-                status: .partial,
-                supplementsTaken: [UUID()],  // One taken
+                status: .missed,
+                supplementsTaken: [],
                 supplementsSkipped: [],
                 archivedSupplementIds: [],
+                rescheduledTime: nil,
                 onSupplementToggle: { _ in },
                 onMarkAllTaken: {},
-                onMarkAllSkipped: {},
+                onRemindMe: {},
                 onUndo: {}
             )
         }

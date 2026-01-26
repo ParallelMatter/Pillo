@@ -12,3 +12,7 @@
 
 - [x] **Enhanced supplement metadata & keyword search** — Added 4 new fields to all 199 supplements with NIH-sourced data: `keywords` (searchable tags), `benefits` (WHY it matters), `demographics` (who should consider it), `deficiencySigns` (hidden behind "Learn more"). Search matches keywords + goals with context shown. Benefits displayed as hero section in detail view.
 
+
+## Product Notes
+
+- [ ] **Notification UX discoverability** — Users may not realize they need to long-press notifications to see action buttons (Mark as Taken, Snooze). Consider: adding hint text to notification body ("Hold for quick actions"), onboarding tip, or settings explanation.

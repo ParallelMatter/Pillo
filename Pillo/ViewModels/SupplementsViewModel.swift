@@ -11,8 +11,8 @@ class SupplementsViewModel {
     private let databaseService = SupplementDatabaseService.shared
     private let schedulingService = SchedulingService.shared
 
-    var searchResults: [SupplementReference] {
-        databaseService.searchSupplements(query: searchQuery)
+    var searchResults: [SupplementSearchResult] {
+        databaseService.searchSupplementsWithContext(query: searchQuery)
     }
 
     func getInteractionsForUserSupplements(_ supplements: [Supplement]) -> [SupplementInteraction] {
@@ -90,6 +90,14 @@ class SupplementsViewModel {
         (user.supplements ?? []).contains { $0.name.lowercased() == name.lowercased() && !$0.isArchived }
     }
 
+    private func findArchivedSupplement(referenceId: String, user: User) -> Supplement? {
+        (user.supplements ?? []).first { $0.referenceId == referenceId && $0.isArchived }
+    }
+
+    private func findArchivedSupplement(name: String, user: User) -> Supplement? {
+        (user.supplements ?? []).first { $0.name.lowercased() == name.lowercased() && $0.isArchived }
+    }
+
     /// Returns true if added successfully, false if duplicate exists
     func addSupplement(
         from reference: SupplementReference,
@@ -99,9 +107,20 @@ class SupplementsViewModel {
         to user: User,
         modelContext: ModelContext
     ) -> Bool {
-        // Check for duplicate
+        // Check for active duplicate
         if userHasSupplement(referenceId: reference.id, user: user) {
             return false
+        }
+
+        // Check for archived version - restore it instead of creating duplicate
+        if let archivedSupplement = findArchivedSupplement(referenceId: reference.id, user: user) {
+            archivedSupplement.isArchived = false
+            archivedSupplement.archivedAt = nil
+            archivedSupplement.dosage = dosage
+            archivedSupplement.dosageUnit = dosageUnit
+            archivedSupplement.form = form
+            regenerateSchedule(for: user, modelContext: modelContext)
+            return true
         }
 
         let supplement = Supplement(
@@ -130,9 +149,21 @@ class SupplementsViewModel {
         to user: User,
         modelContext: ModelContext
     ) -> Bool {
-        // Check for duplicate by name
+        // Check for active duplicate by name
         if userHasSupplement(name: name, user: user) {
             return false
+        }
+
+        // Check for archived version - restore it instead of creating duplicate
+        if let archivedSupplement = findArchivedSupplement(name: name, user: user) {
+            archivedSupplement.isArchived = false
+            archivedSupplement.archivedAt = nil
+            archivedSupplement.category = category
+            archivedSupplement.dosage = dosage
+            archivedSupplement.dosageUnit = dosageUnit
+            archivedSupplement.form = form
+            regenerateSchedule(for: user, modelContext: modelContext)
+            return true
         }
 
         let supplement = Supplement(

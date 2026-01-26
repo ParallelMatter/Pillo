@@ -31,6 +31,11 @@ class TodayViewModel {
             if hasAnyAction {
                 return .partial
             }
+
+            // Check if rescheduled to a future time
+            if let rescheduledTime = log.rescheduledTime, rescheduledTime > Date() {
+                return .upcoming  // Treat as upcoming if reminder is pending
+            }
         }
 
         // Check if the slot time has passed
@@ -76,6 +81,13 @@ class TodayViewModel {
         log.takenAt = Date()
 
         try? modelContext.save()
+
+        // Cancel notification if ALL supplements in slot are now taken
+        let slotSupplementIds = Set(slot.supplementIds)
+        let takenIds = Set(log.supplementIdsTaken)
+        if takenIds.isSuperset(of: slotSupplementIds) && !slotSupplementIds.isEmpty {
+            notificationService.cancelNotificationsForSlot(slot)
+        }
     }
 
     /// Mark a single supplement as skipped
@@ -121,8 +133,12 @@ class TodayViewModel {
         log.supplementIdsTaken = slot.supplementIds
         log.supplementIdsSkipped = []
         log.takenAt = Date()
+        log.rescheduledTime = nil  // Clear any pending reminder
 
         try? modelContext.save()
+
+        // Cancel notification since all supplements are taken
+        notificationService.cancelNotificationsForSlot(slot)
     }
 
     /// Mark all supplements in slot as skipped
@@ -151,6 +167,52 @@ class TodayViewModel {
         }
 
         try? modelContext.save()
+    }
+
+    // MARK: - Remind Me Actions
+
+    /// Schedule a reminder for a slot at a specific time (today only)
+    func scheduleReminder(
+        slot: ScheduleSlot,
+        reminderTime: Date,
+        modelContext: ModelContext,
+        user: User
+    ) {
+        let todayString = IntakeLog.todayDateString()
+        let log = getOrCreateLog(for: slot, date: todayString, user: user, modelContext: modelContext)
+
+        // Store the rescheduled time
+        log.rescheduledTime = reminderTime
+        try? modelContext.save()
+
+        // Calculate minutes until reminder
+        let minutesUntilReminder = Int(reminderTime.timeIntervalSinceNow / 60)
+        guard minutesUntilReminder > 0 else { return }
+
+        // Get supplement names for notification
+        let supplements = user.supplements ?? []
+        let slotSupplements = supplements.filter { slot.supplementIds.contains($0.id) }
+        let names = slotSupplements.map { $0.name }
+
+        // Schedule notification using existing snooze infrastructure
+        notificationService.scheduleSnoozeNotification(
+            slotId: slot.id,
+            supplementNames: names,
+            supplementIds: slot.supplementIds,
+            snoozeMinutes: minutesUntilReminder,
+            sound: user.notificationSound
+        )
+    }
+
+    /// Get rescheduled time for a slot if it exists and is in the future
+    func getRescheduledTime(for slot: ScheduleSlot, logs: [IntakeLog]) -> Date? {
+        let todayString = IntakeLog.todayDateString()
+        guard let log = logs.first(where: { $0.scheduleSlotId == slot.id && $0.date == todayString }),
+              let rescheduledTime = log.rescheduledTime,
+              rescheduledTime > Date() else {
+            return nil
+        }
+        return rescheduledTime
     }
 
     // MARK: - Helpers

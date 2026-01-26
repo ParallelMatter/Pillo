@@ -179,7 +179,7 @@ struct SmallWidgetView: View {
                     .font(.system(size: 32))
                     .foregroundColor(Color(hex: "4ADE80"))
 
-                Text("All done!")
+                Text("All good!")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(textColor)
 
@@ -302,7 +302,7 @@ struct MediumWidgetView: View {
                         .font(.system(size: 24))
                         .foregroundColor(Color(hex: "4ADE80"))
 
-                    Text("All doses complete!")
+                    Text("All good today!")
                         .font(.system(size: 13))
                         .foregroundColor(secondaryTextColor)
                 } else {

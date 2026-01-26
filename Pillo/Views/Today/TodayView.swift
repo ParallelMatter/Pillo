@@ -10,6 +10,8 @@ struct TodayView: View {
     @State private var viewModel = TodayViewModel()
     @State private var refreshID = UUID()
     @State private var showingCalendar = false
+    @State private var showingRemindMeSheet = false
+    @State private var selectedSlotForReminder: ScheduleSlot?
 
     private var user: User? { users.first }
     private var slots: [ScheduleSlot] {
@@ -52,6 +54,11 @@ struct TodayView: View {
             return []
         }
         return Set(log.supplementIdsSkipped)
+    }
+
+    /// Get rescheduled time for a slot if it exists
+    private func getRescheduledTime(for slot: ScheduleSlot) -> Date? {
+        return viewModel.getRescheduledTime(for: slot, logs: Array(intakeLogs))
     }
 
     var body: some View {
@@ -102,6 +109,7 @@ struct TodayView: View {
                                         supplementsTaken: supplementsTaken,
                                         supplementsSkipped: supplementsSkipped,
                                         archivedSupplementIds: archivedSupplementIds,
+                                        rescheduledTime: getRescheduledTime(for: slot),
                                         onSupplementToggle: { supplementId in
                                             withAnimation {
                                                 // Toggle: if taken, undo; if not taken, mark as taken
@@ -119,11 +127,9 @@ struct TodayView: View {
                                                 viewModel.updateWidgetData(slots: slots, logs: user.intakeLogs ?? [], supplements: supplements)
                                             }
                                         },
-                                        onMarkAllSkipped: {
-                                            withAnimation {
-                                                viewModel.markAsSkipped(slot: slot, modelContext: modelContext, user: user)
-                                                viewModel.updateWidgetData(slots: slots, logs: user.intakeLogs ?? [], supplements: supplements)
-                                            }
+                                        onRemindMe: {
+                                            selectedSlotForReminder = slot
+                                            showingRemindMeSheet = true
                                         },
                                         onUndo: {
                                             withAnimation {
@@ -159,6 +165,23 @@ struct TodayView: View {
                 refreshID = UUID()
                 if let _ = user {
                     viewModel.updateWidgetData(slots: slots, logs: intakeLogs, supplements: supplements)
+                }
+            }
+            .sheet(isPresented: $showingRemindMeSheet) {
+                if let slot = selectedSlotForReminder, let user = user {
+                    RemindMeSheet(
+                        slot: slot,
+                        supplements: viewModel.getSupplementsForSlot(slot, allSupplements: supplements, logs: intakeLogs),
+                        onSelectTime: { reminderTime in
+                            viewModel.scheduleReminder(
+                                slot: slot,
+                                reminderTime: reminderTime,
+                                modelContext: modelContext,
+                                user: user
+                            )
+                            viewModel.updateWidgetData(slots: slots, logs: user.intakeLogs ?? [], supplements: supplements)
+                        }
+                    )
                 }
             }
         }

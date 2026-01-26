@@ -312,6 +312,55 @@ class NotificationService {
         )
     }
 
+    /// Cancel all pending notifications for a slot (handles all frequency types)
+    func cancelNotificationsForSlot(_ slot: ScheduleSlot) {
+        var identifiersToCancel: [String] = []
+        let slotIdString = slot.id.uuidString
+
+        switch slot.frequency {
+        case .daily:
+            identifiersToCancel.append(slotIdString)
+
+        case .specificDays(let days):
+            for day in days {
+                identifiersToCancel.append("\(slotIdString)-\(day.shortName)")
+            }
+
+        case .weekly(_):
+            identifiersToCancel.append("\(slotIdString)-weekly")
+
+        case .everyNDays(let interval, _):
+            // Cancel all 8 scheduled occurrences
+            for i in 0..<8 {
+                identifiersToCancel.append("\(slotIdString)-every\(interval)-\(i)")
+            }
+        }
+
+        UNUserNotificationCenter.current().removePendingNotificationRequests(
+            withIdentifiers: identifiersToCancel
+        )
+
+        // Also cancel any pending snooze notifications for this slot
+        cancelSnoozeNotifications(for: slot.id)
+    }
+
+    /// Cancel any pending snooze notifications for a slot
+    func cancelSnoozeNotifications(for slotId: UUID) {
+        let prefix = "snooze-\(slotId.uuidString)-"
+
+        UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
+            let snoozeIds = requests
+                .map { $0.identifier }
+                .filter { $0.hasPrefix(prefix) }
+
+            if !snoozeIds.isEmpty {
+                UNUserNotificationCenter.current().removePendingNotificationRequests(
+                    withIdentifiers: snoozeIds
+                )
+            }
+        }
+    }
+
     // MARK: - Snooze Notifications
 
     func scheduleSnoozeNotification(

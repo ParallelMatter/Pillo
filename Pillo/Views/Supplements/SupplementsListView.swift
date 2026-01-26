@@ -119,13 +119,13 @@ struct SearchResultsSection: View {
 
     var body: some View {
         LazyVStack(spacing: Theme.spacingSM) {
-            ForEach(viewModel.searchResults) { reference in
+            ForEach(viewModel.searchResults) { result in
                 Button(action: {
                     if let user = user {
                         _ = viewModel.addSupplement(
-                            from: reference,
-                            dosage: reference.defaultDosageMin,
-                            dosageUnit: reference.defaultDosageUnit,
+                            from: result.supplement,
+                            dosage: result.supplement.defaultDosageMin,
+                            dosageUnit: result.supplement.defaultDosageUnit,
                             form: nil,
                             to: user,
                             modelContext: modelContext
@@ -135,13 +135,21 @@ struct SearchResultsSection: View {
                 }) {
                     HStack {
                         VStack(alignment: .leading, spacing: Theme.spacingXS) {
-                            Text(reference.primaryName)
+                            Text(result.supplement.primaryName)
                                 .font(Theme.bodyFont)
                                 .foregroundColor(Theme.textPrimary)
 
-                            Text(reference.supplementCategory.displayName)
+                            Text(result.supplement.supplementCategory.displayName)
                                 .font(Theme.captionFont)
                                 .foregroundColor(Theme.textSecondary)
+
+                            // Show match context for keyword/goal matches
+                            if !viewModel.searchQuery.isEmpty && !result.matchedTerms.isEmpty && result.matchType != .exactName && result.matchType != .partialName {
+                                Text("matches: \(result.matchedTerms.joined(separator: ", "))")
+                                    .font(Theme.captionFont)
+                                    .foregroundColor(Theme.accent)
+                                    .italic()
+                            }
                         }
 
                         Spacer()
