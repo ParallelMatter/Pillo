@@ -55,7 +55,7 @@ struct SlotEditSheet: View {
 
                         // Save Button
                         Button(action: saveChanges) {
-                            Text("Save Changes")
+                            Text("Save changes")
                         }
                         .buttonStyle(PrimaryButtonStyle())
                     }

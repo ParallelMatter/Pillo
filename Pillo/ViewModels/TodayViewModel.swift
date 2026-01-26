@@ -8,11 +8,13 @@ class TodayViewModel {
 
     private let notificationService = NotificationService.shared
 
-    func getSlotStatus(slot: ScheduleSlot, logs: [IntakeLog]) -> SlotStatus {
+    func getSlotStatus(slot: ScheduleSlot, supplements: [Supplement], logs: [IntakeLog]) -> SlotStatus {
         let todayString = IntakeLog.todayDateString()
 
+        // Use filtered supplement IDs (excludes archived/deleted supplements)
+        let slotSupplementIds = Set(supplements.map { $0.id })
+
         if let log = logs.first(where: { $0.scheduleSlotId == slot.id && $0.date == todayString }) {
-            let slotSupplementIds = Set(slot.supplementIds)
             let takenIds = Set(log.supplementIdsTaken)
             let skippedIds = Set(log.supplementIdsSkipped)
 
@@ -26,8 +28,15 @@ class TodayViewModel {
                 return .skipped
             }
 
+            // All supplements have some action (mix of taken/skipped counts as complete)
+            let allMarkedIds = takenIds.union(skippedIds)
+            if allMarkedIds.isSuperset(of: slotSupplementIds) && !slotSupplementIds.isEmpty {
+                return .taken
+            }
+
             // Some supplements taken or skipped (partial)
-            let hasAnyAction = !takenIds.isEmpty || !skippedIds.isEmpty
+            let hasAnyAction = !takenIds.intersection(slotSupplementIds).isEmpty ||
+                              !skippedIds.intersection(slotSupplementIds).isEmpty
             if hasAnyAction {
                 return .partial
             }

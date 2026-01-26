@@ -85,21 +85,21 @@ struct TimeSlotCard: View {
             // Action Buttons
             if status == .upcoming {
                 Button(action: onMarkAllTaken) {
-                    Text("All Taken")
+                    Text("All taken")
                 }
                 .buttonStyle(PrimaryButtonStyle())
                 .padding(.top, Theme.spacingLG)
             } else if status == .missed {
                 HStack(spacing: Theme.spacingMD) {
                     Button(action: onMarkAllTaken) {
-                        Text("All Taken")
+                        Text("All taken")
                     }
                     .buttonStyle(PrimaryButtonStyle())
 
                     Button(action: onRemindMe) {
                         HStack(spacing: Theme.spacingXS) {
                             Image(systemName: "bell")
-                            Text("Remind Me")
+                            Text("Remind me")
                         }
                     }
                     .buttonStyle(SecondaryButtonStyle())
@@ -110,12 +110,12 @@ struct TimeSlotCard: View {
                 VStack(spacing: Theme.spacingSM) {
                     HStack(spacing: Theme.spacingMD) {
                         Button(action: onMarkAllTaken) {
-                            Text("Take Remaining")
+                            Text("Take remaining")
                         }
                         .buttonStyle(PrimaryButtonStyle())
 
                         Button(action: onUndo) {
-                            Text("Undo All")
+                            Text("Undo all")
                         }
                         .buttonStyle(SecondaryButtonStyle())
                     }

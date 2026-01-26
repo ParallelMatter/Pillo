@@ -195,8 +195,15 @@ struct ManualEntrySheet: View {
     @State private var dosageUnit = "mg"
     @State private var form: SupplementForm = .capsule
     @State private var showDuplicateAlert = false
+    @State private var customTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
 
     let dosageUnits = ["mg", "mcg", "g", "IU", "ml"]
+
+    private var customTimeString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: customTime)
+    }
 
     var body: some View {
         NavigationStack {
@@ -288,6 +295,27 @@ struct ManualEntrySheet: View {
                         .cornerRadius(Theme.cornerRadiusSM)
                     }
 
+                    // Time
+                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                        Text("TIME")
+                            .font(Theme.headerFont)
+                            .tracking(1)
+                            .foregroundColor(Theme.textSecondary)
+
+                        DatePicker(
+                            "Time",
+                            selection: $customTime,
+                            displayedComponents: .hourAndMinute
+                        )
+                        .datePickerStyle(.compact)
+                        .labelsHidden()
+                        .tint(Theme.accent)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(Theme.spacingMD)
+                        .background(Theme.surface)
+                        .cornerRadius(Theme.cornerRadiusSM)
+                    }
+
                     Spacer()
 
                     Button(action: {
@@ -298,6 +326,7 @@ struct ManualEntrySheet: View {
                             dosage: dosage,
                             dosageUnit: dosage != nil ? dosageUnit : nil,
                             form: form,
+                            customTime: customTimeString,
                             to: user,
                             modelContext: modelContext
                         )
@@ -307,7 +336,7 @@ struct ManualEntrySheet: View {
                             showDuplicateAlert = true
                         }
                     }) {
-                        Text("Add Supplement")
+                        Text("Add supplement")
                     }
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(name.isEmpty)

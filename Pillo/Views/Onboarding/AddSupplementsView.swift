@@ -84,7 +84,7 @@ struct AddSupplementsView: View {
                 Button(action: {
                     showingManualEntry = true
                 }) {
-                    Text("Add Manually")
+                    Text("Add manually")
                 }
                 .buttonStyle(SecondaryButtonStyle())
             }
@@ -244,8 +244,15 @@ struct ManualSupplementEntrySheet: View {
     @State private var category: SupplementCategory = .other
     @State private var dosageString: String = ""
     @State private var dosageUnit: String = "mg"
+    @State private var customTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
 
     let dosageUnits = ["mg", "mcg", "g", "IU", "ml"]
+
+    private var customTimeString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: customTime)
+    }
 
     var body: some View {
         NavigationStack {
@@ -316,6 +323,27 @@ struct ManualSupplementEntrySheet: View {
                         }
                     }
 
+                    // Time
+                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                        Text("TIME")
+                            .font(Theme.headerFont)
+                            .tracking(1)
+                            .foregroundColor(Theme.textSecondary)
+
+                        DatePicker(
+                            "Time",
+                            selection: $customTime,
+                            displayedComponents: .hourAndMinute
+                        )
+                        .datePickerStyle(.compact)
+                        .labelsHidden()
+                        .tint(Theme.accent)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(Theme.spacingMD)
+                        .background(Theme.surface)
+                        .cornerRadius(Theme.cornerRadiusSM)
+                    }
+
                     Spacer()
 
                     Button(action: {
@@ -324,11 +352,12 @@ struct ManualSupplementEntrySheet: View {
                             name: name,
                             category: category,
                             dosage: dosage,
-                            dosageUnit: dosage != nil ? dosageUnit : nil
+                            dosageUnit: dosage != nil ? dosageUnit : nil,
+                            customTime: customTimeString
                         )
                         dismiss()
                     }) {
-                        Text("Add Supplement")
+                        Text("Add supplement")
                     }
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(name.isEmpty)

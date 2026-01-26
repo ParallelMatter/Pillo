@@ -52,6 +52,7 @@ final class Supplement {
     var archivedAt: Date?         // When the supplement was archived
     var createdAt: Date
     var referenceId: String?
+    var customTime: String?  // HH:mm format - user-specified time for manual entries
 
     var user: User?
 
@@ -67,7 +68,8 @@ final class Supplement {
         isArchived: Bool = false,
         archivedAt: Date? = nil,
         createdAt: Date = Date(),
-        referenceId: String? = nil
+        referenceId: String? = nil,
+        customTime: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -81,6 +83,7 @@ final class Supplement {
         self.archivedAt = archivedAt
         self.createdAt = createdAt
         self.referenceId = referenceId
+        self.customTime = customTime
     }
 
     var displayDosage: String {

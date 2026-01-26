@@ -35,6 +35,7 @@ class OnboardingViewModel {
         var dosage: Double?
         var dosageUnit: String?
         var form: SupplementForm?
+        var customTime: String?  // HH:mm format for manual entries
 
         static func == (lhs: SupplementEntry, rhs: SupplementEntry) -> Bool {
             lhs.id == rhs.id
@@ -80,14 +81,15 @@ class OnboardingViewModel {
         searchQuery = ""
     }
 
-    func addManualSupplement(name: String, category: SupplementCategory, dosage: Double?, dosageUnit: String?) {
+    func addManualSupplement(name: String, category: SupplementCategory, dosage: Double?, dosageUnit: String?, customTime: String? = nil) {
         let entry = SupplementEntry(
             reference: nil,
             name: name,
             category: category,
             dosage: dosage,
             dosageUnit: dosageUnit,
-            form: nil
+            form: nil,
+            customTime: customTime
         )
         selectedSupplements.append(entry)
     }
@@ -136,7 +138,8 @@ class OnboardingViewModel {
                 dosage: entry.dosage,
                 dosageUnit: entry.dosageUnit,
                 form: entry.form,
-                referenceId: entry.reference?.id
+                referenceId: entry.reference?.id,
+                customTime: entry.customTime
             )
             supplement.user = user
             supplements.append(supplement)

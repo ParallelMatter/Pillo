@@ -28,7 +28,7 @@ struct TimePickerSheet: View {
                     .labelsHidden()
 
                     Button(action: onConfirm) {
-                        Text("Set Reminder")
+                        Text("Set reminder")
                     }
                     .buttonStyle(PrimaryButtonStyle())
                 }

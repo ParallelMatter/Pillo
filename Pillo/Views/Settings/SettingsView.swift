@@ -302,7 +302,7 @@ struct MealTimeRow: View {
             .padding(Theme.spacingMD)
         }
         .sheet(isPresented: $showingPicker) {
-            TimePickerSheet(
+            MealTimePickerSheet(
                 title: title,
                 selectedTime: $selectedTime,
                 onSave: {
@@ -376,7 +376,7 @@ struct MealTimeRow: View {
     }
 }
 
-struct TimePickerSheet: View {
+struct MealTimePickerSheet: View {
     let title: String
     @Binding var selectedTime: Date
     let onSave: () -> Void

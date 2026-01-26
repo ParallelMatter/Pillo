@@ -33,7 +33,11 @@ class SchedulingService {
         dinnerTime: String,
         skipBreakfast: Bool
     ) -> [ScheduleSlot] {
-        // Create available time slots
+        // Separate supplements with custom times from algorithm-assigned ones
+        let customTimeSupplements = supplements.filter { $0.customTime != nil }
+        let algorithmSupplements = supplements.filter { $0.customTime == nil }
+
+        // Create available time slots for algorithm-assigned supplements
         let slots = createTimeSlots(
             breakfastTime: breakfastTime,
             lunchTime: lunchTime,
@@ -41,21 +45,42 @@ class SchedulingService {
             skipBreakfast: skipBreakfast
         )
 
-        // Get references for supplements
-        let supplementsWithRefs = supplements.map { supp -> (Supplement, SupplementReference?) in
+        // Get references for algorithm supplements
+        let supplementsWithRefs = algorithmSupplements.map { supp -> (Supplement, SupplementReference?) in
             let ref = databaseService.getSupplement(byId: supp.referenceId ?? "")
                 ?? databaseService.getSupplement(byName: supp.name)
             return (supp, ref)
         }
 
-        // Assign supplements to ideal slots
+        // Assign algorithm supplements to ideal slots
         var assignments = assignSupplementsToSlots(supplementsWithRefs, slots: slots)
 
         // Resolve conflicts
         assignments = resolveConflicts(assignments)
 
+        // Create custom time slots for manually-timed supplements
+        var customSlots: [TimeSlot] = []
+        for supplement in customTimeSupplements {
+            if let customTime = supplement.customTime {
+                // Check if a slot already exists at this time
+                if let existingIndex = customSlots.firstIndex(where: { $0.time == customTime }) {
+                    customSlots[existingIndex].supplements.append((supplement, nil))
+                } else {
+                    customSlots.append(TimeSlot(
+                        time: customTime,
+                        context: .betweenMeals,  // Custom times use generic context
+                        supplements: [(supplement, nil)],
+                        explanation: "Scheduled at your preferred time."
+                    ))
+                }
+            }
+        }
+
+        // Combine algorithm slots and custom slots
+        let allSlots = assignments + customSlots
+
         // Convert to ScheduleSlots
-        return createScheduleSlots(from: assignments)
+        return createScheduleSlots(from: allSlots)
     }
 
     // MARK: - Time Slot Creation
@@ -286,8 +311,12 @@ class SchedulingService {
     // MARK: - Schedule Slot Creation
 
     private func createScheduleSlots(from timeSlots: [TimeSlot]) -> [ScheduleSlot] {
-        return timeSlots
+        // Filter non-empty slots and sort by time
+        let sortedSlots = timeSlots
             .filter { !$0.supplements.isEmpty }
+            .sorted { $0.sortOrder < $1.sortOrder }
+
+        return sortedSlots
             .enumerated()
             .map { (index, slot) in
                 let explanation = generateExplanation(for: slot)

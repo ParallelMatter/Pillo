@@ -105,7 +105,7 @@ struct TodayView: View {
                                     TimeSlotCard(
                                         slot: slot,
                                         supplements: slotSupplements,
-                                        status: viewModel.getSlotStatus(slot: slot, logs: intakeLogs),
+                                        status: viewModel.getSlotStatus(slot: slot, supplements: slotSupplements, logs: intakeLogs),
                                         supplementsTaken: supplementsTaken,
                                         supplementsSkipped: supplementsSkipped,
                                         archivedSupplementIds: archivedSupplementIds,

@@ -79,7 +79,7 @@ struct GoalsListView: View {
 
                         // Edit Goals Button
                         NavigationLink(destination: EditGoalsView(user: user)) {
-                            Text("Edit Goals")
+                            Text("Edit goals")
                         }
                         .buttonStyle(SecondaryButtonStyle())
                         .padding(.horizontal, Theme.spacingLG)

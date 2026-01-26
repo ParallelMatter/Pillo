@@ -146,6 +146,7 @@ class SupplementsViewModel {
         dosage: Double?,
         dosageUnit: String?,
         form: SupplementForm?,
+        customTime: String? = nil,
         to user: User,
         modelContext: ModelContext
     ) -> Bool {
@@ -162,6 +163,7 @@ class SupplementsViewModel {
             archivedSupplement.dosage = dosage
             archivedSupplement.dosageUnit = dosageUnit
             archivedSupplement.form = form
+            archivedSupplement.customTime = customTime
             regenerateSchedule(for: user, modelContext: modelContext)
             return true
         }
@@ -171,7 +173,8 @@ class SupplementsViewModel {
             category: category,
             dosage: dosage,
             dosageUnit: dosageUnit,
-            form: form
+            form: form,
+            customTime: customTime
         )
         supplement.user = user
         modelContext.insert(supplement)
@@ -205,12 +208,21 @@ class SupplementsViewModel {
         dosage: Double?,
         dosageUnit: String?,
         form: SupplementForm?,
+        customTime: String? = nil,
+        user: User? = nil,
         modelContext: ModelContext
     ) {
+        let timeChanged = supplement.customTime != customTime
         supplement.dosage = dosage
         supplement.dosageUnit = dosageUnit
         supplement.form = form
+        supplement.customTime = customTime
         try? modelContext.save()
+
+        // Regenerate schedule if time changed (for custom-timed supplements)
+        if timeChanged, let user = user {
+            regenerateSchedule(for: user, modelContext: modelContext)
+        }
     }
 
     private func regenerateSchedule(for user: User, modelContext: ModelContext) {

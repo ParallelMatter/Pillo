@@ -13,6 +13,8 @@
 		4F21046D2F2351B200ECE341 /* widgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4F2104572F2351B100ECE341 /* widgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4FCF18482F249C72007C5ED8 /* SlotEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF18472F249C72007C5ED8 /* SlotEditSheet.swift */; };
 		4FCF184A2F249C81007C5ED8 /* ScheduleFrequencyPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF18492F249C81007C5ED8 /* ScheduleFrequencyPicker.swift */; };
+		4FCF1B5D2F272874007C5ED8 /* RemindMeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF1B5B2F272874007C5ED8 /* RemindMeSheet.swift */; };
+		4FCF1B5E2F272874007C5ED8 /* TimePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF1B5C2F272874007C5ED8 /* TimePickerSheet.swift */; };
 		CA1000000000000000000001 /* CalendarSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000001 /* CalendarSheet.swift */; };
 		CA1000000000000000000002 /* MonthCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000002 /* MonthCalendarView.swift */; };
 		CA1000000000000000000003 /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000003 /* CalendarDayCell.swift */; };
@@ -109,6 +111,8 @@
 		4F2104742F2352FA00ECE341 /* widgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widgetExtension.entitlements; sourceTree = "<group>"; };
 		4FCF18472F249C72007C5ED8 /* SlotEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotEditSheet.swift; sourceTree = "<group>"; };
 		4FCF18492F249C81007C5ED8 /* ScheduleFrequencyPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFrequencyPicker.swift; sourceTree = "<group>"; };
+		4FCF1B5B2F272874007C5ED8 /* RemindMeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindMeSheet.swift; sourceTree = "<group>"; };
+		4FCF1B5C2F272874007C5ED8 /* TimePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePickerSheet.swift; sourceTree = "<group>"; };
 		CA2000000000000000000001 /* CalendarSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSheet.swift; sourceTree = "<group>"; };
 		CA2000000000000000000002 /* MonthCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCalendarView.swift; sourceTree = "<group>"; };
 		CA2000000000000000000003 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
@@ -354,6 +358,8 @@
 		E70000000000000000000011 /* Today */ = {
 			isa = PBXGroup;
 			children = (
+				4FCF1B5B2F272874007C5ED8 /* RemindMeSheet.swift */,
+				4FCF1B5C2F272874007C5ED8 /* TimePickerSheet.swift */,
 				E20000000000000000000024 /* TodayView.swift */,
 				E20000000000000000000025 /* TimeSlotCard.swift */,
 				F21000000000000000000003 /* StreakCard.swift */,
@@ -610,6 +616,8 @@
 				F11000000000000000000001 /* StreakService.swift in Sources */,
 				F11000000000000000000002 /* BarcodeScannerService.swift in Sources */,
 				F11000000000000000000003 /* StreakCard.swift in Sources */,
+				4FCF1B5D2F272874007C5ED8 /* RemindMeSheet.swift in Sources */,
+				4FCF1B5E2F272874007C5ED8 /* TimePickerSheet.swift in Sources */,
 				F11000000000000000000004 /* BarcodeScannerView.swift in Sources */,
 				F11000000000000000000005 /* OpenFoodFactsProduct.swift in Sources */,
 				F11000000000000000000006 /* SharedContainer.swift in Sources */,

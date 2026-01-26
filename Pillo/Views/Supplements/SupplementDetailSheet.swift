@@ -195,7 +195,8 @@ struct SupplementDetailSheet: View {
                 EditSupplementSheet(
                     supplement: supplement,
                     viewModel: viewModel,
-                    modelContext: modelContext
+                    modelContext: modelContext,
+                    user: user
                 )
             }
             .onAppear {
@@ -339,13 +340,25 @@ struct EditSupplementSheet: View {
     let supplement: Supplement
     @Bindable var viewModel: SupplementsViewModel
     let modelContext: ModelContext
+    let user: User?
     @Environment(\.dismiss) private var dismiss
 
     @State private var dosageString: String = ""
     @State private var dosageUnit: String = "mg"
     @State private var form: SupplementForm = .capsule
+    @State private var customTime: Date = Date()
 
     let dosageUnits = ["mg", "mcg", "g", "IU", "ml"]
+
+    private var isManualEntry: Bool {
+        supplement.referenceId == nil
+    }
+
+    private var customTimeString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: customTime)
+    }
 
     var body: some View {
         NavigationStack {
@@ -402,6 +415,29 @@ struct EditSupplementSheet: View {
                         .cornerRadius(Theme.cornerRadiusSM)
                     }
 
+                    // Time - only for manual entries
+                    if isManualEntry {
+                        VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                            Text("TIME")
+                                .font(Theme.headerFont)
+                                .tracking(1)
+                                .foregroundColor(Theme.textSecondary)
+
+                            DatePicker(
+                                "Time",
+                                selection: $customTime,
+                                displayedComponents: .hourAndMinute
+                            )
+                            .datePickerStyle(.compact)
+                            .labelsHidden()
+                            .tint(Theme.accent)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(Theme.spacingMD)
+                            .background(Theme.surface)
+                            .cornerRadius(Theme.cornerRadiusSM)
+                        }
+                    }
+
                     Spacer()
 
                     Button(action: {
@@ -411,11 +447,13 @@ struct EditSupplementSheet: View {
                             dosage: dosage,
                             dosageUnit: dosage != nil ? dosageUnit : nil,
                             form: form,
+                            customTime: isManualEntry ? customTimeString : nil,
+                            user: user,
                             modelContext: modelContext
                         )
                         dismiss()
                     }) {
-                        Text("Save Changes")
+                        Text("Save changes")
                     }
                     .buttonStyle(PrimaryButtonStyle())
                 }
@@ -435,6 +473,14 @@ struct EditSupplementSheet: View {
                 dosageString = supplement.dosage.map { String($0) } ?? ""
                 dosageUnit = supplement.dosageUnit ?? "mg"
                 form = supplement.form ?? .capsule
+                // Initialize custom time from supplement or default to 9:00 AM
+                if let timeString = supplement.customTime {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "HH:mm"
+                    customTime = formatter.date(from: timeString) ?? Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date())!
+                } else {
+                    customTime = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
+                }
             }
         }
     }

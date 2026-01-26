@@ -49,7 +49,7 @@ struct GoalsSelectionView: View {
                 Button(action: {
                     viewModel.nextStep()
                 }) {
-                    Text("Generate My Schedule")
+                    Text("Generate my schedule")
                 }
                 .buttonStyle(PrimaryButtonStyle())
 
