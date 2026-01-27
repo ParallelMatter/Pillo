@@ -82,3 +82,25 @@ Located in SchedulingService.swift:
 - `Pillo/Resources/supplement_database.json` - 199 supplement definitions with interaction rules
 - `Pillo/Utilities/SharedContainer.swift` - Widget data sharing
 - `PRD_Pillo.md` - Full product requirements document with design system and interaction rules
+
+## Design System
+
+**IMPORTANT:** Before creating or modifying any View, Sheet, or UI component, you MUST read `DESIGN_GUIDE.md` to ensure consistency.
+
+### Required Reading
+- `DESIGN_GUIDE.md` - Complete design specifications
+- `Pillo/Utilities/Theme.swift` - Theme tokens source of truth
+
+### UI Change Checklist
+When modifying UI, verify:
+- [ ] Using `Theme.` tokens for colors (not hardcoded hex)
+- [ ] Using spacing scale (`spacingXS` through `spacingXXL`)
+- [ ] Sheets use `Theme.spacingLG` padding (24pt)
+- [ ] Cards use `.cardStyle()` modifier
+- [ ] Buttons use `PrimaryButtonStyle` or `SecondaryButtonStyle`
+- [ ] Section headers: uppercase, `headerFont`, 1pt tracking
+
+### Quick Reference
+- Spacing: XS=4, SM=8, MD=16, LG=24, XL=32, XXL=48
+- Corner radii: SM=8 (buttons), MD=12 (cards), LG=16 (containers)
+- Sheet structure: NavigationStack > ZStack > ScrollView/VStack > .padding(Theme.spacingLG)

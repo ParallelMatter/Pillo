@@ -92,7 +92,7 @@ struct CalendarSheet: View {
 
                     Spacer()
                 }
-                .padding(.top, Theme.spacingMD)
+                .padding(.top, Theme.spacingLG)
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)

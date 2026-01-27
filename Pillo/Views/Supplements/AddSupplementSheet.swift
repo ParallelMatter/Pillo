@@ -196,7 +196,7 @@ struct AddSupplementSheet: View {
             Spacer()
         }
         .padding(.horizontal, Theme.spacingLG)
-        .padding(.top, Theme.spacingMD)
+        .padding(.top, Theme.spacingLG)
     }
 
     // MARK: - Search View
@@ -307,6 +307,7 @@ struct AddSupplementSheet: View {
                 .padding(.horizontal, Theme.spacingLG)
             }
         }
+        .padding(.top, Theme.spacingLG)
     }
 }
 
@@ -330,7 +331,7 @@ struct ManualEntrySheet: View {
     @State private var everyNDays: Int = 2
     @State private var weeklyDay: ScheduleFrequency.Weekday = .monday
 
-    let dosageUnits = ["mg", "mcg", "g", "IU", "ml"]
+    let dosageUnits = ["mg", "mcg", "g", "IU", "ml", "serving", "capsule", "tablet", "softgel", "gummy", "billion CFU"]
 
     enum FrequencyType: String, CaseIterable {
         case daily = "Daily"
@@ -424,6 +425,7 @@ struct ManualEntrySheet: View {
                                     }
                                     .pickerStyle(.menu)
                                     .tint(Theme.textPrimary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(Theme.spacingMD)
                                     .background(Theme.surface)
                                     .cornerRadius(Theme.cornerRadiusSM)
