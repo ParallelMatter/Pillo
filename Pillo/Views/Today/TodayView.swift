@@ -11,7 +11,10 @@ struct TodayView: View {
     @State private var refreshID = UUID()
     @State private var showingCalendar = false
     @State private var selectedSlotForReminder: ScheduleSlot?
+    @State private var selectedSlotForTimePicker: ScheduleSlot?
+    @State private var customReminderTime = Date()
     @State private var pendingRemindMeSlotId: UUID?
+    @State private var pendingTimePickerSlotId: UUID?
 
     private var user: User? { users.first }
     private var slots: [ScheduleSlot] {
@@ -22,11 +25,32 @@ struct TodayView: View {
             .filter { slot in
                 // Show if slot has active supplements scheduled today
                 if !slot.supplementIds.isEmpty && slot.isActiveOn(date: today) {
+                    // Check if slot time has passed
+                    if let slotTime = slot.timeAsDate, slotTime < Date() {
+                        // Time has passed - check if there's an IntakeLog
+                        let hasLog = intakeLogs.contains {
+                            $0.scheduleSlotId == slot.id && $0.date == todayString
+                        }
+
+                        if !hasLog {
+                            // No log - check if user had opportunity to take any supplement
+                            let slotSupplements = supplements.filter { slot.supplementIds.contains($0.id) }
+                            let anyExistedBeforeSlotTime = slotSupplements.contains { supplement in
+                                // Supplement existed before today's slot time
+                                supplement.createdAt < slotTime
+                            }
+
+                            if !anyExistedBeforeSlotTime {
+                                // All supplements were added after the time - don't show (start tomorrow)
+                                return false
+                            }
+                        }
+                    }
                     return true
                 }
-                // Also show if slot has taken/skipped items today (archived supplements)
+                // Also show if slot has taken items today (archived supplements)
                 if let log = intakeLogs.first(where: { $0.scheduleSlotId == slot.id && $0.date == todayString }) {
-                    return !log.supplementIdsTaken.isEmpty || !log.supplementIdsSkipped.isEmpty
+                    return !log.supplementIdsTaken.isEmpty
                 }
                 return false
             }
@@ -208,6 +232,18 @@ struct TodayView: View {
                     pendingRemindMeSlotId = slotId
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .openTimePickerSheet)) { notification in
+                guard let userInfo = notification.userInfo,
+                      let slotIdString = userInfo["slotId"] as? String,
+                      let slotId = UUID(uuidString: slotIdString) else { return }
+
+                if let slot = slots.first(where: { $0.id == slotId }) {
+                    selectedSlotForTimePicker = slot
+                } else {
+                    // Store pending ID to retry when slots load (e.g., cold start from notification)
+                    pendingTimePickerSlotId = slotId
+                }
+            }
             .sheet(item: $selectedSlotForReminder) { slot in
                 if let user = user {
                     RemindMeSheet(
@@ -225,12 +261,33 @@ struct TodayView: View {
                     )
                 }
             }
+            .sheet(item: $selectedSlotForTimePicker) { slot in
+                if let user = user {
+                    TimePickerSheet(
+                        selectedTime: $customReminderTime,
+                        onConfirm: {
+                            viewModel.scheduleReminder(
+                                slot: slot,
+                                reminderTime: customReminderTime,
+                                modelContext: modelContext,
+                                user: user
+                            )
+                            viewModel.updateWidgetData(slots: slots, logs: user.intakeLogs ?? [], supplements: supplements)
+                        }
+                    )
+                }
+            }
             .onChange(of: slots) { _, newSlots in
                 // Handle pending slot ID from notification when app cold-starts
                 if let pendingId = pendingRemindMeSlotId,
                    let slot = newSlots.first(where: { $0.id == pendingId }) {
                     selectedSlotForReminder = slot
                     pendingRemindMeSlotId = nil
+                }
+                if let pendingId = pendingTimePickerSlotId,
+                   let slot = newSlots.first(where: { $0.id == pendingId }) {
+                    selectedSlotForTimePicker = slot
+                    pendingTimePickerSlotId = nil
                 }
             }
         }
