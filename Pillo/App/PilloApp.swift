@@ -93,12 +93,19 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         let descriptor = FetchDescriptor<User>()
         guard let user = try? context.fetch(descriptor).first else { return }
 
+        // Get supplement names for history preservation
+        let supplements = user.supplements ?? []
+        let supplementNames = supplementIds.compactMap { id in
+            supplements.first(where: { $0.id == id })?.name
+        }
+
         // Check if log already exists for this slot and date
         let existingLogs = user.intakeLogs ?? []
         if let existingLog = existingLogs.first(where: { $0.scheduleSlotId == slotId && $0.date == date }) {
             // Update existing log
             existingLog.supplementIdsTaken = supplementIds
             existingLog.supplementIdsSkipped = []
+            existingLog.takenSupplementNames = supplementNames
             existingLog.takenAt = Date()
         } else {
             // Create new log
@@ -108,6 +115,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
                 supplementIdsTaken: supplementIds,
                 takenAt: Date()
             )
+            log.takenSupplementNames = supplementNames
             log.user = user
             context.insert(log)
         }

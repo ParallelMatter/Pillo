@@ -8,6 +8,7 @@ final class IntakeLog {
     var date: String  // "yyyy-MM-dd" format
     var supplementIdsTaken: [UUID] = []    // Which supplements were taken
     var supplementIdsSkipped: [UUID] = []  // Which supplements were skipped
+    var takenSupplementNames: [String] = []  // Names stored at time of taking (for history when supplements are deleted)
     var takenAt: Date?
     var createdAt: Date
     var rescheduledTime: Date?  // Today-only reschedule time for "Remind Me" feature

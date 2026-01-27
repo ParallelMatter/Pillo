@@ -33,7 +33,7 @@ struct DayDetailSheet: View {
 
     /// Get slot details for the day
     /// For historical display, we include archived supplements if they were taken that day
-    private var slotDetails: [(slot: ScheduleSlot, log: IntakeLog?, supplements: [Supplement])] {
+    private var slotDetails: [(slot: ScheduleSlot, log: IntakeLog?, supplements: [Supplement], deletedTakenNames: [String], deletedSkippedCount: Int)] {
         activeSlotsForDate.sorted { $0.sortOrder < $1.sortOrder }.compactMap { slot in
             let log = logsForDate.first { $0.scheduleSlotId == slot.id }
 
@@ -46,14 +46,30 @@ struct DayDetailSheet: View {
                 relevantSupplementIds.formUnion(log.supplementIdsSkipped)
             }
 
+            let existingSupplementIds = Set(supplements.map { $0.id })
+            let existingSupplementNames = Set(supplements.map { $0.name })
             let slotSupplements = supplements.filter { relevantSupplementIds.contains($0.id) }
 
-            // Only show slots that have supplements or logs
-            if slotSupplements.isEmpty && log == nil {
+            // Get names of deleted supplements from stored history
+            var deletedTakenNames: [String] = []
+            var deletedSkippedCount = 0
+            if let log = log {
+                // Use stored names for taken supplements that no longer exist
+                deletedTakenNames = log.takenSupplementNames.filter { !existingSupplementNames.contains($0) }
+                // If no stored names, fall back to counting
+                let deletedTakenCount = log.supplementIdsTaken.filter { !existingSupplementIds.contains($0) }.count
+                if deletedTakenNames.isEmpty && deletedTakenCount > 0 {
+                    deletedTakenNames = (0..<deletedTakenCount).map { _ in "Unknown supplement" }
+                }
+                deletedSkippedCount = log.supplementIdsSkipped.filter { !existingSupplementIds.contains($0) }.count
+            }
+
+            // Show slots that have supplements, logs, OR deleted supplement records
+            if slotSupplements.isEmpty && log == nil && deletedTakenNames.isEmpty && deletedSkippedCount == 0 {
                 return nil
             }
 
-            return (slot: slot, log: log, supplements: slotSupplements)
+            return (slot: slot, log: log, supplements: slotSupplements, deletedTakenNames: deletedTakenNames, deletedSkippedCount: deletedSkippedCount)
         }
     }
 
@@ -84,13 +100,15 @@ struct DayDetailSheet: View {
                             .background(Theme.border)
 
                         // Slot breakdown
-                        if !activeSlotsForDate.isEmpty {
+                        if !activeSlotsForDate.isEmpty || !slotDetails.isEmpty {
                             VStack(spacing: Theme.spacingMD) {
                                 ForEach(slotDetails, id: \.slot.id) { detail in
                                     SlotDetailCard(
                                         slot: detail.slot,
                                         log: detail.log,
-                                        supplements: detail.supplements
+                                        supplements: detail.supplements,
+                                        deletedTakenNames: detail.deletedTakenNames,
+                                        deletedSkippedCount: detail.deletedSkippedCount
                                     )
                                 }
                             }
@@ -163,17 +181,19 @@ struct SlotDetailCard: View {
     let slot: ScheduleSlot
     let log: IntakeLog?
     let supplements: [Supplement]
+    var deletedTakenNames: [String] = []
+    var deletedSkippedCount: Int = 0
 
     private var takenCount: Int {
-        log?.supplementIdsTaken.count ?? 0
+        (log?.supplementIdsTaken.count ?? 0)
     }
 
     private var skippedCount: Int {
-        log?.supplementIdsSkipped.count ?? 0
+        (log?.supplementIdsSkipped.count ?? 0)
     }
 
     private var totalCount: Int {
-        supplements.count
+        supplements.count + deletedTakenNames.count + deletedSkippedCount
     }
 
     private var slotStatus: SlotStatus {
@@ -269,7 +289,7 @@ struct SlotDetailCard: View {
             }
 
             // Supplements in this slot with individual status
-            if !supplements.isEmpty {
+            if !supplements.isEmpty || !deletedTakenNames.isEmpty || deletedSkippedCount > 0 {
                 VStack(alignment: .leading, spacing: Theme.spacingXS) {
                     ForEach(supplements) { supplement in
                         let isTaken = isSupplementTaken(supplement)
@@ -291,6 +311,39 @@ struct SlotDetailCard: View {
                                     .font(Theme.captionFont)
                                     .foregroundColor(Theme.textSecondary)
                             }
+                        }
+                    }
+
+                    // Show deleted supplements that were taken (with names if available)
+                    ForEach(Array(deletedTakenNames.enumerated()), id: \.offset) { _, name in
+                        HStack(spacing: Theme.spacingSM) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(Theme.success)
+
+                            Text(name)
+                                .font(Theme.captionFont)
+                                .foregroundColor(Theme.textSecondary)
+                                .strikethrough(true)
+
+                            Text("(removed)")
+                                .font(Theme.captionFont)
+                                .foregroundColor(Theme.textSecondary)
+                                .italic()
+                        }
+                    }
+
+                    // Show deleted supplements that were skipped (count only, no names stored)
+                    if deletedSkippedCount > 0 {
+                        HStack(spacing: Theme.spacingSM) {
+                            Image(systemName: "xmark.circle")
+                                .font(.system(size: 12))
+                                .foregroundColor(Theme.warning)
+
+                            Text("\(deletedSkippedCount) removed supplement\(deletedSkippedCount == 1 ? "" : "s") skipped")
+                                .font(Theme.captionFont)
+                                .foregroundColor(Theme.textSecondary)
+                                .italic()
                         }
                     }
                 }

@@ -85,6 +85,13 @@ class TodayViewModel {
         // Add to taken, remove from skipped if present
         if !log.supplementIdsTaken.contains(supplementId) {
             log.supplementIdsTaken.append(supplementId)
+
+            // Store supplement name for history preservation
+            if let supplement = (user.supplements ?? []).first(where: { $0.id == supplementId }) {
+                if !log.takenSupplementNames.contains(supplement.name) {
+                    log.takenSupplementNames.append(supplement.name)
+                }
+            }
         }
         log.supplementIdsSkipped.removeAll { $0 == supplementId }
         log.takenAt = Date()
@@ -143,6 +150,13 @@ class TodayViewModel {
         log.supplementIdsSkipped = []
         log.takenAt = Date()
         log.rescheduledTime = nil  // Clear any pending reminder
+
+        // Store supplement names for history preservation
+        let supplements = user.supplements ?? []
+        let slotSupplementNames = slot.supplementIds.compactMap { id in
+            supplements.first(where: { $0.id == id })?.name
+        }
+        log.takenSupplementNames = slotSupplementNames
 
         try? modelContext.save()
 
