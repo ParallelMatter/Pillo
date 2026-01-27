@@ -111,9 +111,9 @@ class NotificationService {
 
         let timeComponents = Calendar.current.dateComponents([.hour, .minute], from: triggerDate)
 
-        // Check if we need an immediate notification for today
-        // This handles the case where advance-adjusted time has passed but slot time is still in the future
-        scheduleImmediateNotificationIfNeeded(
+        // Check if we need a same-day notification
+        // Only fires if slot time is >15 min away (user is planning ahead, not adding "right now")
+        scheduleSameDayNotificationIfNeeded(
             slot: slot,
             content: content,
             advanceMinutes: advanceMinutes
@@ -142,33 +142,37 @@ class NotificationService {
         }
     }
 
-    /// Schedules an immediate one-time notification if the advance-adjusted time has passed
-    /// but the actual slot time is still in the future (or very recently passed).
-    /// This ensures users get notified for newly added supplements on the same day.
-    private func scheduleImmediateNotificationIfNeeded(
+    /// Schedules a one-time notification for today if the advance-adjusted time has passed
+    /// but the slot time is still more than 15 minutes away.
+    ///
+    /// Rationale: If someone adds a supplement for "right now" (within 15 min), they're aware
+    /// and don't need a notification. But if they're planning ahead (>15 min), they might
+    /// forget and should be reminded at the slot time.
+    private func scheduleSameDayNotificationIfNeeded(
         slot: ScheduleSlot,
         content: UNMutableNotificationContent,
         advanceMinutes: Int
     ) {
         let calendar = Calendar.current
         let now = Date()
+        let minimumLeadTime: TimeInterval = 15 * 60  // 15 minutes
 
         // Calculate the actual slot time for today
         guard let slotTimeToday = calculateSlotTimeForToday(slotTime: slot.time) else { return }
 
         // Calculate the advance-adjusted notification time
-        guard let notificationTime = calendar.date(byAdding: .minute, value: -advanceMinutes, to: slotTimeToday) else { return }
+        guard let advanceNotificationTime = calendar.date(byAdding: .minute, value: -advanceMinutes, to: slotTimeToday) else { return }
 
-        // Only proceed if:
-        // 1. The advance-adjusted time has already passed (notification won't fire today with repeating trigger)
-        // 2. The actual slot time is still in the future (or within 2 minutes past - grace period)
-        let gracePeriod: TimeInterval = 2 * 60  // 2 minutes
-        let slotTimeWithGrace = slotTimeToday.addingTimeInterval(gracePeriod)
+        let timeUntilSlot = slotTimeToday.timeIntervalSince(now)
 
-        if notificationTime < now && slotTimeWithGrace > now {
-            // Schedule an immediate one-time notification (5 seconds from now to ensure it registers)
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-            let identifier = "\(slot.id.uuidString)-immediate"
+        // Only schedule if:
+        // 1. The advance-adjusted time has already passed (repeating trigger won't fire today)
+        // 2. The slot time is still in the future
+        // 3. The slot time is more than 15 minutes away (user is planning ahead, not adding "right now")
+        if advanceNotificationTime < now && slotTimeToday > now && timeUntilSlot > minimumLeadTime {
+            // Schedule notification for the actual slot time
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeUntilSlot, repeats: false)
+            let identifier = "\(slot.id.uuidString)-sameday"
 
             let request = UNNotificationRequest(
                 identifier: identifier,
@@ -178,7 +182,7 @@ class NotificationService {
 
             UNUserNotificationCenter.current().add(request) { error in
                 if let error = error {
-                    print("Error scheduling immediate notification: \(error)")
+                    print("Error scheduling same-day notification: \(error)")
                 }
             }
         }
