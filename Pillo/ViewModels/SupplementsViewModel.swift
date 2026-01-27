@@ -304,5 +304,15 @@ class SupplementsViewModel {
         }
 
         try? modelContext.save()
+
+        // Reschedule notifications with the new slots
+        if user.notificationsEnabled {
+            NotificationService.shared.scheduleNotifications(
+                for: user.scheduleSlots ?? [],
+                supplements: user.supplements ?? [],
+                advanceMinutes: user.notificationAdvanceMinutes,
+                sound: user.notificationSound
+            )
+        }
     }
 }

@@ -30,7 +30,37 @@ struct TodayView: View {
                 }
                 return false
             }
-            .sorted { $0.sortOrder < $1.sortOrder }
+            .sorted { slot1, slot2 in
+                // Get effective sort time for each slot (rescheduled time or original slot time)
+                let time1 = getEffectiveSortTime(for: slot1)
+                let time2 = getEffectiveSortTime(for: slot2)
+                return time1 < time2
+            }
+    }
+
+    /// Get the effective time for sorting - uses rescheduled time if present, otherwise slot's original time
+    private func getEffectiveSortTime(for slot: ScheduleSlot) -> Date {
+        let todayString = IntakeLog.todayDateString()
+
+        // Check for rescheduled time in today's log
+        if let log = intakeLogs.first(where: { $0.scheduleSlotId == slot.id && $0.date == todayString }),
+           let rescheduledTime = log.rescheduledTime {
+            return rescheduledTime
+        }
+
+        // Fall back to slot's original time (convert "HH:mm" to today's date)
+        let components = slot.time.split(separator: ":").compactMap { Int($0) }
+        if components.count == 2 {
+            var dateComponents = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+            dateComponents.hour = components[0]
+            dateComponents.minute = components[1]
+            if let date = Calendar.current.date(from: dateComponents) {
+                return date
+            }
+        }
+
+        // Ultimate fallback - use sort order as seconds from midnight
+        return Calendar.current.startOfDay(for: Date()).addingTimeInterval(TimeInterval(slot.sortOrder * 60))
     }
 
     /// Set of archived supplement IDs
