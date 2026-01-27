@@ -53,9 +53,21 @@ final class Supplement {
     var createdAt: Date
     var referenceId: String?
     var customTime: String?  // HH:mm format - user-specified time for manual entries
-    var customFrequency: ScheduleFrequency?  // User-specified frequency for manual entries
+    var customFrequencyData: Data?  // Encoded ScheduleFrequency for SwiftData compatibility
 
     var user: User?
+
+    // MARK: - Computed Property for Frequency
+
+    var customFrequency: ScheduleFrequency? {
+        get {
+            guard let data = customFrequencyData else { return nil }
+            return try? JSONDecoder().decode(ScheduleFrequency.self, from: data)
+        }
+        set {
+            customFrequencyData = newValue.flatMap { try? JSONEncoder().encode($0) }
+        }
+    }
 
     init(
         id: UUID = UUID(),
@@ -86,14 +98,14 @@ final class Supplement {
         self.createdAt = createdAt
         self.referenceId = referenceId
         self.customTime = customTime
-        self.customFrequency = customFrequency
+        self.customFrequencyData = customFrequency.flatMap { try? JSONEncoder().encode($0) }
     }
 
     var displayDosage: String {
         guard let dosage = dosage, let unit = dosageUnit else { return "" }
         if dosage == floor(dosage) {
-            return "\(Int(dosage))\(unit)"
+            return "\(Int(dosage)) \(unit)"
         }
-        return "\(dosage)\(unit)"
+        return "\(dosage) \(unit)"
     }
 }

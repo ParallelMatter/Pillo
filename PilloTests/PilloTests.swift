@@ -77,7 +77,7 @@ final class PilloTests: XCTestCase {
             dosageUnit: "mg"
         )
 
-        XCTAssertEqual(supplement1.displayDosage, "65mg")
+        XCTAssertEqual(supplement1.displayDosage, "65 mg")
 
         let supplement2 = Supplement(
             name: "Biotin",
@@ -86,7 +86,7 @@ final class PilloTests: XCTestCase {
             dosageUnit: "mg"
         )
 
-        XCTAssertEqual(supplement2.displayDosage, "2.5mg")
+        XCTAssertEqual(supplement2.displayDosage, "2.5 mg")
 
         let supplement3 = Supplement(
             name: "Test",
