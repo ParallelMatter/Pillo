@@ -17,6 +17,10 @@ struct SupplementDetailSheet: View {
         viewModel.getReferenceInfo(for: supplement)
     }
 
+    private var scheduleSlot: ScheduleSlot? {
+        user.scheduleSlots?.first { $0.supplementIds.contains(supplement.id) }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -81,7 +85,25 @@ struct SupplementDetailSheet: View {
                             }
 
                             // Why This Time
-                            if !ref.absorptionNotes.isEmpty {
+                            if let slot = scheduleSlot {
+                                VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                    Text("WHY THIS TIME?")
+                                        .font(Theme.headerFont)
+                                        .tracking(1)
+                                        .foregroundColor(Theme.textSecondary)
+
+                                    Text(slot.displayTime)
+                                        .font(Theme.bodyFont)
+                                        .foregroundColor(Theme.accent)
+
+                                    if !ref.absorptionNotes.isEmpty {
+                                        Text(ref.absorptionNotes)
+                                            .font(Theme.bodyFont)
+                                            .foregroundColor(Theme.textPrimary)
+                                            .lineSpacing(4)
+                                    }
+                                }
+                            } else if !ref.absorptionNotes.isEmpty {
                                 InfoSection(
                                     title: "WHY THIS TIME?",
                                     content: ref.absorptionNotes
