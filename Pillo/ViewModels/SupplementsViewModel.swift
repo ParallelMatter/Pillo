@@ -188,8 +188,19 @@ class SupplementsViewModel {
     }
 
     func deleteSupplement(_ supplement: Supplement, user: User, modelContext: ModelContext) {
+        let supplementId = supplement.id
+        let todayString = IntakeLog.todayDateString()
+
+        // Clean up today's IntakeLogs - remove from skipped (but not taken)
+        // This ensures missed/upcoming items don't appear after deletion
+        if let logs = user.intakeLogs {
+            for log in logs where log.date == todayString {
+                log.supplementIdsSkipped.removeAll { $0 == supplementId }
+            }
+        }
+
         // Check if this supplement has been taken historically
-        if checkForHistoricalLogs(supplementId: supplement.id, user: user) {
+        if checkForHistoricalLogs(supplementId: supplementId, user: user) {
             // Archive instead of delete - preserve for historical records
             supplement.isArchived = true
             supplement.archivedAt = Date()
