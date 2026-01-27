@@ -36,22 +36,30 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         case Constants.actionMarkAsTaken:
             Task { @MainActor in
                 self.markSupplementsAsTaken(slotId: slotId, supplementIds: supplementIds, date: date)
+                completionHandler()
             }
+            return
 
         case Constants.actionSnooze15:
             Task { @MainActor in
-                self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 15)
+                await self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 15)
+                completionHandler()
             }
+            return
 
         case Constants.actionSnooze30:
             Task { @MainActor in
-                self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 30)
+                await self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 30)
+                completionHandler()
             }
+            return
 
         case Constants.actionSnooze60:
             Task { @MainActor in
-                self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 60)
+                await self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 60)
+                completionHandler()
             }
+            return
 
         case Constants.actionPickTime:
             NotificationCenter.default.post(name: .navigateToTodayTab, object: nil)
@@ -127,7 +135,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     }
 
     @MainActor
-    private func scheduleSnoozeForSlot(slotId: UUID, supplementIds: [UUID], minutes: Int) {
+    private func scheduleSnoozeForSlot(slotId: UUID, supplementIds: [UUID], minutes: Int) async {
         let context = modelContainer.mainContext
 
         // Fetch user to get supplement names and sound preference
@@ -141,13 +149,17 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         // Guard against empty names to prevent crash
         guard !names.isEmpty else { return }
 
-        NotificationService.shared.scheduleSnoozeNotification(
-            slotId: slotId,
-            supplementNames: names,
-            supplementIds: supplementIds,
-            snoozeMinutes: minutes,
-            sound: user.notificationSound
-        )
+        do {
+            try await NotificationService.shared.scheduleSnoozeNotificationAsync(
+                slotId: slotId,
+                supplementNames: names,
+                supplementIds: supplementIds,
+                snoozeMinutes: minutes,
+                sound: user.notificationSound
+            )
+        } catch {
+            print("Error scheduling snooze notification: \(error)")
+        }
     }
 }
 

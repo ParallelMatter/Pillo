@@ -425,6 +425,58 @@ class NotificationService {
         }
     }
 
+    /// Async version of snooze notification scheduling - awaits until notification is registered
+    func scheduleSnoozeNotificationAsync(
+        slotId: UUID,
+        supplementNames: [String],
+        supplementIds: [UUID],
+        snoozeMinutes: Int,
+        sound: String
+    ) async throws {
+        let content = UNMutableNotificationContent()
+        content.title = "Reminder"
+
+        if supplementNames.count == 1 {
+            content.body = "Time to take your \(supplementNames[0])"
+        } else if supplementNames.count == 2 {
+            content.body = "Time to take your \(supplementNames[0]) and \(supplementNames[1])"
+        } else {
+            content.body = "Time to take your \(supplementNames[0]) and \(supplementNames.count - 1) others"
+        }
+
+        content.categoryIdentifier = Constants.notificationCategoryIdentifier
+
+        content.userInfo = [
+            "slotId": slotId.uuidString,
+            "supplementIds": supplementIds.map { $0.uuidString },
+            "date": IntakeLog.todayDateString(),
+            "isSnoozed": true
+        ]
+
+        switch sound {
+        case "subtle", "standard":
+            content.sound = UNNotificationSound.default
+        default:
+            content.sound = nil
+        }
+
+        let trigger = UNTimeIntervalNotificationTrigger(
+            timeInterval: TimeInterval(snoozeMinutes * 60),
+            repeats: false
+        )
+
+        let identifier = "snooze-\(slotId.uuidString)-\(Int(Date().timeIntervalSince1970))"
+
+        let request = UNNotificationRequest(
+            identifier: identifier,
+            content: content,
+            trigger: trigger
+        )
+
+        // Use async/await to ensure notification is registered before returning
+        try await UNUserNotificationCenter.current().add(request)
+    }
+
     // MARK: - Badge Management
 
     func clearBadge() {

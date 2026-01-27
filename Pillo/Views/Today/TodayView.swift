@@ -10,8 +10,8 @@ struct TodayView: View {
     @State private var viewModel = TodayViewModel()
     @State private var refreshID = UUID()
     @State private var showingCalendar = false
-    @State private var showingRemindMeSheet = false
     @State private var selectedSlotForReminder: ScheduleSlot?
+    @State private var pendingRemindMeSlotId: UUID?
 
     private var user: User? { users.first }
     private var slots: [ScheduleSlot] {
@@ -129,7 +129,6 @@ struct TodayView: View {
                                         },
                                         onRemindMe: {
                                             selectedSlotForReminder = slot
-                                            showingRemindMeSheet = true
                                         },
                                         onUndo: {
                                             withAnimation {
@@ -174,11 +173,13 @@ struct TodayView: View {
 
                 if let slot = slots.first(where: { $0.id == slotId }) {
                     selectedSlotForReminder = slot
-                    showingRemindMeSheet = true
+                } else {
+                    // Store pending ID to retry when slots load (e.g., cold start from notification)
+                    pendingRemindMeSlotId = slotId
                 }
             }
-            .sheet(isPresented: $showingRemindMeSheet) {
-                if let slot = selectedSlotForReminder, let user = user {
+            .sheet(item: $selectedSlotForReminder) { slot in
+                if let user = user {
                     RemindMeSheet(
                         slot: slot,
                         supplements: viewModel.getSupplementsForSlot(slot, allSupplements: supplements, logs: intakeLogs),
@@ -192,6 +193,14 @@ struct TodayView: View {
                             viewModel.updateWidgetData(slots: slots, logs: user.intakeLogs ?? [], supplements: supplements)
                         }
                     )
+                }
+            }
+            .onChange(of: slots) { _, newSlots in
+                // Handle pending slot ID from notification when app cold-starts
+                if let pendingId = pendingRemindMeSlotId,
+                   let slot = newSlots.first(where: { $0.id == pendingId }) {
+                    selectedSlotForReminder = slot
+                    pendingRemindMeSlotId = nil
                 }
             }
         }
