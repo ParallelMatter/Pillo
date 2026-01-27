@@ -196,6 +196,11 @@ class SupplementsViewModel {
         if let logs = user.intakeLogs {
             for log in logs where log.date == todayString {
                 log.supplementIdsSkipped.removeAll { $0 == supplementId }
+
+                // Delete empty IntakeLogs to prevent orphaned time slots from showing
+                if log.supplementIdsTaken.isEmpty && log.supplementIdsSkipped.isEmpty {
+                    modelContext.delete(log)
+                }
             }
         }
 
