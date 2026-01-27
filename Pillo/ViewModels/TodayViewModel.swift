@@ -260,12 +260,15 @@ class TodayViewModel {
         return log
     }
 
-    func getCompletionStats(slots: [ScheduleSlot], logs: [IntakeLog]) -> (completed: Int, total: Int) {
+    func getCompletionStats(slots: [ScheduleSlot], logs: [IntakeLog], supplements: [Supplement]) -> (completed: Int, total: Int) {
         let todayString = IntakeLog.todayDateString()
         let activeSlotIds = Set(slots.map { $0.id })
+        let activeSupplementIds = Set(supplements.filter { !$0.isArchived }.map { $0.id })
 
-        // Count total supplements across all slots
-        let totalSupplements = slots.reduce(0) { $0 + $1.supplementIds.count }
+        // Count total supplements across all slots (only active/non-archived)
+        let totalSupplements = slots.reduce(0) { sum, slot in
+            sum + slot.supplementIds.filter { activeSupplementIds.contains($0) }.count
+        }
 
         // Count taken supplements only from logs matching current slots
         let todayLogs = logs.filter { $0.date == todayString && activeSlotIds.contains($0.scheduleSlotId) }
@@ -289,12 +292,12 @@ class TodayViewModel {
 
     // MARK: - Streak Methods
 
-    func calculateStreak(slots: [ScheduleSlot], logs: [IntakeLog]) -> Int {
-        return StreakService.calculateStreak(intakeLogs: logs, slots: slots)
+    func calculateStreak(slots: [ScheduleSlot], logs: [IntakeLog], supplements: [Supplement] = []) -> Int {
+        return StreakService.calculateStreak(intakeLogs: logs, slots: slots, supplements: supplements)
     }
 
-    func getSevenDayHistory(slots: [ScheduleSlot], logs: [IntakeLog]) -> [DayData] {
-        return StreakService.getSevenDayHistory(intakeLogs: logs, slots: slots)
+    func getSevenDayHistory(slots: [ScheduleSlot], logs: [IntakeLog], supplements: [Supplement] = []) -> [DayData] {
+        return StreakService.getSevenDayHistory(intakeLogs: logs, slots: slots, supplements: supplements)
     }
 }
 

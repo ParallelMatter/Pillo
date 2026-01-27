@@ -74,8 +74,8 @@ struct TodayView: View {
 
                             // Streak Card
                             StreakCard(
-                                streak: viewModel.calculateStreak(slots: slots, logs: intakeLogs),
-                                sevenDayHistory: viewModel.getSevenDayHistory(slots: slots, logs: intakeLogs),
+                                streak: viewModel.calculateStreak(slots: Array(user.scheduleSlots ?? []), logs: intakeLogs, supplements: Array(supplements)),
+                                sevenDayHistory: viewModel.getSevenDayHistory(slots: Array(user.scheduleSlots ?? []), logs: intakeLogs, supplements: Array(supplements)),
                                 onTap: {
                                     showingCalendar = true
                                 }
@@ -84,14 +84,14 @@ struct TodayView: View {
                             .sheet(isPresented: $showingCalendar) {
                                 CalendarSheet(
                                     intakeLogs: Array(intakeLogs),
-                                    slots: slots,
+                                    slots: Array(user.scheduleSlots ?? []),
                                     supplements: Array(supplements)
                                 )
                             }
 
                             // Progress Card
                             ProgressCard(
-                                stats: viewModel.getCompletionStats(slots: slots, logs: intakeLogs)
+                                stats: viewModel.getCompletionStats(slots: slots, logs: intakeLogs, supplements: Array(supplements))
                             )
                             .padding(.horizontal, Theme.spacingLG)
 

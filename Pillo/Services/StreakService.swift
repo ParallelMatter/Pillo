@@ -9,17 +9,19 @@ struct StreakService {
     /// - Parameters:
     ///   - intakeLogs: All intake logs for the user
     ///   - slots: All schedule slots for the user
+    ///   - supplements: All supplements for the user (optional, used to filter archived)
     /// - Returns: Number of consecutive complete days (not including today unless complete)
-    static func calculateStreak(intakeLogs: [IntakeLog], slots: [ScheduleSlot]) -> Int {
+    static func calculateStreak(intakeLogs: [IntakeLog], slots: [ScheduleSlot], supplements: [Supplement] = []) -> Int {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let allSlotIds = Set(slots.map { $0.id })
+        let activeSupplementIds = Set(supplements.filter { !$0.isArchived }.map { $0.id })
 
         var streak = 0
         var checkDate = calendar.date(byAdding: .day, value: -1, to: today)!
 
         // Check if today is complete - if so, include it in streak
-        if isDayComplete(date: today, intakeLogs: intakeLogs, slots: slots, allSlotIds: allSlotIds) {
+        if isDayComplete(date: today, intakeLogs: intakeLogs, slots: slots, allSlotIds: allSlotIds, activeSupplementIds: activeSupplementIds) {
             streak = 1
         }
 
@@ -27,7 +29,15 @@ struct StreakService {
         while true {
             // Calculate active supplements for THIS specific date (respecting frequency)
             let activeSlotsForDate = slots.filter { !$0.supplementIds.isEmpty && $0.isActiveOn(date: checkDate) }
-            let activeSupplementCount = activeSlotsForDate.reduce(0) { $0 + $1.supplementIds.count }
+            // Filter out archived supplements when counting
+            let activeSupplementCount: Int
+            if supplements.isEmpty {
+                activeSupplementCount = activeSlotsForDate.reduce(0) { $0 + $1.supplementIds.count }
+            } else {
+                activeSupplementCount = activeSlotsForDate.reduce(0) { sum, slot in
+                    sum + slot.supplementIds.filter { activeSupplementIds.contains($0) }.count
+                }
+            }
 
             // Skip days with no active slots (don't break streak)
             if activeSupplementCount == 0 {
@@ -62,11 +72,13 @@ struct StreakService {
     /// - Parameters:
     ///   - intakeLogs: All intake logs for the user
     ///   - slots: All schedule slots for the user
+    ///   - supplements: All supplements for the user (optional, used to filter archived)
     /// - Returns: Array of 7 DayData objects, from 6 days ago to today
-    static func getSevenDayHistory(intakeLogs: [IntakeLog], slots: [ScheduleSlot]) -> [DayData] {
+    static func getSevenDayHistory(intakeLogs: [IntakeLog], slots: [ScheduleSlot], supplements: [Supplement] = []) -> [DayData] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let allSlotIds = Set(slots.map { $0.id })
+        let activeSupplementIds = Set(supplements.filter { !$0.isArchived }.map { $0.id })
 
         var days: [DayData] = []
 
@@ -75,7 +87,15 @@ struct StreakService {
 
             // Calculate active supplements for THIS specific date (respecting frequency)
             let activeSlotsForDate = slots.filter { !$0.supplementIds.isEmpty && $0.isActiveOn(date: date) }
-            let totalCount = activeSlotsForDate.reduce(0) { $0 + $1.supplementIds.count }
+            // Filter out archived supplements when counting total
+            let totalCount: Int
+            if supplements.isEmpty {
+                totalCount = activeSlotsForDate.reduce(0) { $0 + $1.supplementIds.count }
+            } else {
+                totalCount = activeSlotsForDate.reduce(0) { sum, slot in
+                    sum + slot.supplementIds.filter { activeSupplementIds.contains($0) }.count
+                }
+            }
 
             let dateStr = dateString(for: date)
             let logsForDay = intakeLogs.filter { $0.date == dateStr && allSlotIds.contains($0.scheduleSlotId) }
@@ -119,10 +139,18 @@ struct StreakService {
     }
 
     /// Check if a specific day is complete (all supplements taken)
-    private static func isDayComplete(date: Date, intakeLogs: [IntakeLog], slots: [ScheduleSlot], allSlotIds: Set<UUID>) -> Bool {
+    private static func isDayComplete(date: Date, intakeLogs: [IntakeLog], slots: [ScheduleSlot], allSlotIds: Set<UUID>, activeSupplementIds: Set<UUID> = []) -> Bool {
         // Calculate active supplements for THIS specific date (respecting frequency)
         let activeSlotsForDate = slots.filter { !$0.supplementIds.isEmpty && $0.isActiveOn(date: date) }
-        let activeSupplementCount = activeSlotsForDate.reduce(0) { $0 + $1.supplementIds.count }
+        // Filter out archived supplements when counting
+        let activeSupplementCount: Int
+        if activeSupplementIds.isEmpty {
+            activeSupplementCount = activeSlotsForDate.reduce(0) { $0 + $1.supplementIds.count }
+        } else {
+            activeSupplementCount = activeSlotsForDate.reduce(0) { sum, slot in
+                sum + slot.supplementIds.filter { activeSupplementIds.contains($0) }.count
+            }
+        }
 
         guard activeSupplementCount > 0 else { return false }
 
@@ -139,11 +167,13 @@ struct StreakService {
     ///   - month: Any date within the target month
     ///   - intakeLogs: All intake logs for the user
     ///   - slots: All schedule slots for the user
+    ///   - supplements: All supplements for the user (optional, used to filter archived)
     /// - Returns: Dictionary mapping dates to DayData for the entire month
-    static func getMonthHistory(for month: Date, intakeLogs: [IntakeLog], slots: [ScheduleSlot]) -> [Date: DayData] {
+    static func getMonthHistory(for month: Date, intakeLogs: [IntakeLog], slots: [ScheduleSlot], supplements: [Supplement] = []) -> [Date: DayData] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let allSlotIds = Set(slots.map { $0.id })
+        let activeSupplementIds = Set(supplements.filter { !$0.isArchived }.map { $0.id })
 
         // Get the range of days in the month
         guard let monthInterval = calendar.dateInterval(of: .month, for: month),
@@ -159,7 +189,15 @@ struct StreakService {
 
             // Calculate active supplements for THIS specific date (respecting frequency)
             let activeSlotsForDate = slots.filter { !$0.supplementIds.isEmpty && $0.isActiveOn(date: normalizedDate) }
-            let totalCount = activeSlotsForDate.reduce(0) { $0 + $1.supplementIds.count }
+            // Filter out archived supplements when counting total
+            let totalCount: Int
+            if supplements.isEmpty {
+                totalCount = activeSlotsForDate.reduce(0) { $0 + $1.supplementIds.count }
+            } else {
+                totalCount = activeSlotsForDate.reduce(0) { sum, slot in
+                    sum + slot.supplementIds.filter { activeSupplementIds.contains($0) }.count
+                }
+            }
 
             let dateStr = dateString(for: normalizedDate)
             let logsForDay = intakeLogs.filter { $0.date == dateStr && allSlotIds.contains($0.scheduleSlotId) }

@@ -291,11 +291,11 @@ extension TodayViewModel {
     /// Update shared container data for widget
     func updateWidgetData(slots: [ScheduleSlot], logs: [IntakeLog], supplements: [Supplement]) {
         // Update progress
-        let stats = getCompletionStats(slots: slots, logs: logs)
+        let stats = getCompletionStats(slots: slots, logs: logs, supplements: supplements)
         SharedContainer.saveTodayProgress(completed: stats.completed, total: stats.total)
 
         // Update streak
-        let streak = StreakService.calculateStreak(intakeLogs: logs, slots: slots)
+        let streak = StreakService.calculateStreak(intakeLogs: logs, slots: slots, supplements: supplements)
         SharedContainer.saveStreak(streak)
 
         // Update next dose

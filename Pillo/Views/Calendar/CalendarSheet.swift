@@ -22,7 +22,7 @@ struct CalendarSheet: View {
     }
 
     private var monthData: [Date: DayData] {
-        StreakService.getMonthHistory(for: displayedMonth, intakeLogs: intakeLogs, slots: slots)
+        StreakService.getMonthHistory(for: displayedMonth, intakeLogs: intakeLogs, slots: slots, supplements: supplements)
     }
 
     var body: some View {
