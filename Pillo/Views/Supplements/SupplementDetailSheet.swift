@@ -96,7 +96,12 @@ struct SupplementDetailSheet: View {
                                         .font(Theme.bodyFont)
                                         .foregroundColor(Theme.accent)
 
-                                    if !ref.absorptionNotes.isEmpty {
+                                    if !slot.explanation.isEmpty {
+                                        Text(slot.explanation)
+                                            .font(Theme.bodyFont)
+                                            .foregroundColor(Theme.textPrimary)
+                                            .lineSpacing(4)
+                                    } else if !ref.absorptionNotes.isEmpty {
                                         Text(ref.absorptionNotes)
                                             .font(Theme.bodyFont)
                                             .foregroundColor(Theme.textPrimary)

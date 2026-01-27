@@ -70,10 +70,10 @@ struct SupplementReferenceDetailSheet: View {
                             DeficiencySignsSection(signs: reference.deficiencySigns)
                         }
 
-                        // Why This Time
+                        // Best Time to Take
                         if !reference.absorptionNotes.isEmpty {
                             InfoSection(
-                                title: "WHY THIS TIME?",
+                                title: "BEST TIME TO TAKE",
                                 content: reference.absorptionNotes
                             )
                         }
