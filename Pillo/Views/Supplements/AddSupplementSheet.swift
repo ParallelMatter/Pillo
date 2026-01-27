@@ -363,199 +363,204 @@ struct ManualEntrySheet: View {
             ZStack {
                 Theme.background.ignoresSafeArea()
 
-                VStack(spacing: Theme.spacingLG) {
-                    // Name
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("NAME")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
-
-                        TextField("Supplement name", text: $name)
-                            .font(Theme.bodyFont)
-                            .foregroundColor(Theme.textPrimary)
-                            .padding(Theme.spacingMD)
-                            .background(Theme.surface)
-                            .cornerRadius(Theme.cornerRadiusSM)
-                    }
-
-                    // Category
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("CATEGORY")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
-
-                        Picker("Category", selection: $category) {
-                            ForEach(SupplementCategory.allCases, id: \.self) { cat in
-                                Text(cat.displayName).tag(cat)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .tint(Theme.textPrimary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-                    }
-
-                    // Dosage
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("DOSAGE")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
-
-                        HStack(spacing: Theme.spacingMD) {
-                            TextField("Amount", text: $dosageString)
-                                .font(Theme.bodyFont)
-                                .foregroundColor(Theme.textPrimary)
-                                .keyboardType(.decimalPad)
-                                .padding(Theme.spacingMD)
-                                .background(Theme.surface)
-                                .cornerRadius(Theme.cornerRadiusSM)
-
-                            Picker("Unit", selection: $dosageUnit) {
-                                ForEach(dosageUnits, id: \.self) { unit in
-                                    Text(unit).tag(unit)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .tint(Theme.textPrimary)
-                            .padding(Theme.spacingMD)
-                            .background(Theme.surface)
-                            .cornerRadius(Theme.cornerRadiusSM)
-                        }
-                    }
-
-                    // Form
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("FORM")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
-
-                        Picker("Form", selection: $form) {
-                            ForEach(SupplementForm.allCases, id: \.self) { f in
-                                Text(f.displayName).tag(f)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .tint(Theme.textPrimary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-                    }
-
-                    // Time
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("TIME")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
-
-                        DatePicker(
-                            "Time",
-                            selection: $customTime,
-                            displayedComponents: .hourAndMinute
-                        )
-                        .datePickerStyle(.compact)
-                        .labelsHidden()
-                        .tint(Theme.accent)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-                    }
-
-                    // Frequency
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("FREQUENCY")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
-
-                        Picker("Frequency", selection: $frequencyType) {
-                            ForEach(FrequencyType.allCases, id: \.self) { type in
-                                Text(type.rawValue).tag(type)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .tint(Theme.textPrimary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-
-                        // Conditional sub-pickers based on frequency type
-                        switch frequencyType {
-                        case .daily:
-                            EmptyView()
-
-                        case .specificDays:
-                            // Weekday selector
-                            HStack(spacing: Theme.spacingXS) {
-                                ForEach(ScheduleFrequency.Weekday.allCases, id: \.self) { day in
-                                    Button(action: {
-                                        if selectedWeekdays.contains(day) {
-                                            selectedWeekdays.remove(day)
-                                        } else {
-                                            selectedWeekdays.insert(day)
-                                        }
-                                    }) {
-                                        Text(day.initial)
-                                            .font(Theme.captionFont)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(selectedWeekdays.contains(day) ? Theme.background : Theme.textSecondary)
-                                            .frame(width: 36, height: 36)
-                                            .background(selectedWeekdays.contains(day) ? Theme.accent : Theme.surface)
-                                            .cornerRadius(18)
-                                    }
-                                }
-                            }
-
-                        case .everyNDays:
-                            // Interval picker
-                            HStack(spacing: Theme.spacingSM) {
-                                Text("Every")
-                                    .font(Theme.bodyFont)
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(spacing: Theme.spacingLG) {
+                            // Name
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("NAME")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
                                     .foregroundColor(Theme.textSecondary)
 
-                                Picker("Days", selection: $everyNDays) {
-                                    ForEach(2...14, id: \.self) { n in
-                                        Text("\(n)").tag(n)
+                                TextField("Supplement name", text: $name)
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textPrimary)
+                                    .padding(Theme.spacingMD)
+                                    .background(Theme.surface)
+                                    .cornerRadius(Theme.cornerRadiusSM)
+                            }
+
+                            // Category
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("CATEGORY")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Picker("Category", selection: $category) {
+                                    ForEach(SupplementCategory.allCases, id: \.self) { cat in
+                                        Text(cat.displayName).tag(cat)
                                     }
                                 }
                                 .pickerStyle(.menu)
                                 .tint(Theme.textPrimary)
-                                .padding(.horizontal, Theme.spacingSM)
-                                .padding(.vertical, Theme.spacingXS)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(Theme.spacingMD)
+                                .background(Theme.surface)
+                                .cornerRadius(Theme.cornerRadiusSM)
+                            }
+
+                            // Dosage
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("DOSAGE")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                HStack(spacing: Theme.spacingMD) {
+                                    TextField("Amount", text: $dosageString)
+                                        .font(Theme.bodyFont)
+                                        .foregroundColor(Theme.textPrimary)
+                                        .keyboardType(.decimalPad)
+                                        .padding(Theme.spacingMD)
+                                        .background(Theme.surface)
+                                        .cornerRadius(Theme.cornerRadiusSM)
+
+                                    Picker("Unit", selection: $dosageUnit) {
+                                        ForEach(dosageUnits, id: \.self) { unit in
+                                            Text(unit).tag(unit)
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .tint(Theme.textPrimary)
+                                    .padding(Theme.spacingMD)
+                                    .background(Theme.surface)
+                                    .cornerRadius(Theme.cornerRadiusSM)
+                                }
+                            }
+
+                            // Form
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("FORM")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Picker("Form", selection: $form) {
+                                    ForEach(SupplementForm.allCases, id: \.self) { f in
+                                        Text(f.displayName).tag(f)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(Theme.textPrimary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(Theme.spacingMD)
+                                .background(Theme.surface)
+                                .cornerRadius(Theme.cornerRadiusSM)
+                            }
+
+                            // Time
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("TIME")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                DatePicker(
+                                    "Time",
+                                    selection: $customTime,
+                                    displayedComponents: .hourAndMinute
+                                )
+                                .datePickerStyle(.compact)
+                                .labelsHidden()
+                                .tint(Theme.accent)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(Theme.spacingMD)
+                                .background(Theme.surface)
+                                .cornerRadius(Theme.cornerRadiusSM)
+                            }
+
+                            // Frequency
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("FREQUENCY")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Picker("Frequency", selection: $frequencyType) {
+                                    ForEach(FrequencyType.allCases, id: \.self) { type in
+                                        Text(type.rawValue).tag(type)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(Theme.textPrimary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(Theme.spacingMD)
                                 .background(Theme.surface)
                                 .cornerRadius(Theme.cornerRadiusSM)
 
-                                Text("days")
-                                    .font(Theme.bodyFont)
-                                    .foregroundColor(Theme.textSecondary)
-                            }
+                                // Conditional sub-pickers based on frequency type
+                                switch frequencyType {
+                                case .daily:
+                                    EmptyView()
 
-                        case .weekly:
-                            // Day of week picker
-                            Picker("Day", selection: $weeklyDay) {
-                                ForEach(ScheduleFrequency.Weekday.allCases, id: \.self) { day in
-                                    Text(day.fullName).tag(day)
+                                case .specificDays:
+                                    // Weekday selector
+                                    HStack(spacing: Theme.spacingXS) {
+                                        ForEach(ScheduleFrequency.Weekday.allCases, id: \.self) { day in
+                                            Button(action: {
+                                                if selectedWeekdays.contains(day) {
+                                                    selectedWeekdays.remove(day)
+                                                } else {
+                                                    selectedWeekdays.insert(day)
+                                                }
+                                            }) {
+                                                Text(day.initial)
+                                                    .font(Theme.captionFont)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(selectedWeekdays.contains(day) ? Theme.background : Theme.textSecondary)
+                                                    .frame(width: 36, height: 36)
+                                                    .background(selectedWeekdays.contains(day) ? Theme.accent : Theme.surface)
+                                                    .cornerRadius(18)
+                                            }
+                                        }
+                                    }
+
+                                case .everyNDays:
+                                    // Interval picker
+                                    HStack(spacing: Theme.spacingSM) {
+                                        Text("Every")
+                                            .font(Theme.bodyFont)
+                                            .foregroundColor(Theme.textSecondary)
+
+                                        Picker("Days", selection: $everyNDays) {
+                                            ForEach(2...14, id: \.self) { n in
+                                                Text("\(n)").tag(n)
+                                            }
+                                        }
+                                        .pickerStyle(.menu)
+                                        .tint(Theme.textPrimary)
+                                        .padding(.horizontal, Theme.spacingSM)
+                                        .padding(.vertical, Theme.spacingXS)
+                                        .background(Theme.surface)
+                                        .cornerRadius(Theme.cornerRadiusSM)
+
+                                        Text("days")
+                                            .font(Theme.bodyFont)
+                                            .foregroundColor(Theme.textSecondary)
+                                    }
+
+                                case .weekly:
+                                    // Day of week picker
+                                    Picker("Day", selection: $weeklyDay) {
+                                        ForEach(ScheduleFrequency.Weekday.allCases, id: \.self) { day in
+                                            Text(day.fullName).tag(day)
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .tint(Theme.textPrimary)
+                                    .padding(Theme.spacingMD)
+                                    .background(Theme.surface)
+                                    .cornerRadius(Theme.cornerRadiusSM)
                                 }
                             }
-                            .pickerStyle(.menu)
-                            .tint(Theme.textPrimary)
-                            .padding(Theme.spacingMD)
-                            .background(Theme.surface)
-                            .cornerRadius(Theme.cornerRadiusSM)
                         }
+                        .padding(Theme.spacingLG)
                     }
+                    .scrollDismissesKeyboard(.interactively)
 
-                    Spacer()
-
+                    // Fixed button at bottom
                     Button(action: {
                         let dosage = Double(dosageString)
                         let added = viewModel.addManualSupplement(
@@ -580,8 +585,8 @@ struct ManualEntrySheet: View {
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(name.isEmpty)
                     .opacity(name.isEmpty ? 0.5 : 1)
+                    .padding(Theme.spacingLG)
                 }
-                .padding(Theme.spacingLG)
             }
             .navigationTitle("Add Manually")
             .navigationBarTitleDisplayMode(.inline)
@@ -599,5 +604,6 @@ struct ManualEntrySheet: View {
                 Text("A supplement with this name is already in your routine.")
             }
         }
+        .presentationDetents([.large])
     }
 }
