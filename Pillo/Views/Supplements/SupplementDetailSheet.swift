@@ -11,7 +11,6 @@ struct SupplementDetailSheet: View {
     @State private var isEditing = false
     @State private var editedDosage: String = ""
     @State private var editedUnit: String = "mg"
-    @State private var editedForm: SupplementForm = .capsule
 
     private var reference: SupplementReference? {
         viewModel.getReferenceInfo(for: supplement)
@@ -229,7 +228,6 @@ struct SupplementDetailSheet: View {
             .onAppear {
                 editedDosage = supplement.dosage.map { String($0) } ?? ""
                 editedUnit = supplement.dosageUnit ?? "mg"
-                editedForm = supplement.form ?? .capsule
             }
         }
     }
@@ -372,10 +370,9 @@ struct EditSupplementSheet: View {
 
     @State private var dosageString: String = ""
     @State private var dosageUnit: String = "mg"
-    @State private var form: SupplementForm = .capsule
     @State private var customTime: Date = Date()
 
-    let dosageUnits = ["mg", "mcg", "g", "IU", "ml"]
+    let dosageUnits = ["mg", "mcg", "g", "IU", "ml", "serving", "capsule", "tablet", "softgel", "gummy", "billion CFU"]
 
     private var isManualEntry: Bool {
         supplement.referenceId == nil
@@ -392,88 +389,72 @@ struct EditSupplementSheet: View {
             ZStack {
                 Theme.background.ignoresSafeArea()
 
-                VStack(spacing: Theme.spacingLG) {
-                    // Dosage
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("DOSAGE")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(spacing: Theme.spacingLG) {
+                            // Dosage
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("DOSAGE")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
 
-                        HStack(spacing: Theme.spacingMD) {
-                            TextField("Amount", text: $dosageString)
-                                .font(Theme.bodyFont)
-                                .foregroundColor(Theme.textPrimary)
-                                .keyboardType(.decimalPad)
-                                .padding(Theme.spacingMD)
-                                .background(Theme.surface)
-                                .cornerRadius(Theme.cornerRadiusSM)
+                                HStack(spacing: Theme.spacingMD) {
+                                    TextField("Amount", text: $dosageString)
+                                        .font(Theme.bodyFont)
+                                        .foregroundColor(Theme.textPrimary)
+                                        .keyboardType(.decimalPad)
+                                        .padding(Theme.spacingMD)
+                                        .background(Theme.surface)
+                                        .cornerRadius(Theme.cornerRadiusSM)
 
-                            Picker("Unit", selection: $dosageUnit) {
-                                ForEach(dosageUnits, id: \.self) { unit in
-                                    Text(unit).tag(unit)
+                                    Picker("Unit", selection: $dosageUnit) {
+                                        ForEach(dosageUnits, id: \.self) { unit in
+                                            Text(unit).tag(unit)
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .tint(Theme.textPrimary)
+                                    .padding(Theme.spacingMD)
+                                    .background(Theme.surface)
+                                    .cornerRadius(Theme.cornerRadiusSM)
                                 }
                             }
-                            .pickerStyle(.menu)
-                            .tint(Theme.textPrimary)
-                            .padding(Theme.spacingMD)
-                            .background(Theme.surface)
-                            .cornerRadius(Theme.cornerRadiusSM)
-                        }
-                    }
 
-                    // Form
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("FORM")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
+                            // Time - only for manual entries
+                            if isManualEntry {
+                                VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                    Text("TIME")
+                                        .font(Theme.headerFont)
+                                        .tracking(1)
+                                        .foregroundColor(Theme.textSecondary)
 
-                        Picker("Form", selection: $form) {
-                            ForEach(SupplementForm.allCases, id: \.self) { f in
-                                Text(f.displayName).tag(f)
+                                    DatePicker(
+                                        "Time",
+                                        selection: $customTime,
+                                        displayedComponents: .hourAndMinute
+                                    )
+                                    .datePickerStyle(.compact)
+                                    .labelsHidden()
+                                    .tint(Theme.accent)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(Theme.spacingMD)
+                                    .background(Theme.surface)
+                                    .cornerRadius(Theme.cornerRadiusSM)
+                                }
                             }
                         }
-                        .pickerStyle(.menu)
-                        .tint(Theme.textPrimary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
+                        .padding(Theme.spacingLG)
                     }
+                    .scrollDismissesKeyboard(.interactively)
 
-                    // Time - only for manual entries
-                    if isManualEntry {
-                        VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                            Text("TIME")
-                                .font(Theme.headerFont)
-                                .tracking(1)
-                                .foregroundColor(Theme.textSecondary)
-
-                            DatePicker(
-                                "Time",
-                                selection: $customTime,
-                                displayedComponents: .hourAndMinute
-                            )
-                            .datePickerStyle(.compact)
-                            .labelsHidden()
-                            .tint(Theme.accent)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(Theme.spacingMD)
-                            .background(Theme.surface)
-                            .cornerRadius(Theme.cornerRadiusSM)
-                        }
-                    }
-
-                    Spacer()
-
+                    // Fixed button at bottom
                     Button(action: {
                         let dosage = Double(dosageString)
                         viewModel.updateSupplement(
                             supplement,
                             dosage: dosage,
                             dosageUnit: dosage != nil ? dosageUnit : nil,
-                            form: form,
                             customTime: isManualEntry ? customTimeString : nil,
                             user: user,
                             modelContext: modelContext
@@ -483,8 +464,8 @@ struct EditSupplementSheet: View {
                         Text("Save changes")
                     }
                     .buttonStyle(PrimaryButtonStyle())
+                    .padding(Theme.spacingLG)
                 }
-                .padding(Theme.spacingLG)
             }
             .navigationTitle("Edit \(supplement.name)")
             .navigationBarTitleDisplayMode(.inline)
@@ -499,7 +480,6 @@ struct EditSupplementSheet: View {
             .onAppear {
                 dosageString = supplement.dosage.map { String($0) } ?? ""
                 dosageUnit = supplement.dosageUnit ?? "mg"
-                form = supplement.form ?? .capsule
                 // Initialize custom time from supplement or default to 9:00 AM
                 if let timeString = supplement.customTime {
                     let formatter = DateFormatter()
