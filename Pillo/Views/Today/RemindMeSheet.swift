@@ -8,6 +8,7 @@ struct RemindMeSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showingTimePicker = false
     @State private var customTime = Date()
+    @State private var confirmedCustomTime = false
 
     private var presetOptions: [(label: String, minutes: Int)] {
         [
@@ -100,12 +101,18 @@ struct RemindMeSheet: View {
                     .foregroundColor(Theme.textSecondary)
                 }
             }
-            .sheet(isPresented: $showingTimePicker) {
+            .sheet(isPresented: $showingTimePicker, onDismiss: {
+                if confirmedCustomTime {
+                    confirmedCustomTime = false
+                    onSelectTime(customTime)
+                    dismiss()
+                }
+            }) {
                 TimePickerSheet(
                     selectedTime: $customTime,
                     onConfirm: {
-                        onSelectTime(customTime)
-                        dismiss()
+                        confirmedCustomTime = true
+                        showingTimePicker = false
                     }
                 )
             }
