@@ -25,19 +25,6 @@ enum SupplementCategory: String, Codable, CaseIterable {
     }
 }
 
-enum SupplementForm: String, Codable, CaseIterable {
-    case capsule
-    case tablet
-    case gummy
-    case liquid
-    case powder
-    case softgel
-
-    var displayName: String {
-        rawValue.capitalized
-    }
-}
-
 @Model
 final class Supplement {
     var id: UUID
@@ -45,7 +32,6 @@ final class Supplement {
     var category: SupplementCategory
     var dosage: Double?
     var dosageUnit: String?
-    var form: SupplementForm?
     var barcode: String?
     var isActive: Bool = true
     var isArchived: Bool = false  // When true, supplement is hidden but preserved for historical records
@@ -75,7 +61,6 @@ final class Supplement {
         category: SupplementCategory,
         dosage: Double? = nil,
         dosageUnit: String? = nil,
-        form: SupplementForm? = nil,
         barcode: String? = nil,
         isActive: Bool = true,
         isArchived: Bool = false,
@@ -90,7 +75,6 @@ final class Supplement {
         self.category = category
         self.dosage = dosage
         self.dosageUnit = dosageUnit
-        self.form = form
         self.barcode = barcode
         self.isActive = isActive
         self.isArchived = isArchived

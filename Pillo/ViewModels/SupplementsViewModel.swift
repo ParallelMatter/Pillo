@@ -104,7 +104,6 @@ class SupplementsViewModel {
         from reference: SupplementReference,
         dosage: Double?,
         dosageUnit: String?,
-        form: SupplementForm?,
         to user: User,
         modelContext: ModelContext
     ) -> Bool {
@@ -119,7 +118,6 @@ class SupplementsViewModel {
             archivedSupplement.archivedAt = nil
             archivedSupplement.dosage = dosage
             archivedSupplement.dosageUnit = dosageUnit
-            archivedSupplement.form = form
             regenerateSchedule(for: user, modelContext: modelContext)
             return true
         }
@@ -129,7 +127,6 @@ class SupplementsViewModel {
             category: reference.supplementCategory,
             dosage: dosage,
             dosageUnit: dosageUnit,
-            form: form,
             referenceId: reference.id
         )
         supplement.user = user
@@ -146,7 +143,6 @@ class SupplementsViewModel {
         category: SupplementCategory,
         dosage: Double?,
         dosageUnit: String?,
-        form: SupplementForm?,
         customTime: String? = nil,
         customFrequency: ScheduleFrequency? = nil,
         to user: User,
@@ -164,7 +160,6 @@ class SupplementsViewModel {
             archivedSupplement.category = category
             archivedSupplement.dosage = dosage
             archivedSupplement.dosageUnit = dosageUnit
-            archivedSupplement.form = form
             archivedSupplement.customTime = customTime
             archivedSupplement.customFrequency = customFrequency
             regenerateSchedule(for: user, modelContext: modelContext)
@@ -176,7 +171,6 @@ class SupplementsViewModel {
             category: category,
             dosage: dosage,
             dosageUnit: dosageUnit,
-            form: form,
             customTime: customTime,
             customFrequency: customFrequency
         )
@@ -227,7 +221,6 @@ class SupplementsViewModel {
         _ supplement: Supplement,
         dosage: Double?,
         dosageUnit: String?,
-        form: SupplementForm?,
         customTime: String? = nil,
         user: User? = nil,
         modelContext: ModelContext
@@ -235,7 +228,6 @@ class SupplementsViewModel {
         let timeChanged = supplement.customTime != customTime
         supplement.dosage = dosage
         supplement.dosageUnit = dosageUnit
-        supplement.form = form
         supplement.customTime = customTime
         try? modelContext.save()
 

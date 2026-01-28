@@ -246,7 +246,7 @@ struct ManualSupplementEntrySheet: View {
     @State private var dosageUnit: String = "mg"
     @State private var customTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
 
-    let dosageUnits = ["mg", "mcg", "g", "IU", "ml"]
+    let dosageUnits = ["mg", "mcg", "g", "IU", "ml", "serving", "capsule", "tablet", "softgel", "gummy", "billion CFU"]
 
     private var customTimeString: String {
         let formatter = DateFormatter()

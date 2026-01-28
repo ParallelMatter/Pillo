@@ -60,7 +60,6 @@ struct AddSupplementSheet: View {
                                 from: reference,
                                 dosage: reference.defaultDosageMin,
                                 dosageUnit: reference.defaultDosageUnit,
-                                form: nil,
                                 to: user,
                                 modelContext: modelContext
                             )
@@ -264,7 +263,6 @@ struct AddSupplementSheet: View {
                                     from: result.supplement,
                                     dosage: result.supplement.defaultDosageMin,
                                     dosageUnit: result.supplement.defaultDosageUnit,
-                                    form: nil,
                                     to: user,
                                     modelContext: modelContext
                                 )
@@ -321,7 +319,6 @@ struct ManualEntrySheet: View {
     @State private var category: SupplementCategory = .other
     @State private var dosageString = ""
     @State private var dosageUnit = "mg"
-    @State private var form: SupplementForm = .capsule
     @State private var showDuplicateAlert = false
     @State private var customTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
 
@@ -430,26 +427,6 @@ struct ManualEntrySheet: View {
                                     .background(Theme.surface)
                                     .cornerRadius(Theme.cornerRadiusSM)
                                 }
-                            }
-
-                            // Form
-                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                                Text("FORM")
-                                    .font(Theme.headerFont)
-                                    .tracking(1)
-                                    .foregroundColor(Theme.textSecondary)
-
-                                Picker("Form", selection: $form) {
-                                    ForEach(SupplementForm.allCases, id: \.self) { f in
-                                        Text(f.displayName).tag(f)
-                                    }
-                                }
-                                .pickerStyle(.menu)
-                                .tint(Theme.textPrimary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(Theme.spacingMD)
-                                .background(Theme.surface)
-                                .cornerRadius(Theme.cornerRadiusSM)
                             }
 
                             // Time
@@ -570,7 +547,6 @@ struct ManualEntrySheet: View {
                             category: category,
                             dosage: dosage,
                             dosageUnit: dosage != nil ? dosageUnit : nil,
-                            form: form,
                             customTime: customTimeString,
                             customFrequency: customFrequency,
                             to: user,
