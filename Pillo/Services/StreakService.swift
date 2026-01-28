@@ -169,7 +169,7 @@ struct StreakService {
     ///   - slots: All schedule slots for the user
     ///   - supplements: All supplements for the user (optional, used to filter archived)
     /// - Returns: Dictionary mapping dates to DayData for the entire month
-    static func getMonthHistory(for month: Date, intakeLogs: [IntakeLog], slots: [ScheduleSlot], supplements: [Supplement] = []) -> [Date: DayData] {
+    static func getMonthHistory(for month: Date, intakeLogs: [IntakeLog], slots: [ScheduleSlot], supplements: [Supplement] = [], trackingStartDate: Date? = nil) -> [Date: DayData] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let allSlotIds = Set(slots.map { $0.id })
@@ -208,8 +208,16 @@ struct StreakService {
             let status: DayCompletionStatus
             let isToday = calendar.isDateInToday(normalizedDate)
             let isFuture = normalizedDate > today
+            let isBeforeTracking: Bool
+            if let trackingStartDate = trackingStartDate {
+                isBeforeTracking = normalizedDate < calendar.startOfDay(for: trackingStartDate)
+            } else {
+                isBeforeTracking = false
+            }
 
-            if totalCount == 0 {
+            if isBeforeTracking {
+                status = .future
+            } else if totalCount == 0 {
                 status = isFuture ? .future : (isToday ? .today : .missed)
             } else if isFuture {
                 status = .future

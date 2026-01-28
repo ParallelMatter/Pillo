@@ -139,7 +139,8 @@ struct TodayView: View {
                                 CalendarSheet(
                                     intakeLogs: Array(intakeLogs),
                                     slots: Array(user.scheduleSlots ?? []),
-                                    supplements: Array(supplements)
+                                    supplements: Array(supplements),
+                                    trackingStartDate: user.createdAt
                                 )
                             }
 

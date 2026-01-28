@@ -5,10 +5,12 @@ struct CalendarSheet: View {
     let intakeLogs: [IntakeLog]
     let slots: [ScheduleSlot]
     let supplements: [Supplement]
+    let trackingStartDate: Date
 
     @Environment(\.dismiss) private var dismiss
     @State private var displayedMonth: Date = Date()
     @State private var selectedDate: Date? = nil
+    @State private var selectedDayData: DayData? = nil
     @State private var showingDayDetail = false
 
     private var calendar: Calendar {
@@ -22,7 +24,7 @@ struct CalendarSheet: View {
     }
 
     private var monthData: [Date: DayData] {
-        StreakService.getMonthHistory(for: displayedMonth, intakeLogs: intakeLogs, slots: slots, supplements: supplements)
+        StreakService.getMonthHistory(for: displayedMonth, intakeLogs: intakeLogs, slots: slots, supplements: supplements, trackingStartDate: trackingStartDate)
     }
 
     var body: some View {
@@ -42,9 +44,10 @@ struct CalendarSheet: View {
                         }) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(Theme.textPrimary)
+                                .foregroundColor(canGoToPreviousMonth ? Theme.textPrimary : Theme.textSecondary.opacity(0.3))
                                 .frame(width: 44, height: 44)
                         }
+                        .disabled(!canGoToPreviousMonth)
 
                         Spacer()
 
@@ -85,6 +88,7 @@ struct CalendarSheet: View {
                         monthData: monthData,
                         onDaySelected: { date in
                             selectedDate = date
+                            selectedDayData = monthData[date]
                             showingDayDetail = true
                         }
                     )
@@ -105,7 +109,7 @@ struct CalendarSheet: View {
                 }
             }
             .sheet(isPresented: $showingDayDetail) {
-                if let date = selectedDate, let dayData = monthData[date] {
+                if let date = selectedDate, let dayData = selectedDayData {
                     DayDetailSheet(
                         date: date,
                         dayData: dayData,
@@ -116,6 +120,21 @@ struct CalendarSheet: View {
                 }
             }
         }
+    }
+
+    private var canGoToPreviousMonth: Bool {
+        guard let prevMonth = calendar.date(byAdding: .month, value: -1, to: displayedMonth) else {
+            return false
+        }
+        let startComponents = calendar.dateComponents([.year, .month], from: trackingStartDate)
+        let prevComponents = calendar.dateComponents([.year, .month], from: prevMonth)
+
+        guard let startYear = startComponents.year, let startM = startComponents.month,
+              let prevYear = prevComponents.year, let prevM = prevComponents.month else {
+            return false
+        }
+
+        return prevYear > startYear || (prevYear == startYear && prevM >= startM)
     }
 
     private var canGoToNextMonth: Bool {
@@ -139,7 +158,8 @@ struct CalendarSheet: View {
     CalendarSheet(
         intakeLogs: [],
         slots: [],
-        supplements: []
+        supplements: [],
+        trackingStartDate: Date()
     )
     .preferredColorScheme(.dark)
 }
