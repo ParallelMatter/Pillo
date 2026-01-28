@@ -185,7 +185,6 @@ struct SupplementReferenceDetailSheet: View {
                 from: reference,
                 dosage: reference.defaultDosageMin,
                 dosageUnit: reference.defaultDosageUnit,
-                form: nil,
                 to: user,
                 modelContext: modelContext
             )
