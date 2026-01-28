@@ -237,6 +237,79 @@ class SupplementsViewModel {
         }
     }
 
+    // MARK: - Deduplication
+
+    /// Removes duplicate Supplement objects (same name, different UUIDs).
+    /// Keeps the best candidate and transfers IntakeLog references from duplicates.
+    static func deduplicateSupplements(user: User, modelContext: ModelContext) {
+        let supplements = user.supplements ?? []
+        let logs = user.intakeLogs ?? []
+
+        // Group by lowercased name
+        var groups: [String: [Supplement]] = [:]
+        for supplement in supplements {
+            let key = supplement.name.lowercased()
+            groups[key, default: []].append(supplement)
+        }
+
+        var needsScheduleRegeneration = false
+
+        for (_, group) in groups where group.count > 1 {
+            // Pick the best one to keep: prefer non-archived with a referenceId
+            let sorted = group.sorted { a, b in
+                if a.isArchived != b.isArchived { return !a.isArchived }
+                if (a.referenceId != nil) != (b.referenceId != nil) { return a.referenceId != nil }
+                return a.createdAt < b.createdAt
+            }
+
+            let keeper = sorted[0]
+            let duplicates = sorted.dropFirst()
+
+            for duplicate in duplicates {
+                // Transfer IntakeLog references
+                for log in logs {
+                    if log.supplementIdsTaken.contains(duplicate.id) {
+                        log.supplementIdsTaken.removeAll { $0 == duplicate.id }
+                        if !log.supplementIdsTaken.contains(keeper.id) {
+                            log.supplementIdsTaken.append(keeper.id)
+                        }
+                    }
+                    if log.supplementIdsSkipped.contains(duplicate.id) {
+                        log.supplementIdsSkipped.removeAll { $0 == duplicate.id }
+                        if !log.supplementIdsSkipped.contains(keeper.id) {
+                            log.supplementIdsSkipped.append(keeper.id)
+                        }
+                    }
+                }
+
+                // Transfer any slot references
+                for slot in user.scheduleSlots ?? [] {
+                    if slot.supplementIds.contains(duplicate.id) {
+                        slot.supplementIds.removeAll { $0 == duplicate.id }
+                        if !slot.supplementIds.contains(keeper.id) {
+                            slot.supplementIds.append(keeper.id)
+                        }
+                    }
+                }
+
+                modelContext.delete(duplicate)
+            }
+
+            needsScheduleRegeneration = true
+        }
+
+        if needsScheduleRegeneration {
+            try? modelContext.save()
+            let viewModel = SupplementsViewModel()
+            viewModel.regenerateSchedulePublic(for: user, modelContext: modelContext)
+        }
+    }
+
+    /// Public wrapper for schedule regeneration (used by deduplication)
+    func regenerateSchedulePublic(for user: User, modelContext: ModelContext) {
+        regenerateSchedule(for: user, modelContext: modelContext)
+    }
+
     private func regenerateSchedule(for user: User, modelContext: ModelContext) {
         let existingSlots = user.scheduleSlots ?? []
         let logs = user.intakeLogs ?? []

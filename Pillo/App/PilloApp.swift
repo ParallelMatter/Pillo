@@ -65,7 +65,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
             NotificationCenter.default.post(name: .navigateToTodayTab, object: nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 NotificationCenter.default.post(
-                    name: .openRemindMeSheet,
+                    name: .openTimePickerSheet,
                     object: nil,
                     userInfo: ["slotId": slotIdString]
                 )
@@ -167,6 +167,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 extension Notification.Name {
     static let navigateToTodayTab = Notification.Name("navigateToTodayTab")
     static let openRemindMeSheet = Notification.Name("openRemindMeSheet")
+    static let openTimePickerSheet = Notification.Name("openTimePickerSheet")
 }
 
 @main
@@ -215,6 +216,7 @@ struct PilloApp: App {
                     handleDeepLink(url)
                 }
                 .onAppear {
+                    deduplicateSupplementsIfNeeded()
                     updateWidgetData()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .navigateToTodayTab)) { _ in
@@ -256,6 +258,15 @@ struct PilloApp: App {
                 sound: user.notificationSound
             )
         }
+    }
+
+    // MARK: - Deduplication
+    @MainActor
+    private func deduplicateSupplementsIfNeeded() {
+        let context = modelContainer.mainContext
+        let descriptor = FetchDescriptor<User>()
+        guard let user = try? context.fetch(descriptor).first else { return }
+        SupplementsViewModel.deduplicateSupplements(user: user, modelContext: context)
     }
 
     // MARK: - Deep Link Handling

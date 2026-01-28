@@ -68,6 +68,11 @@ class OnboardingViewModel {
     }
 
     func addSupplement(from reference: SupplementReference) {
+        guard !selectedSupplements.contains(where: {
+            $0.reference?.id == reference.id ||
+            $0.name.lowercased() == reference.primaryName.lowercased()
+        }) else { return }
+
         let entry = SupplementEntry(
             reference: reference,
             name: reference.primaryName,
@@ -80,6 +85,10 @@ class OnboardingViewModel {
     }
 
     func addManualSupplement(name: String, category: SupplementCategory, dosage: Double?, dosageUnit: String?, customTime: String? = nil) {
+        guard !selectedSupplements.contains(where: {
+            $0.name.lowercased() == name.lowercased()
+        }) else { return }
+
         let entry = SupplementEntry(
             reference: nil,
             name: name,

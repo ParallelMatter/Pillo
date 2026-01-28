@@ -191,37 +191,14 @@ struct GoalRecommendationCard: View {
 
     private func addSupplement(_ ref: SupplementReference) {
         guard let user = user else { return }
-
-        let supplement = Supplement(
-            name: ref.primaryName,
-            category: ref.supplementCategory,
+        let viewModel = SupplementsViewModel()
+        _ = viewModel.addSupplement(
+            from: ref,
             dosage: ref.defaultDosageMin,
             dosageUnit: ref.defaultDosageUnit,
-            referenceId: ref.id
+            to: user,
+            modelContext: modelContext
         )
-        supplement.user = user
-        modelContext.insert(supplement)
-
-        // Regenerate schedule
-        let schedulingService = SchedulingService.shared
-        for slot in user.scheduleSlots ?? [] {
-            modelContext.delete(slot)
-        }
-
-        let newSlots = schedulingService.generateSchedule(
-            supplements: user.supplements ?? [],
-            breakfastTime: user.breakfastTime,
-            lunchTime: user.lunchTime,
-            dinnerTime: user.dinnerTime,
-            skipBreakfast: user.skipBreakfast
-        )
-
-        for slot in newSlots {
-            slot.user = user
-            modelContext.insert(slot)
-        }
-
-        try? modelContext.save()
     }
 }
 
