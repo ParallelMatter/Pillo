@@ -86,6 +86,7 @@ struct CalendarSheet: View {
                     MonthCalendarView(
                         month: displayedMonth,
                         monthData: monthData,
+                        trackingStartDate: trackingStartDate,
                         onDaySelected: { date in
                             selectedDate = date
                             selectedDayData = monthData[date]

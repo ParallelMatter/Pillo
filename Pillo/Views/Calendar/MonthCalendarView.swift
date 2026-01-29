@@ -3,6 +3,7 @@ import SwiftUI
 struct MonthCalendarView: View {
     let month: Date
     let monthData: [Date: DayData]
+    let trackingStartDate: Date?
     let onDaySelected: (Date) -> Void
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
@@ -67,6 +68,7 @@ struct MonthCalendarView: View {
                             date: date,
                             dayData: monthData[date],
                             isSelected: false,
+                            trackingStartDate: trackingStartDate,
                             onTap: {
                                 onDaySelected(date)
                             }
@@ -86,6 +88,7 @@ struct MonthCalendarView: View {
     MonthCalendarView(
         month: Date(),
         monthData: [:],
+        trackingStartDate: Date().addingTimeInterval(-7*86400),
         onDaySelected: { _ in }
     )
     .padding()

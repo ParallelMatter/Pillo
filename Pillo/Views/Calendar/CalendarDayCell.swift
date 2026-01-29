@@ -4,14 +4,21 @@ struct CalendarDayCell: View {
     let date: Date
     let dayData: DayData?
     let isSelected: Bool
+    let trackingStartDate: Date?
     let onTap: () -> Void
 
     private var isToday: Bool {
         Calendar.current.isDateInToday(date)
     }
 
-    private var isFuture: Bool {
-        date > Calendar.current.startOfDay(for: Date())
+    /// Date is not trackable if it's in the future OR before the user started tracking
+    private var isNotTrackable: Bool {
+        let isFutureDate = date > Calendar.current.startOfDay(for: Date())
+        if let startDate = trackingStartDate {
+            let isBeforeTracking = date < Calendar.current.startOfDay(for: startDate)
+            return isFutureDate || isBeforeTracking
+        }
+        return isFutureDate
     }
 
     private var dayNumber: Int {
@@ -20,7 +27,7 @@ struct CalendarDayCell: View {
 
     var body: some View {
         Button(action: {
-            if !isFuture {
+            if !isNotTrackable {
                 onTap()
             }
         }) {
@@ -95,12 +102,12 @@ struct CalendarDayCell: View {
                 // Day number
                 Text("\(dayNumber)")
                     .font(Theme.bodyFont)
-                    .foregroundColor(isFuture ? Theme.textSecondary.opacity(0.5) : Theme.textPrimary)
+                    .foregroundColor(isNotTrackable ? Theme.textSecondary.opacity(0.5) : Theme.textPrimary)
             }
             .frame(width: 44, height: 44)
         }
         .buttonStyle(.plain)
-        .disabled(isFuture)
+        .disabled(isNotTrackable)
     }
 }
 
@@ -110,6 +117,7 @@ struct CalendarDayCell: View {
             date: Date(),
             dayData: DayData(date: Date(), status: .today, takenCount: 1, totalCount: 3),
             isSelected: false,
+            trackingStartDate: Date().addingTimeInterval(-7*86400),
             onTap: {}
         )
 
@@ -117,6 +125,7 @@ struct CalendarDayCell: View {
             date: Date().addingTimeInterval(-86400),
             dayData: DayData(date: Date().addingTimeInterval(-86400), status: .complete, takenCount: 3, totalCount: 3),
             isSelected: false,
+            trackingStartDate: Date().addingTimeInterval(-7*86400),
             onTap: {}
         )
 
@@ -124,6 +133,7 @@ struct CalendarDayCell: View {
             date: Date().addingTimeInterval(-2*86400),
             dayData: DayData(date: Date().addingTimeInterval(-2*86400), status: .partial, takenCount: 2, totalCount: 3),
             isSelected: false,
+            trackingStartDate: Date().addingTimeInterval(-7*86400),
             onTap: {}
         )
 
@@ -131,6 +141,7 @@ struct CalendarDayCell: View {
             date: Date().addingTimeInterval(-3*86400),
             dayData: DayData(date: Date().addingTimeInterval(-3*86400), status: .missed, takenCount: 0, totalCount: 3),
             isSelected: false,
+            trackingStartDate: Date().addingTimeInterval(-7*86400),
             onTap: {}
         )
     }

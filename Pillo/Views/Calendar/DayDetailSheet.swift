@@ -20,9 +20,26 @@ struct DayDetailSheet: View {
         StreakService.dateString(for: date)
     }
 
-    /// Get slots that are active for this specific date
+    /// Get slots that are active for this specific date AND have supplements that existed then
     private var activeSlotsForDate: [ScheduleSlot] {
-        slots.filter { $0.isActiveOn(date: date) }
+        let calendar = Calendar.current
+        let normalizedDate = calendar.startOfDay(for: date)
+        let isHistoricalDate = normalizedDate < calendar.startOfDay(for: Date())
+
+        return slots.filter { slot in
+            guard slot.isActiveOn(date: date) else { return false }
+
+            // For past dates, only include if at least one supplement existed on that date
+            if isHistoricalDate {
+                let slotSupplementIds = Set(slot.supplementIds)
+                let supplementsInSlot = supplements.filter { slotSupplementIds.contains($0.id) }
+                let anyExistedOnDate = supplementsInSlot.contains { supplement in
+                    calendar.startOfDay(for: supplement.createdAt) <= normalizedDate
+                }
+                return anyExistedOnDate
+            }
+            return true
+        }
     }
 
     /// Get logs for this specific date
@@ -48,7 +65,35 @@ struct DayDetailSheet: View {
 
             let existingSupplementIds = Set(supplements.map { $0.id })
             let existingSupplementNames = Set(supplements.map { $0.name })
-            let slotSupplements = supplements.filter { relevantSupplementIds.contains($0.id) }
+
+            // IDs from the log (these have historical records, show regardless of creation date)
+            let loggedIds: Set<UUID>
+            if let log = log {
+                loggedIds = Set(log.supplementIdsTaken).union(Set(log.supplementIdsSkipped))
+            } else {
+                loggedIds = []
+            }
+
+            // Filter supplements: show if in log OR (in slot AND existed on this date)
+            let calendar = Calendar.current
+            let normalizedDate = calendar.startOfDay(for: date)
+            let isHistoricalDate = normalizedDate < calendar.startOfDay(for: Date())
+
+            let slotSupplements = supplements.filter { supplement in
+                guard relevantSupplementIds.contains(supplement.id) else { return false }
+
+                // Always show supplements that were logged (taken/skipped)
+                if loggedIds.contains(supplement.id) {
+                    return true
+                }
+
+                // For historical dates, only show supplements that existed then
+                if isHistoricalDate {
+                    return calendar.startOfDay(for: supplement.createdAt) <= normalizedDate
+                }
+
+                return true
+            }
 
             // Get names of deleted supplements from stored history
             var deletedTakenNames: [String] = []

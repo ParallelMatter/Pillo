@@ -20,6 +20,8 @@ struct TodayView: View {
     private var slots: [ScheduleSlot] {
         let today = Date()
         let todayString = IntakeLog.todayDateString()
+        // On the user's first day, show all slots so they can log existing habits
+        let isFirstDay = Calendar.current.isDateInToday(user?.createdAt ?? Date.distantPast)
 
         return (user?.scheduleSlots ?? [])
             .filter { slot in
@@ -27,6 +29,12 @@ struct TodayView: View {
                 if !slot.supplementIds.isEmpty && slot.isActiveOn(date: today) {
                     // Check if slot time has passed
                     if let slotTime = slot.timeAsDate, slotTime < Date() {
+                        // ON FIRST DAY: Show all slots so user can log existing habits
+                        // (they may have already taken their supplements before downloading the app)
+                        if isFirstDay {
+                            return true
+                        }
+
                         // Time has passed - check if there's an IntakeLog
                         let hasLog = intakeLogs.contains {
                             $0.scheduleSlotId == slot.id && $0.date == todayString
