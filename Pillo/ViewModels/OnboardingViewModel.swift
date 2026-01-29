@@ -4,6 +4,7 @@ import SwiftData
 
 enum OnboardingStep: Int, CaseIterable {
     case welcome
+    case valueProposition
     case addSupplements
     case mealTimes
     case goals

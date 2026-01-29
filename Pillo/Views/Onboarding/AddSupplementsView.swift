@@ -4,6 +4,7 @@ struct AddSupplementsView: View {
     @Bindable var viewModel: OnboardingViewModel
     @State private var showingManualEntry = false
     @State private var showingBarcodeScanner = false
+    @State private var selectedReference: SupplementReference?
     @FocusState private var isSearchFocused: Bool
 
     var body: some View {
@@ -62,7 +63,7 @@ struct AddSupplementsView: View {
             // Content
             if !viewModel.searchQuery.isEmpty {
                 // Search Results
-                SearchResultsList(viewModel: viewModel)
+                SearchResultsList(viewModel: viewModel, selectedReference: $selectedReference)
             } else {
                 // Selected Supplements
                 SelectedSupplementsList(viewModel: viewModel, showingManualEntry: $showingManualEntry)
@@ -110,11 +111,18 @@ struct AddSupplementsView: View {
                 }
             )
         }
+        .sheet(item: $selectedReference) { reference in
+            OnboardingSupplementDetailSheet(
+                reference: reference,
+                viewModel: viewModel
+            )
+        }
     }
 }
 
 struct SearchResultsList: View {
     @Bindable var viewModel: OnboardingViewModel
+    @Binding var selectedReference: SupplementReference?
 
     private var results: [SupplementSearchResult] {
         viewModel.searchResults
@@ -124,10 +132,11 @@ struct SearchResultsList: View {
         ScrollView {
             LazyVStack(spacing: Theme.spacingSM) {
                 ForEach(results, id: \.id) { (result: SupplementSearchResult) in
-                    Button(action: {
-                        viewModel.addSupplement(from: result.supplement)
-                    }) {
-                        HStack {
+                    HStack {
+                        // Name/text area — tap to open detail sheet
+                        Button(action: {
+                            selectedReference = result.supplement
+                        }) {
                             VStack(alignment: .leading, spacing: Theme.spacingXS) {
                                 Text(result.supplement.primaryName)
                                     .font(Theme.bodyFont)
@@ -145,20 +154,28 @@ struct SearchResultsList: View {
                                         .italic()
                                 }
                             }
-
-                            Spacer()
-
-                            Text(result.supplement.displayDosageRange)
-                                .font(Theme.captionFont)
-                                .foregroundColor(Theme.textSecondary)
-
-                            Image(systemName: "plus.circle")
-                                .foregroundColor(Theme.textSecondary)
                         }
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
+                        .buttonStyle(.plain)
+
+                        Spacer()
+
+                        Text(result.supplement.displayDosageRange)
+                            .font(Theme.captionFont)
+                            .foregroundColor(Theme.textSecondary)
+
+                        // Quick add button — separate tap target
+                        Button(action: {
+                            viewModel.addSupplement(from: result.supplement)
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(Theme.accent)
+                        }
+                        .buttonStyle(.plain)
                     }
+                    .padding(Theme.spacingMD)
+                    .background(Theme.surface)
+                    .cornerRadius(Theme.cornerRadiusSM)
                 }
             }
             .padding(.horizontal, Theme.spacingLG)
@@ -259,93 +276,100 @@ struct ManualSupplementEntrySheet: View {
             ZStack {
                 Theme.background.ignoresSafeArea()
 
-                VStack(spacing: Theme.spacingLG) {
-                    // Name
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("NAME")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(spacing: Theme.spacingLG) {
+                            // Name
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("NAME")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
 
-                        TextField("Supplement name", text: $name)
-                            .font(Theme.bodyFont)
-                            .foregroundColor(Theme.textPrimary)
-                            .padding(Theme.spacingMD)
-                            .background(Theme.surface)
-                            .cornerRadius(Theme.cornerRadiusSM)
-                    }
-
-                    // Category
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("CATEGORY")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
-
-                        Picker("Category", selection: $category) {
-                            ForEach(SupplementCategory.allCases, id: \.self) { cat in
-                                Text(cat.displayName).tag(cat)
+                                TextField("Supplement name", text: $name)
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textPrimary)
+                                    .padding(Theme.spacingMD)
+                                    .background(Theme.surface)
+                                    .cornerRadius(Theme.cornerRadiusSM)
                             }
-                        }
-                        .pickerStyle(.menu)
-                        .tint(Theme.textPrimary)
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-                    }
 
-                    // Dosage
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("DOSAGE (OPTIONAL)")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
+                            // Category
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("CATEGORY")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
 
-                        HStack(spacing: Theme.spacingMD) {
-                            TextField("Amount", text: $dosageString)
-                                .font(Theme.bodyFont)
-                                .foregroundColor(Theme.textPrimary)
-                                .keyboardType(.decimalPad)
+                                Picker("Category", selection: $category) {
+                                    ForEach(SupplementCategory.allCases, id: \.self) { cat in
+                                        Text(cat.displayName).tag(cat)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(Theme.textPrimary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(Theme.spacingMD)
                                 .background(Theme.surface)
                                 .cornerRadius(Theme.cornerRadiusSM)
+                            }
 
-                            Picker("Unit", selection: $dosageUnit) {
-                                ForEach(dosageUnits, id: \.self) { unit in
-                                    Text(unit).tag(unit)
+                            // Dosage
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("DOSAGE (OPTIONAL)")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                HStack(spacing: Theme.spacingMD) {
+                                    TextField("Amount", text: $dosageString)
+                                        .font(Theme.bodyFont)
+                                        .foregroundColor(Theme.textPrimary)
+                                        .keyboardType(.decimalPad)
+                                        .padding(Theme.spacingMD)
+                                        .background(Theme.surface)
+                                        .cornerRadius(Theme.cornerRadiusSM)
+
+                                    Picker("Unit", selection: $dosageUnit) {
+                                        ForEach(dosageUnits, id: \.self) { unit in
+                                            Text(unit).tag(unit)
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .tint(Theme.textPrimary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(Theme.spacingMD)
+                                    .background(Theme.surface)
+                                    .cornerRadius(Theme.cornerRadiusSM)
                                 }
                             }
-                            .pickerStyle(.menu)
-                            .tint(Theme.textPrimary)
-                            .padding(Theme.spacingMD)
-                            .background(Theme.surface)
-                            .cornerRadius(Theme.cornerRadiusSM)
+
+                            // Time
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("TIME")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                DatePicker(
+                                    "Time",
+                                    selection: $customTime,
+                                    displayedComponents: .hourAndMinute
+                                )
+                                .datePickerStyle(.compact)
+                                .labelsHidden()
+                                .tint(Theme.accent)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(Theme.spacingMD)
+                                .background(Theme.surface)
+                                .cornerRadius(Theme.cornerRadiusSM)
+                            }
                         }
+                        .padding(Theme.spacingLG)
                     }
+                    .scrollDismissesKeyboard(.interactively)
 
-                    // Time
-                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text("TIME")
-                            .font(Theme.headerFont)
-                            .tracking(1)
-                            .foregroundColor(Theme.textSecondary)
-
-                        DatePicker(
-                            "Time",
-                            selection: $customTime,
-                            displayedComponents: .hourAndMinute
-                        )
-                        .datePickerStyle(.compact)
-                        .labelsHidden()
-                        .tint(Theme.accent)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-                    }
-
-                    Spacer()
-
+                    // Fixed button at bottom
                     Button(action: {
                         let dosage = Double(dosageString)
                         viewModel.addManualSupplement(
@@ -362,8 +386,8 @@ struct ManualSupplementEntrySheet: View {
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(name.isEmpty)
                     .opacity(name.isEmpty ? 0.5 : 1)
+                    .padding(Theme.spacingLG)
                 }
-                .padding(Theme.spacingLG)
             }
             .navigationTitle("Add Manually")
             .navigationBarTitleDisplayMode(.inline)
@@ -376,7 +400,134 @@ struct ManualSupplementEntrySheet: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.large])
+    }
+}
+
+// MARK: - Onboarding Supplement Detail Sheet
+
+struct OnboardingSupplementDetailSheet: View {
+    let reference: SupplementReference
+    @Bindable var viewModel: OnboardingViewModel
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Theme.background.ignoresSafeArea()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: Theme.spacingLG) {
+                        // Header
+                        VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                            Text(reference.primaryName.uppercased())
+                                .font(Theme.titleFont)
+                                .tracking(1)
+                                .foregroundColor(Theme.textPrimary)
+
+                            Text(reference.supplementCategory.displayName)
+                                .font(Theme.bodyFont)
+                                .foregroundColor(Theme.textSecondary)
+
+                            Text("Typical dose: \(reference.displayDosageRange)")
+                                .font(Theme.bodyFont)
+                                .foregroundColor(Theme.textSecondary)
+                        }
+
+                        Divider()
+                            .background(Theme.border)
+
+                        if !reference.benefits.isEmpty {
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("WHY IT MATTERS")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Text(reference.benefits)
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textPrimary)
+                                    .lineSpacing(4)
+                            }
+                        }
+
+                        if !reference.absorptionNotes.isEmpty {
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("BEST TIME TO TAKE")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Text(reference.absorptionNotes)
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textPrimary)
+                                    .lineSpacing(4)
+                            }
+                        }
+
+                        if !reference.avoidWith.isEmpty {
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("WHAT TO AVOID")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                ForEach(reference.avoidWith, id: \.self) { avoid in
+                                    HStack(alignment: .top, spacing: Theme.spacingSM) {
+                                        Text("\u{2022}")
+                                            .foregroundColor(Theme.warning)
+                                        Text("Don't take with \(avoid.replacingOccurrences(of: "_", with: " ").capitalized)")
+                                            .font(Theme.bodyFont)
+                                            .foregroundColor(Theme.textPrimary)
+                                    }
+                                }
+                            }
+                        }
+
+                        if !reference.pairsWith.isEmpty {
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("PAIRS WELL WITH")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                ForEach(reference.pairsWith, id: \.self) { pair in
+                                    HStack(alignment: .top, spacing: Theme.spacingSM) {
+                                        Text("\u{2022}")
+                                            .foregroundColor(Theme.success)
+                                        Text(pair.replacingOccurrences(of: "_", with: " ").capitalized)
+                                            .font(Theme.bodyFont)
+                                            .foregroundColor(Theme.textPrimary)
+                                    }
+                                }
+                            }
+                        }
+
+                        Spacer(minLength: Theme.spacingXL)
+
+                        // Add button
+                        Button(action: {
+                            viewModel.addSupplement(from: reference)
+                            dismiss()
+                        }) {
+                            Text("Add to routine")
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+                    }
+                    .padding(Theme.spacingLG)
+                }
+            }
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .foregroundColor(Theme.textPrimary)
+                }
+            }
+        }
     }
 }
 

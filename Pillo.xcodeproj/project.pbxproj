@@ -53,6 +53,7 @@
 		E10000000000000000000031 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000031 /* SettingsView.swift */; };
 		E10000000000000000000032 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000032 /* Assets.xcassets */; };
 		E10000000000000000000033 /* supplement_database.json in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000033 /* supplement_database.json */; };
+		E10000000000000000000034 /* ValuePropositionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000034 /* ValuePropositionView.swift */; };
 		E10000000000000000000050 /* PilloTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000050 /* PilloTests.swift */; };
 		E10000000000000000000051 /* SchedulingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000051 /* SchedulingServiceTests.swift */; };
 		E10000000000000000000052 /* SupplementDatabaseServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000052 /* SupplementDatabaseServiceTests.swift */; };
@@ -152,6 +153,7 @@
 		E20000000000000000000031 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E20000000000000000000032 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E20000000000000000000033 /* supplement_database.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = supplement_database.json; sourceTree = "<group>"; };
+		E20000000000000000000034 /* ValuePropositionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValuePropositionView.swift; sourceTree = "<group>"; };
 		E20000000000000000000050 /* PilloTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilloTests.swift; sourceTree = "<group>"; };
 		E20000000000000000000051 /* SchedulingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingServiceTests.swift; sourceTree = "<group>"; };
 		E20000000000000000000052 /* SupplementDatabaseServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementDatabaseServiceTests.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 				E20000000000000000000021 /* MealTimesView.swift */,
 				E20000000000000000000022 /* GoalsSelectionView.swift */,
 				E20000000000000000000023 /* GeneratingView.swift */,
+				E20000000000000000000034 /* ValuePropositionView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -650,6 +653,7 @@
 				E10000000000000000000022 /* GoalsSelectionView.swift in Sources */,
 				4FCF18482F249C72007C5ED8 /* SlotEditSheet.swift in Sources */,
 				E10000000000000000000023 /* GeneratingView.swift in Sources */,
+				E10000000000000000000034 /* ValuePropositionView.swift in Sources */,
 				E10000000000000000000024 /* TodayView.swift in Sources */,
 				E10000000000000000000025 /* TimeSlotCard.swift in Sources */,
 				E10000000000000000000026 /* SupplementsListView.swift in Sources */,

@@ -12,6 +12,8 @@ struct OnboardingContainerView: View {
             switch viewModel.currentStep {
             case .welcome:
                 WelcomeView(viewModel: viewModel)
+            case .valueProposition:
+                ValuePropositionView(viewModel: viewModel)
             case .addSupplements:
                 AddSupplementsView(viewModel: viewModel)
             case .mealTimes:
