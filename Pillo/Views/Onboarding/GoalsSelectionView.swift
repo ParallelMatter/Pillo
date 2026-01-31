@@ -10,6 +10,24 @@ struct GoalsSelectionView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Back Button
+            HStack {
+                Button(action: {
+                    viewModel.previousStep()
+                }) {
+                    HStack(spacing: Theme.spacingXS) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .medium))
+                        Text("Back")
+                            .font(Theme.labelFont)
+                    }
+                    .foregroundColor(Theme.textSecondary)
+                }
+                Spacer()
+            }
+            .padding(.horizontal, Theme.spacingLG)
+            .padding(.top, Theme.spacingMD)
+
             // Header
             VStack(spacing: Theme.spacingSM) {
                 Text(Constants.Copy.goalsTitle)
@@ -21,7 +39,7 @@ struct GoalsSelectionView: View {
                     .font(Theme.captionFont)
                     .foregroundColor(Theme.textSecondary)
             }
-            .padding(.top, Theme.spacingXL)
+            .padding(.top, Theme.spacingMD)
             .padding(.bottom, Theme.spacingLG)
 
             // Goals Grid

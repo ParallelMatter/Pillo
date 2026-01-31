@@ -63,34 +63,56 @@ struct AddSupplementsView: View {
             // Content
             if !viewModel.searchQuery.isEmpty {
                 // Search Results
-                SearchResultsList(viewModel: viewModel, selectedReference: $selectedReference)
+                SearchResultsList(
+                    viewModel: viewModel,
+                    selectedReference: $selectedReference,
+                    showingManualEntry: $showingManualEntry
+                )
             } else {
                 // Selected Supplements
-                SelectedSupplementsList(viewModel: viewModel, showingManualEntry: $showingManualEntry)
+                SelectedSupplementsList(viewModel: viewModel)
             }
 
             Spacer()
 
-            // Bottom Buttons
+            // Bottom Buttons - Progressive visibility based on state
             VStack(spacing: Theme.spacingMD) {
                 if viewModel.canContinueFromSupplements {
+                    let count = viewModel.selectedSupplements.count
                     Button(action: {
                         viewModel.nextStep()
                     }) {
-                        Text("Continue")
+                        Text("Continue with \(count) \(count == 1 ? "supplement" : "supplements")")
                     }
                     .buttonStyle(PrimaryButtonStyle())
-                }
 
-                Button(action: {
-                    showingManualEntry = true
-                }) {
-                    Text("Add manually")
+                    // Secondary "Add manually" when supplements exist
+                    Button(action: {
+                        showingManualEntry = true
+                    }) {
+                        Text("Add manually")
+                    }
+                    .buttonStyle(SecondaryButtonStyle())
+                } else if viewModel.searchQuery.isEmpty {
+                    // Subtle link when empty state (no supplements, no search)
+                    Button(action: {
+                        showingManualEntry = true
+                    }) {
+                        Text("Can't find yours? Add manually")
+                            .font(Theme.captionFont)
+                            .foregroundColor(Theme.textSecondary)
+                    }
                 }
-                .buttonStyle(SecondaryButtonStyle())
+                // Note: When searching with no results, the button is shown inline in SearchResultsList
             }
             .padding(.horizontal, Theme.spacingLG)
             .padding(.bottom, Theme.spacingXL)
+        }
+        .onAppear {
+            // Auto-focus search field to signal "start typing"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                isSearchFocused = true
+            }
         }
         .sheet(isPresented: $showingManualEntry) {
             ManualSupplementEntrySheet(viewModel: viewModel)
@@ -123,6 +145,7 @@ struct AddSupplementsView: View {
 struct SearchResultsList: View {
     @Bindable var viewModel: OnboardingViewModel
     @Binding var selectedReference: SupplementReference?
+    @Binding var showingManualEntry: Bool
 
     private var results: [SupplementSearchResult] {
         viewModel.searchResults
@@ -131,51 +154,74 @@ struct SearchResultsList: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: Theme.spacingSM) {
-                ForEach(results, id: \.id) { (result: SupplementSearchResult) in
-                    HStack {
-                        // Name/text area — tap to open detail sheet
-                        Button(action: {
-                            selectedReference = result.supplement
-                        }) {
-                            VStack(alignment: .leading, spacing: Theme.spacingXS) {
-                                Text(result.supplement.primaryName)
-                                    .font(Theme.bodyFont)
-                                    .foregroundColor(Theme.textPrimary)
+                if results.isEmpty {
+                    // No results state
+                    VStack(spacing: Theme.spacingMD) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 32))
+                            .foregroundColor(Theme.textSecondary.opacity(0.5))
 
-                                Text(result.supplement.supplementCategory.displayName)
-                                    .font(Theme.captionFont)
-                                    .foregroundColor(Theme.textSecondary)
-
-                                // Show match context for keyword/goal matches
-                                if !viewModel.searchQuery.isEmpty && !result.matchedTerms.isEmpty && result.matchType != .exactName && result.matchType != .partialName {
-                                    Text("matches: \(result.matchedTerms.joined(separator: ", "))")
-                                        .font(Theme.captionFont)
-                                        .foregroundColor(Theme.accent)
-                                        .italic()
-                                }
-                            }
-                        }
-                        .buttonStyle(.plain)
-
-                        Spacer()
-
-                        Text(result.supplement.displayDosageRange)
-                            .font(Theme.captionFont)
+                        Text("No matches found")
+                            .font(Theme.bodyFont)
                             .foregroundColor(Theme.textSecondary)
 
-                        // Quick add button — separate tap target
                         Button(action: {
-                            viewModel.addSupplement(from: result.supplement)
+                            showingManualEntry = true
                         }) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 24))
-                                .foregroundColor(Theme.accent)
+                            Text("Add manually")
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PrimaryButtonStyle())
+                        .padding(.top, Theme.spacingSM)
                     }
-                    .padding(Theme.spacingMD)
-                    .background(Theme.surface)
-                    .cornerRadius(Theme.cornerRadiusSM)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, Theme.spacingXXL)
+                } else {
+                    ForEach(results, id: \.id) { (result: SupplementSearchResult) in
+                        HStack {
+                            // Name/text area — tap to open detail sheet
+                            Button(action: {
+                                selectedReference = result.supplement
+                            }) {
+                                VStack(alignment: .leading, spacing: Theme.spacingXS) {
+                                    Text(result.supplement.primaryName)
+                                        .font(Theme.bodyFont)
+                                        .foregroundColor(Theme.textPrimary)
+
+                                    Text(result.supplement.supplementCategory.displayName)
+                                        .font(Theme.captionFont)
+                                        .foregroundColor(Theme.textSecondary)
+
+                                    // Show match context for keyword/goal matches
+                                    if !viewModel.searchQuery.isEmpty && !result.matchedTerms.isEmpty && result.matchType != .exactName && result.matchType != .partialName {
+                                        Text("matches: \(result.matchedTerms.joined(separator: ", "))")
+                                            .font(Theme.captionFont)
+                                            .foregroundColor(Theme.accent)
+                                            .italic()
+                                    }
+                                }
+                            }
+                            .buttonStyle(.plain)
+
+                            Spacer()
+
+                            Text(result.supplement.displayDosageRange)
+                                .font(Theme.captionFont)
+                                .foregroundColor(Theme.textSecondary)
+
+                            // Quick add button — separate tap target
+                            Button(action: {
+                                viewModel.addSupplement(from: result.supplement)
+                            }) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(Theme.accent)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(Theme.spacingMD)
+                        .background(Theme.surface)
+                        .cornerRadius(Theme.cornerRadiusSM)
+                    }
                 }
             }
             .padding(.horizontal, Theme.spacingLG)
@@ -186,24 +232,23 @@ struct SearchResultsList: View {
 
 struct SelectedSupplementsList: View {
     @Bindable var viewModel: OnboardingViewModel
-    @Binding var showingManualEntry: Bool
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: Theme.spacingSM) {
                 if viewModel.selectedSupplements.isEmpty {
                     VStack(spacing: Theme.spacingMD) {
-                        Image(systemName: "pill.fill")
-                            .font(.system(size: 40))
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 32))
                             .foregroundColor(Theme.textSecondary.opacity(0.5))
 
-                        Text("No supplements added yet")
+                        Text("Search for your supplements")
                             .font(Theme.bodyFont)
-                            .foregroundColor(Theme.textSecondary)
+                            .foregroundColor(Theme.textPrimary)
 
-                        Text("Search above or add manually")
+                        Text("Add as many as you need")
                             .font(Theme.captionFont)
-                            .foregroundColor(Theme.textSecondary.opacity(0.7))
+                            .foregroundColor(Theme.textSecondary)
                     }
                     .padding(.top, Theme.spacingXXL)
                 } else {
