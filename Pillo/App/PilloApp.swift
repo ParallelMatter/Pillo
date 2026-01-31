@@ -36,6 +36,8 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         case Constants.actionMarkAsTaken:
             Task { @MainActor in
                 self.markSupplementsAsTaken(slotId: slotId, supplementIds: supplementIds, date: date)
+                // Cancel any pending follow-up notifications since user took action
+                NotificationService.shared.cancelFollowUpNotifications(for: slotId)
                 completionHandler()
             }
             return
@@ -43,6 +45,8 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         case Constants.actionSnooze15:
             Task { @MainActor in
                 await self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 15)
+                // Cancel follow-ups since user snoozed (they'll get the snooze notification instead)
+                NotificationService.shared.cancelFollowUpNotifications(for: slotId)
                 completionHandler()
             }
             return
@@ -50,6 +54,8 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         case Constants.actionSnooze30:
             Task { @MainActor in
                 await self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 30)
+                // Cancel follow-ups since user snoozed
+                NotificationService.shared.cancelFollowUpNotifications(for: slotId)
                 completionHandler()
             }
             return
@@ -57,11 +63,15 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         case Constants.actionSnooze60:
             Task { @MainActor in
                 await self.scheduleSnoozeForSlot(slotId: slotId, supplementIds: supplementIds, minutes: 60)
+                // Cancel follow-ups since user snoozed
+                NotificationService.shared.cancelFollowUpNotifications(for: slotId)
                 completionHandler()
             }
             return
 
         case Constants.actionPickTime:
+            // Cancel follow-ups since user is picking a custom time
+            NotificationService.shared.cancelFollowUpNotifications(for: slotId)
             NotificationCenter.default.post(name: .navigateToTodayTab, object: nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 NotificationCenter.default.post(
@@ -255,7 +265,10 @@ struct PilloApp: App {
                 for: slots,
                 supplements: user.supplements ?? [],
                 advanceMinutes: user.notificationAdvanceMinutes,
-                sound: user.notificationSound
+                sound: user.notificationSound,
+                repeatEnabled: user.repeatMissedNotifications,
+                repeatIntervalMinutes: user.repeatIntervalMinutes,
+                repeatMaxCount: user.repeatMaxCount
             )
         }
     }

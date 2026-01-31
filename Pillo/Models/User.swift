@@ -13,6 +13,9 @@ final class User {
     var notificationsEnabled: Bool
     var notificationAdvanceMinutes: Int
     var notificationSound: String
+    var repeatMissedNotifications: Bool
+    var repeatIntervalMinutes: Int
+    var repeatMaxCount: Int
 
     @Relationship(deleteRule: .cascade, inverse: \Supplement.user)
     var supplements: [Supplement]?
@@ -33,7 +36,10 @@ final class User {
         goals: [String] = [],
         notificationsEnabled: Bool = true,
         notificationAdvanceMinutes: Int = Constants.defaultAdvanceMinutes,
-        notificationSound: String = "subtle"
+        notificationSound: String = "subtle",
+        repeatMissedNotifications: Bool = false,
+        repeatIntervalMinutes: Int = 30,
+        repeatMaxCount: Int = 2
     ) {
         self.id = id
         self.createdAt = createdAt
@@ -45,5 +51,8 @@ final class User {
         self.notificationsEnabled = notificationsEnabled
         self.notificationAdvanceMinutes = notificationAdvanceMinutes
         self.notificationSound = notificationSound
+        self.repeatMissedNotifications = repeatMissedNotifications
+        self.repeatIntervalMinutes = repeatIntervalMinutes
+        self.repeatMaxCount = repeatMaxCount
     }
 }

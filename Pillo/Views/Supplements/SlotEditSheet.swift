@@ -86,7 +86,10 @@ struct SlotEditSheet: View {
                 for: user.scheduleSlots ?? [],
                 supplements: user.supplements ?? [],
                 advanceMinutes: user.notificationAdvanceMinutes,
-                sound: user.notificationSound
+                sound: user.notificationSound,
+                repeatEnabled: user.repeatMissedNotifications,
+                repeatIntervalMinutes: user.repeatIntervalMinutes,
+                repeatMaxCount: user.repeatMaxCount
             )
         }
 

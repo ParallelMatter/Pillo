@@ -187,7 +187,10 @@ class OnboardingViewModel {
                 for: slots,
                 supplements: supplements,
                 advanceMinutes: user.notificationAdvanceMinutes,
-                sound: user.notificationSound
+                sound: user.notificationSound,
+                repeatEnabled: user.repeatMissedNotifications,
+                repeatIntervalMinutes: user.repeatIntervalMinutes,
+                repeatMaxCount: user.repeatMaxCount
             )
         }
 

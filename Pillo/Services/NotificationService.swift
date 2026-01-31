@@ -73,7 +73,10 @@ class NotificationService {
         for slots: [ScheduleSlot],
         supplements: [Supplement],
         advanceMinutes: Int = 5,
-        sound: String = "subtle"
+        sound: String = "subtle",
+        repeatEnabled: Bool = false,
+        repeatIntervalMinutes: Int = 30,
+        repeatMaxCount: Int = 2
     ) {
         // Clear existing notifications
         cancelAllNotifications()
@@ -83,7 +86,10 @@ class NotificationService {
                 for: slot,
                 supplements: supplements,
                 advanceMinutes: advanceMinutes,
-                sound: sound
+                sound: sound,
+                repeatEnabled: repeatEnabled,
+                repeatIntervalMinutes: repeatIntervalMinutes,
+                repeatMaxCount: repeatMaxCount
             )
         }
     }
@@ -92,7 +98,10 @@ class NotificationService {
         for slot: ScheduleSlot,
         supplements: [Supplement],
         advanceMinutes: Int,
-        sound: String
+        sound: String,
+        repeatEnabled: Bool = false,
+        repeatIntervalMinutes: Int = 30,
+        repeatMaxCount: Int = 2
     ) {
         let slotSupplements = supplements.filter { slot.supplementIds.contains($0.id) }
         guard !slotSupplements.isEmpty else { return }
@@ -118,6 +127,17 @@ class NotificationService {
             content: content,
             advanceMinutes: advanceMinutes
         )
+
+        // Schedule follow-up notifications if enabled (for daily slots only, as they have predictable timing)
+        if repeatEnabled, case .daily = slot.frequency {
+            scheduleFollowUpNotifications(
+                for: slot,
+                supplements: slotSupplements,
+                sound: sound,
+                repeatIntervalMinutes: repeatIntervalMinutes,
+                repeatMaxCount: repeatMaxCount
+            )
+        }
 
         // Schedule based on frequency
         switch slot.frequency {
@@ -435,6 +455,90 @@ class NotificationService {
                 )
             }
         }
+    }
+
+    // MARK: - Follow-Up Notifications (Repeat If Missed)
+
+    /// Schedule follow-up notifications that fire after the slot time if user doesn't act
+    private func scheduleFollowUpNotifications(
+        for slot: ScheduleSlot,
+        supplements: [Supplement],
+        sound: String,
+        repeatIntervalMinutes: Int,
+        repeatMaxCount: Int
+    ) {
+        guard let slotTime = slot.timeAsDate else { return }
+
+        let maxWindowMinutes = 120  // 2-hour cutoff
+        let calendar = Calendar.current
+
+        for followUpNumber in 1...repeatMaxCount {
+            let intervalMinutes = repeatIntervalMinutes * followUpNumber
+
+            // Don't schedule if beyond the 2-hour window
+            guard intervalMinutes <= maxWindowMinutes else { continue }
+
+            guard let triggerTime = calendar.date(byAdding: .minute, value: intervalMinutes, to: slotTime) else { continue }
+
+            // Create follow-up content
+            let content = UNMutableNotificationContent()
+            content.title = "Reminder"
+
+            let names = supplements.map { $0.name }
+            if names.count == 1 {
+                content.body = "You haven't taken your \(names[0]) yet"
+            } else if names.count == 2 {
+                content.body = "You haven't taken your \(names[0]) and \(names[1]) yet"
+            } else {
+                content.body = "You haven't taken your supplements yet"
+            }
+
+            content.categoryIdentifier = Constants.notificationCategoryIdentifier
+
+            content.userInfo = [
+                "slotId": slot.id.uuidString,
+                "supplementIds": supplements.map { $0.id.uuidString },
+                "date": IntakeLog.todayDateString(),
+                "isFollowUp": true,
+                "followUpNumber": followUpNumber
+            ]
+
+            switch sound {
+            case "subtle", "standard":
+                content.sound = UNNotificationSound.default
+            default:
+                content.sound = nil
+            }
+
+            // Use calendar trigger with hour:minute to fire daily at the follow-up time
+            let triggerComponents = calendar.dateComponents([.hour, .minute], from: triggerTime)
+            let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: true)
+
+            let identifier = "followup-\(slot.id.uuidString)-\(followUpNumber)"
+
+            let request = UNNotificationRequest(
+                identifier: identifier,
+                content: content,
+                trigger: trigger
+            )
+
+            UNUserNotificationCenter.current().add(request) { error in
+                if let error = error {
+                    print("Error scheduling follow-up notification: \(error)")
+                }
+            }
+        }
+    }
+
+    /// Cancel all follow-up notifications for a slot
+    func cancelFollowUpNotifications(for slotId: UUID, maxCount: Int = 3) {
+        var identifiers: [String] = []
+        for i in 1...maxCount {
+            identifiers.append("followup-\(slotId.uuidString)-\(i)")
+        }
+        UNUserNotificationCenter.current().removePendingNotificationRequests(
+            withIdentifiers: identifiers
+        )
     }
 
     // MARK: - Snooze Notifications

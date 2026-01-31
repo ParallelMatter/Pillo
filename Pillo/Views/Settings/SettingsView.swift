@@ -111,6 +111,59 @@ struct SettingsView: View {
                                         ),
                                         options: ["0 min", "5 min", "10 min", "15 min"]
                                     )
+
+                                    Divider().background(Theme.border)
+
+                                    ToggleRow(
+                                        title: "Repeat if missed",
+                                        isOn: Binding(
+                                            get: { user.repeatMissedNotifications },
+                                            set: {
+                                                user.repeatMissedNotifications = $0
+                                                updateNotifications(for: user)
+                                            }
+                                        )
+                                    )
+
+                                    if user.repeatMissedNotifications {
+                                        Divider().background(Theme.border)
+
+                                        PickerRow(
+                                            title: "Follow-up interval",
+                                            selection: Binding(
+                                                get: {
+                                                    if user.repeatIntervalMinutes == 60 {
+                                                        return "1 hour"
+                                                    }
+                                                    return "\(user.repeatIntervalMinutes) min"
+                                                },
+                                                set: { newValue in
+                                                    if newValue == "1 hour" {
+                                                        user.repeatIntervalMinutes = 60
+                                                    } else {
+                                                        let minutes = Int(newValue.replacingOccurrences(of: " min", with: "")) ?? 30
+                                                        user.repeatIntervalMinutes = minutes
+                                                    }
+                                                    updateNotifications(for: user)
+                                                }
+                                            ),
+                                            options: ["15 min", "30 min", "1 hour"]
+                                        )
+
+                                        Divider().background(Theme.border)
+
+                                        PickerRow(
+                                            title: "Max reminders",
+                                            selection: Binding(
+                                                get: { "\(user.repeatMaxCount)" },
+                                                set: {
+                                                    user.repeatMaxCount = Int($0) ?? 2
+                                                    updateNotifications(for: user)
+                                                }
+                                            ),
+                                            options: ["1", "2", "3"]
+                                        )
+                                    }
                                 }
                             }
 
@@ -234,7 +287,10 @@ struct SettingsView: View {
                 for: user.scheduleSlots ?? [],
                 supplements: user.supplements ?? [],
                 advanceMinutes: user.notificationAdvanceMinutes,
-                sound: user.notificationSound
+                sound: user.notificationSound,
+                repeatEnabled: user.repeatMissedNotifications,
+                repeatIntervalMinutes: user.repeatIntervalMinutes,
+                repeatMaxCount: user.repeatMaxCount
             )
         } else {
             notificationService.cancelAllNotifications()
