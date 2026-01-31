@@ -1,6 +1,12 @@
 import SwiftUI
 import SwiftData
 
+struct SelectedDayInfo: Identifiable {
+    let id = UUID()
+    let date: Date
+    let dayData: DayData
+}
+
 struct CalendarSheet: View {
     let intakeLogs: [IntakeLog]
     let slots: [ScheduleSlot]
@@ -10,9 +16,7 @@ struct CalendarSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var displayedMonth: Date = Date()
-    @State private var selectedDate: Date? = nil
-    @State private var selectedDayData: DayData? = nil
-    @State private var showingDayDetail = false
+    @State private var selectedDayInfo: SelectedDayInfo? = nil
 
     private var calendar: Calendar {
         Calendar.current
@@ -89,9 +93,9 @@ struct CalendarSheet: View {
                         monthData: monthData,
                         trackingStartDate: trackingStartDate,
                         onDaySelected: { date in
-                            selectedDate = date
-                            selectedDayData = monthData[date]
-                            showingDayDetail = true
+                            if let dayData = monthData[date] {
+                                selectedDayInfo = SelectedDayInfo(date: date, dayData: dayData)
+                            }
                         }
                     )
                     .padding(.horizontal, Theme.spacingMD)
@@ -110,16 +114,14 @@ struct CalendarSheet: View {
                     .foregroundColor(Theme.textPrimary)
                 }
             }
-            .sheet(isPresented: $showingDayDetail) {
-                if let date = selectedDate, let dayData = selectedDayData {
-                    DayDetailSheet(
-                        date: date,
-                        dayData: dayData,
-                        slots: slots,
-                        supplements: supplements,
-                        user: user  // DayDetailSheet reads intakeLogs from user relationship for live updates
-                    )
-                }
+            .sheet(item: $selectedDayInfo) { info in
+                DayDetailSheet(
+                    date: info.date,
+                    dayData: info.dayData,
+                    slots: slots,
+                    supplements: supplements,
+                    user: user
+                )
             }
         }
     }
