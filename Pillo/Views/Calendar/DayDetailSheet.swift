@@ -4,11 +4,18 @@ import SwiftData
 struct DayDetailSheet: View {
     let date: Date
     let dayData: DayData
-    let intakeLogs: [IntakeLog]
     let slots: [ScheduleSlot]
     let supplements: [Supplement]
+    let user: User  // For live data updates via relationship
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @State private var viewModel = TodayViewModel()
+
+    /// Can edit past dates and today, but not future
+    private var isEditable: Bool {
+        Calendar.current.startOfDay(for: date) <= Calendar.current.startOfDay(for: Date())
+    }
 
     private var dateTitle: String {
         let formatter = DateFormatter()
@@ -21,12 +28,23 @@ struct DayDetailSheet: View {
     }
 
     /// Get slots that are active for this specific date AND have supplements that existed then
+    /// Also includes slots with historical logs (handles deleted/archived supplements)
     private var activeSlotsForDate: [ScheduleSlot] {
         let calendar = Calendar.current
         let normalizedDate = calendar.startOfDay(for: date)
         let isHistoricalDate = normalizedDate < calendar.startOfDay(for: Date())
 
+        // Pre-compute which slots have logs for this date (reads from user relationship for live updates)
+        let allLogs = user.intakeLogs ?? []
+        let slotsWithLogs = Set(allLogs.filter { $0.date == dateString }.map { $0.scheduleSlotId })
+
         return slots.filter { slot in
+            // Always include if there's a log for this slot on this date
+            // This handles deleted/archived supplements that have historical records
+            if slotsWithLogs.contains(slot.id) {
+                return true
+            }
+
             guard slot.isActiveOn(date: date) else { return false }
 
             // For past dates, only include if at least one supplement existed on that date
@@ -43,9 +61,25 @@ struct DayDetailSheet: View {
     }
 
     /// Get logs for this specific date
+    /// Reads from user relationship for live updates after editing
     private var logsForDate: [IntakeLog] {
-        let slotIds = Set(activeSlotsForDate.map { $0.id })
-        return intakeLogs.filter { $0.date == dateString && slotIds.contains($0.scheduleSlotId) }
+        (user.intakeLogs ?? []).filter { $0.date == dateString }
+    }
+
+    /// Toggle supplement taken status for this date
+    private func toggleSupplement(supplementId: UUID, slot: ScheduleSlot) {
+        let dateStr = StreakService.dateString(for: date)
+
+        // Check if already taken (reading from live relationship)
+        if let log = logsForDate.first(where: { $0.scheduleSlotId == slot.id }),
+           log.supplementIdsTaken.contains(supplementId) {
+            viewModel.undoSupplementStatus(supplementId: supplementId, slot: slot, forDate: dateStr, modelContext: modelContext, user: user)
+        } else {
+            viewModel.markSupplementAsTaken(supplementId: supplementId, slot: slot, forDate: dateStr, modelContext: modelContext, user: user)
+        }
+
+        // Update widget
+        viewModel.updateWidgetData(slots: slots, logs: user.intakeLogs ?? [], supplements: supplements)
     }
 
     /// Get slot details for the day
@@ -153,7 +187,11 @@ struct DayDetailSheet: View {
                                         log: detail.log,
                                         supplements: detail.supplements,
                                         deletedTakenNames: detail.deletedTakenNames,
-                                        deletedSkippedCount: detail.deletedSkippedCount
+                                        deletedSkippedCount: detail.deletedSkippedCount,
+                                        isEditable: isEditable,
+                                        onSupplementToggle: { supplementId in
+                                            toggleSupplement(supplementId: supplementId, slot: detail.slot)
+                                        }
                                     )
                                 }
                             }
@@ -228,6 +266,8 @@ struct SlotDetailCard: View {
     let supplements: [Supplement]
     var deletedTakenNames: [String] = []
     var deletedSkippedCount: Int = 0
+    var isEditable: Bool = false
+    var onSupplementToggle: ((UUID) -> Void)? = nil
 
     private var takenCount: Int {
         (log?.supplementIdsTaken.count ?? 0)
@@ -341,22 +381,30 @@ struct SlotDetailCard: View {
                         let isSkipped = isSupplementSkipped(supplement)
                         let itemColor = isTaken ? Theme.success : (isSkipped ? Theme.warning : Theme.border)
 
-                        HStack(spacing: Theme.spacingSM) {
-                            Image(systemName: isTaken ? "checkmark.circle.fill" : (isSkipped ? "xmark.circle" : "circle"))
-                                .font(.system(size: 12))
-                                .foregroundColor(itemColor)
+                        Button(action: {
+                            onSupplementToggle?(supplement.id)
+                        }) {
+                            HStack(spacing: Theme.spacingSM) {
+                                Image(systemName: isTaken ? "checkmark.circle.fill" : (isSkipped ? "xmark.circle" : "circle"))
+                                    .font(.system(size: 12))
+                                    .foregroundColor(itemColor)
 
-                            Text(supplement.name)
-                                .font(Theme.captionFont)
-                                .foregroundColor(isTaken || isSkipped ? Theme.textSecondary : Theme.textPrimary)
-                                .strikethrough(isTaken || isSkipped)
-
-                            if !supplement.displayDosage.isEmpty {
-                                Text(supplement.displayDosage)
+                                Text(supplement.name)
                                     .font(Theme.captionFont)
-                                    .foregroundColor(Theme.textSecondary)
+                                    .foregroundColor(isTaken || isSkipped ? Theme.textSecondary : Theme.textPrimary)
+                                    .strikethrough(isTaken || isSkipped)
+
+                                if !supplement.displayDosage.isEmpty {
+                                    Text(supplement.displayDosage)
+                                        .font(Theme.captionFont)
+                                        .foregroundColor(Theme.textSecondary)
+                                }
+
+                                Spacer()
                             }
                         }
+                        .buttonStyle(.plain)
+                        .disabled(!isEditable)
                     }
 
                     // Show deleted supplements that were taken (with names if available)
@@ -401,13 +449,5 @@ struct SlotDetailCard: View {
     }
 }
 
-#Preview {
-    DayDetailSheet(
-        date: Date(),
-        dayData: DayData(date: Date(), status: .partial, takenCount: 2, totalCount: 3),
-        intakeLogs: [],
-        slots: [],
-        supplements: []
-    )
-    .preferredColorScheme(.dark)
-}
+// Preview requires a User model with SwiftData container
+// Use the app to test this view

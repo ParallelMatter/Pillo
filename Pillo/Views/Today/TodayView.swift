@@ -148,7 +148,8 @@ struct TodayView: View {
                                     intakeLogs: Array(intakeLogs),
                                     slots: Array(user.scheduleSlots ?? []),
                                     supplements: Array(supplements),
-                                    trackingStartDate: user.createdAt
+                                    trackingStartDate: user.createdAt,
+                                    user: user
                                 )
                             }
 

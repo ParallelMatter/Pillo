@@ -77,10 +77,9 @@ class TodayViewModel {
 
     // MARK: - Per-Supplement Actions
 
-    /// Mark a single supplement as taken
-    func markSupplementAsTaken(supplementId: UUID, slot: ScheduleSlot, modelContext: ModelContext, user: User) {
-        let todayString = IntakeLog.todayDateString()
-        let log = getOrCreateLog(for: slot, date: todayString, user: user, modelContext: modelContext)
+    /// Mark a single supplement as taken for a specific date
+    func markSupplementAsTaken(supplementId: UUID, slot: ScheduleSlot, forDate dateString: String, modelContext: ModelContext, user: User) {
+        let log = getOrCreateLog(for: slot, date: dateString, user: user, modelContext: modelContext)
 
         // Add to taken, remove from skipped if present
         if !log.supplementIdsTaken.contains(supplementId) {
@@ -98,18 +97,24 @@ class TodayViewModel {
 
         try? modelContext.save()
 
-        // Cancel notification if ALL supplements in slot are now taken
-        let slotSupplementIds = Set(slot.supplementIds)
-        let takenIds = Set(log.supplementIdsTaken)
-        if takenIds.isSuperset(of: slotSupplementIds) && !slotSupplementIds.isEmpty {
-            notificationService.cancelNotificationsForSlot(slot)
+        // Only cancel notifications for TODAY
+        if dateString == IntakeLog.todayDateString() {
+            let slotSupplementIds = Set(slot.supplementIds)
+            let takenIds = Set(log.supplementIdsTaken)
+            if takenIds.isSuperset(of: slotSupplementIds) && !slotSupplementIds.isEmpty {
+                notificationService.cancelNotificationsForSlot(slot)
+            }
         }
     }
 
-    /// Mark a single supplement as skipped
-    func markSupplementAsSkipped(supplementId: UUID, slot: ScheduleSlot, modelContext: ModelContext, user: User) {
-        let todayString = IntakeLog.todayDateString()
-        let log = getOrCreateLog(for: slot, date: todayString, user: user, modelContext: modelContext)
+    /// Mark a single supplement as taken (convenience for today)
+    func markSupplementAsTaken(supplementId: UUID, slot: ScheduleSlot, modelContext: ModelContext, user: User) {
+        markSupplementAsTaken(supplementId: supplementId, slot: slot, forDate: IntakeLog.todayDateString(), modelContext: modelContext, user: user)
+    }
+
+    /// Mark a single supplement as skipped for a specific date
+    func markSupplementAsSkipped(supplementId: UUID, slot: ScheduleSlot, forDate dateString: String, modelContext: ModelContext, user: User) {
+        let log = getOrCreateLog(for: slot, date: dateString, user: user, modelContext: modelContext)
 
         // Add to skipped, remove from taken if present
         if !log.supplementIdsSkipped.contains(supplementId) {
@@ -120,10 +125,14 @@ class TodayViewModel {
         try? modelContext.save()
     }
 
-    /// Undo status for a single supplement
-    func undoSupplementStatus(supplementId: UUID, slot: ScheduleSlot, modelContext: ModelContext, user: User) {
-        let todayString = IntakeLog.todayDateString()
-        guard let log = (user.intakeLogs ?? []).first(where: { $0.scheduleSlotId == slot.id && $0.date == todayString }) else {
+    /// Mark a single supplement as skipped (convenience for today)
+    func markSupplementAsSkipped(supplementId: UUID, slot: ScheduleSlot, modelContext: ModelContext, user: User) {
+        markSupplementAsSkipped(supplementId: supplementId, slot: slot, forDate: IntakeLog.todayDateString(), modelContext: modelContext, user: user)
+    }
+
+    /// Undo status for a single supplement on a specific date
+    func undoSupplementStatus(supplementId: UUID, slot: ScheduleSlot, forDate dateString: String, modelContext: ModelContext, user: User) {
+        guard let log = (user.intakeLogs ?? []).first(where: { $0.scheduleSlotId == slot.id && $0.date == dateString }) else {
             return
         }
 
@@ -138,12 +147,16 @@ class TodayViewModel {
         try? modelContext.save()
     }
 
+    /// Undo status for a single supplement (convenience for today)
+    func undoSupplementStatus(supplementId: UUID, slot: ScheduleSlot, modelContext: ModelContext, user: User) {
+        undoSupplementStatus(supplementId: supplementId, slot: slot, forDate: IntakeLog.todayDateString(), modelContext: modelContext, user: user)
+    }
+
     // MARK: - Slot-Level Actions (for "Mark All" convenience)
 
-    /// Mark all supplements in slot as taken
-    func markAsTaken(slot: ScheduleSlot, modelContext: ModelContext, user: User) {
-        let todayString = IntakeLog.todayDateString()
-        let log = getOrCreateLog(for: slot, date: todayString, user: user, modelContext: modelContext)
+    /// Mark all supplements in slot as taken for a specific date
+    func markAsTaken(slot: ScheduleSlot, forDate dateString: String, modelContext: ModelContext, user: User) {
+        let log = getOrCreateLog(for: slot, date: dateString, user: user, modelContext: modelContext)
 
         // Mark all supplements in this slot as taken
         log.supplementIdsTaken = slot.supplementIds
@@ -160,14 +173,20 @@ class TodayViewModel {
 
         try? modelContext.save()
 
-        // Cancel notification since all supplements are taken
-        notificationService.cancelNotificationsForSlot(slot)
+        // Only cancel notification for TODAY
+        if dateString == IntakeLog.todayDateString() {
+            notificationService.cancelNotificationsForSlot(slot)
+        }
     }
 
-    /// Mark all supplements in slot as skipped
-    func markAsSkipped(slot: ScheduleSlot, modelContext: ModelContext, user: User) {
-        let todayString = IntakeLog.todayDateString()
-        let log = getOrCreateLog(for: slot, date: todayString, user: user, modelContext: modelContext)
+    /// Mark all supplements in slot as taken (convenience for today)
+    func markAsTaken(slot: ScheduleSlot, modelContext: ModelContext, user: User) {
+        markAsTaken(slot: slot, forDate: IntakeLog.todayDateString(), modelContext: modelContext, user: user)
+    }
+
+    /// Mark all supplements in slot as skipped for a specific date
+    func markAsSkipped(slot: ScheduleSlot, forDate dateString: String, modelContext: ModelContext, user: User) {
+        let log = getOrCreateLog(for: slot, date: dateString, user: user, modelContext: modelContext)
 
         // Mark all supplements in this slot as skipped
         log.supplementIdsSkipped = slot.supplementIds
@@ -177,12 +196,15 @@ class TodayViewModel {
         try? modelContext.save()
     }
 
-    /// Undo all status for a slot
-    func undoStatus(slot: ScheduleSlot, modelContext: ModelContext, user: User) {
-        let todayString = IntakeLog.todayDateString()
+    /// Mark all supplements in slot as skipped (convenience for today)
+    func markAsSkipped(slot: ScheduleSlot, modelContext: ModelContext, user: User) {
+        markAsSkipped(slot: slot, forDate: IntakeLog.todayDateString(), modelContext: modelContext, user: user)
+    }
 
+    /// Undo all status for a slot on a specific date
+    func undoStatus(slot: ScheduleSlot, forDate dateString: String, modelContext: ModelContext, user: User) {
         let existingLogs = (user.intakeLogs ?? []).filter {
-            $0.scheduleSlotId == slot.id && $0.date == todayString
+            $0.scheduleSlotId == slot.id && $0.date == dateString
         }
 
         for log in existingLogs {
@@ -190,6 +212,11 @@ class TodayViewModel {
         }
 
         try? modelContext.save()
+    }
+
+    /// Undo all status for a slot (convenience for today)
+    func undoStatus(slot: ScheduleSlot, modelContext: ModelContext, user: User) {
+        undoStatus(slot: slot, forDate: IntakeLog.todayDateString(), modelContext: modelContext, user: user)
     }
 
     // MARK: - Remind Me Actions

@@ -119,7 +119,12 @@ struct StreakService {
             let isToday = calendar.isDateInToday(date)
 
             if totalCount == 0 {
-                status = isToday ? .today : .missed
+                // Historical day with deleted/archived supplements but valid logs
+                if takenCount > 0 {
+                    status = isToday ? .today : .complete
+                } else {
+                    status = isToday ? .today : .missed
+                }
             } else if isToday {
                 if takenCount >= totalCount {
                     status = .complete
@@ -242,7 +247,12 @@ struct StreakService {
             if isBeforeTracking {
                 status = .future
             } else if totalCount == 0 {
-                status = isFuture ? .future : (isToday ? .today : .missed)
+                // Historical day with deleted/archived supplements but valid logs
+                if takenCount > 0 && !isFuture && !isToday {
+                    status = .complete  // User completed their schedule as it existed then
+                } else {
+                    status = isFuture ? .future : (isToday ? .today : .missed)
+                }
             } else if isFuture {
                 status = .future
             } else if isToday {

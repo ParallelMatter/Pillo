@@ -6,6 +6,7 @@ struct CalendarSheet: View {
     let slots: [ScheduleSlot]
     let supplements: [Supplement]
     let trackingStartDate: Date
+    let user: User  // For passing to DayDetailSheet for live data updates
 
     @Environment(\.dismiss) private var dismiss
     @State private var displayedMonth: Date = Date()
@@ -114,9 +115,9 @@ struct CalendarSheet: View {
                     DayDetailSheet(
                         date: date,
                         dayData: dayData,
-                        intakeLogs: intakeLogs,
                         slots: slots,
-                        supplements: supplements
+                        supplements: supplements,
+                        user: user  // DayDetailSheet reads intakeLogs from user relationship for live updates
                     )
                 }
             }
@@ -155,12 +156,5 @@ struct CalendarSheet: View {
     }
 }
 
-#Preview {
-    CalendarSheet(
-        intakeLogs: [],
-        slots: [],
-        supplements: [],
-        trackingStartDate: Date()
-    )
-    .preferredColorScheme(.dark)
-}
+// Preview requires a User model with SwiftData container
+// Use the app to test this view
