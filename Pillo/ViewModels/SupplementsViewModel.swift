@@ -208,6 +208,10 @@ class SupplementsViewModel {
             modelContext.delete(supplement)
         }
 
+        // Save deletion/archive before regenerating schedule to ensure SwiftData
+        // removes the supplement from relationships before we rebuild slots
+        try? modelContext.save()
+
         regenerateSchedule(for: user, modelContext: modelContext)
     }
 

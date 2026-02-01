@@ -62,6 +62,23 @@ struct TodayView: View {
                 }
                 return false
             }
+            // Defensive filter: ensure slots have actual supplements to display
+            // This catches edge cases where slot data becomes stale (e.g., SwiftData sync issues)
+            .filter { slot in
+                // Check if slot has any supplements that actually exist
+                let slotSupplements = supplements.filter { slot.supplementIds.contains($0.id) }
+                if !slotSupplements.isEmpty { return true }
+
+                // Also check if there are taken items for today that exist as supplements
+                let todayStr = IntakeLog.todayDateString()
+                if let log = intakeLogs.first(where: { $0.scheduleSlotId == slot.id && $0.date == todayStr }) {
+                    let hasTakenItems = log.supplementIdsTaken.contains { id in
+                        supplements.contains { $0.id == id }
+                    }
+                    return hasTakenItems
+                }
+                return false
+            }
             .sorted { slot1, slot2 in
                 // Get effective sort time for each slot (rescheduled time or original slot time)
                 let time1 = getEffectiveSortTime(for: slot1)
