@@ -3,7 +3,6 @@ import SwiftUI
 struct AddSupplementsView: View {
     @Bindable var viewModel: OnboardingViewModel
     @State private var showingManualEntry = false
-    @State private var showingBarcodeScanner = false
     @State private var selectedReference: SupplementReference?
     @FocusState private var isSearchFocused: Bool
 
@@ -23,41 +22,27 @@ struct AddSupplementsView: View {
             .padding(.top, Theme.spacingXL)
             .padding(.bottom, Theme.spacingLG)
 
-            // Search Bar with Barcode Button
-            HStack(spacing: Theme.spacingSM) {
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(Theme.textSecondary)
+            // Search Bar
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(Theme.textSecondary)
 
-                    TextField("Search supplements", text: $viewModel.searchQuery)
-                        .foregroundColor(Theme.textPrimary)
-                        .focused($isSearchFocused)
+                TextField("Search supplements", text: $viewModel.searchQuery)
+                    .foregroundColor(Theme.textPrimary)
+                    .focused($isSearchFocused)
 
-                    if !viewModel.searchQuery.isEmpty {
-                        Button(action: {
-                            viewModel.searchQuery = ""
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(Theme.textSecondary)
-                        }
+                if !viewModel.searchQuery.isEmpty {
+                    Button(action: {
+                        viewModel.searchQuery = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(Theme.textSecondary)
                     }
                 }
-                .padding(Theme.spacingMD)
-                .background(Theme.surface)
-                .cornerRadius(Theme.cornerRadiusSM)
-
-                // Barcode Scanner Button
-                Button(action: {
-                    showingBarcodeScanner = true
-                }) {
-                    Image(systemName: "barcode.viewfinder")
-                        .font(.system(size: 20))
-                        .foregroundColor(Theme.textPrimary)
-                        .frame(width: 48, height: 48)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-                }
             }
+            .padding(Theme.spacingMD)
+            .background(Theme.surface)
+            .cornerRadius(Theme.cornerRadiusSM)
             .padding(.horizontal, Theme.spacingLG)
 
             // Content
@@ -85,15 +70,6 @@ struct AddSupplementsView: View {
                         Text("Continue with \(count) \(count == 1 ? "supplement" : "supplements")")
                     }
                     .buttonStyle(PrimaryButtonStyle())
-
-                    // Secondary "Add more" to return to search
-                    Button(action: {
-                        viewModel.searchQuery = ""
-                        isSearchFocused = true
-                    }) {
-                        Text("Add more")
-                    }
-                    .buttonStyle(SecondaryButtonStyle())
                 }
                 // Note: When searching with no results, the "Add it" button is shown inline in SearchResultsList
             }
@@ -108,22 +84,6 @@ struct AddSupplementsView: View {
         }
         .sheet(isPresented: $showingManualEntry) {
             ManualSupplementEntrySheet(viewModel: viewModel)
-        }
-        .sheet(isPresented: $showingBarcodeScanner) {
-            BarcodeScannerView(
-                onProductFound: { product in
-                    // Try to find a matching supplement in the database
-                    if let reference = SupplementDatabaseService.shared.getSupplement(byName: product.name) {
-                        viewModel.addSupplement(from: reference)
-                    } else {
-                        // Pre-fill search with scanned product name
-                        viewModel.searchQuery = product.displayTitle
-                    }
-                },
-                onManualEntry: { _ in
-                    showingManualEntry = true
-                }
-            )
         }
         .sheet(item: $selectedReference) { reference in
             OnboardingSupplementDetailSheet(
@@ -165,7 +125,10 @@ struct SearchResultsList: View {
                         Button(action: {
                             showingManualEntry = true
                         }) {
-                            Text("Add it")
+                            HStack(spacing: Theme.spacingSM) {
+                                Image(systemName: "plus.circle.fill")
+                                Text("Add manually")
+                            }
                         }
                         .buttonStyle(PrimaryButtonStyle())
                     }
