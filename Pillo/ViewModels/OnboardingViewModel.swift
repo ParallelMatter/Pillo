@@ -81,7 +81,7 @@ class OnboardingViewModel {
             dosage: reference.defaultDosageMin,
             dosageUnit: reference.defaultDosageUnit
         )
-        selectedSupplements.append(entry)
+        selectedSupplements.insert(entry, at: 0)
         searchQuery = ""
     }
 
@@ -98,11 +98,25 @@ class OnboardingViewModel {
             dosageUnit: dosageUnit,
             customTime: customTime
         )
-        selectedSupplements.append(entry)
+        selectedSupplements.insert(entry, at: 0)
     }
 
     func removeSupplement(_ entry: SupplementEntry) {
         selectedSupplements.removeAll { $0.id == entry.id }
+    }
+
+    func updateSupplement(_ entry: SupplementEntry, name: String, category: SupplementCategory, dosage: Double?, dosageUnit: String?, customTime: String?) {
+        guard let index = selectedSupplements.firstIndex(where: { $0.id == entry.id }) else { return }
+
+        let updatedEntry = SupplementEntry(
+            reference: entry.reference,
+            name: name,
+            category: category,
+            dosage: dosage,
+            dosageUnit: dosageUnit,
+            customTime: customTime
+        )
+        selectedSupplements[index] = updatedEntry
     }
 
     func toggleGoal(_ goal: Goal) {
