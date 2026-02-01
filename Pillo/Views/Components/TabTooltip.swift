@@ -9,30 +9,31 @@ struct TabTooltip: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let tabWidth = geometry.size.width / CGFloat(totalTabs)
-            let tabCenterX = tabWidth * (CGFloat(tabIndex) + 0.5)
+            // Calculate offset from center: tab 1 of 5 is at 30%, center is 50%, so -20%
+            let tabFraction = (CGFloat(tabIndex) + 0.5) / CGFloat(totalTabs)
+            let offsetFromCenter = (tabFraction - 0.5) * geometry.size.width
 
-            VStack(spacing: 0) {
-                // Tooltip bubble
-                Text(text)
-                    .font(Theme.bodyFont)
-                    .fontWeight(.medium)
-                    .foregroundColor(Theme.background)
-                    .padding(.horizontal, Theme.spacingMD)
-                    .padding(.vertical, Theme.spacingSM)
-                    .background(Theme.accent)
-                    .cornerRadius(Theme.cornerRadiusSM)
-                    .shadow(color: Theme.accent.opacity(0.4), radius: 12, x: 0, y: 4)
+            VStack {
+                Spacer()
 
-                // Arrow pointing down
-                Triangle()
-                    .fill(Theme.accent)
-                    .frame(width: 14, height: 8)
+                VStack(spacing: 0) {
+                    Text(text)
+                        .font(Theme.bodyFont)
+                        .fontWeight(.medium)
+                        .foregroundColor(Theme.background)
+                        .padding(.horizontal, Theme.spacingMD)
+                        .padding(.vertical, Theme.spacingSM)
+                        .background(Theme.accent)
+                        .cornerRadius(Theme.cornerRadiusSM)
+
+                    Triangle()
+                        .fill(Theme.accent)
+                        .frame(width: 14, height: 8)
+                }
+                .offset(x: offsetFromCenter)
+                .padding(.bottom, 58)
             }
-            .position(
-                x: tabCenterX,
-                y: geometry.size.height - 70
-            )
+            .frame(maxWidth: .infinity)
         }
         .contentShape(Rectangle())
         .onTapGesture { onDismiss() }

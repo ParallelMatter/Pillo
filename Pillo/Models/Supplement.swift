@@ -9,6 +9,7 @@ enum SupplementCategory: String, Codable, CaseIterable {
     case probiotic = "probiotic"
     case herbal = "herbal"
     case aminoAcid = "amino_acid"
+    case medication = "medication"
     case other = "other"
 
     var displayName: String {
@@ -20,6 +21,7 @@ enum SupplementCategory: String, Codable, CaseIterable {
         case .probiotic: return "Probiotic"
         case .herbal: return "Herbal/Adaptogen"
         case .aminoAcid: return "Amino Acid"
+        case .medication: return "Medication"
         case .other: return "Other"
         }
     }

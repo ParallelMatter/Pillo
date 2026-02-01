@@ -95,9 +95,16 @@ struct AddSupplementSheet: View {
                                 .font(Theme.bodyFont)
                                 .foregroundColor(Theme.textPrimary)
 
-                            Text("Add as many as you need")
+                            Text("or add something not listed")
                                 .font(Theme.captionFont)
                                 .foregroundColor(Theme.textSecondary)
+
+                            Button(action: {
+                                showingManualEntry = true
+                            }) {
+                                Text("Add manually")
+                            }
+                            .buttonStyle(SecondaryButtonStyle())
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.top, Theme.spacingXXL)
@@ -112,15 +119,17 @@ struct AddSupplementSheet: View {
                                 .font(Theme.bodyFont)
                                 .foregroundColor(Theme.textSecondary)
 
-                            Text("Not here?")
-                                .font(Theme.captionFont)
+                            Text("Can't find it?")
+                                .font(Theme.bodyFont)
                                 .foregroundColor(Theme.textSecondary)
-                                .padding(.top, Theme.spacingSM)
 
                             Button(action: {
                                 showingManualEntry = true
                             }) {
-                                Text("Add it")
+                                HStack(spacing: Theme.spacingSM) {
+                                    Image(systemName: "plus.circle.fill")
+                                    Text("Add your own")
+                                }
                             }
                             .buttonStyle(PrimaryButtonStyle())
                         }
@@ -190,10 +199,10 @@ struct AddSupplementSheet: View {
                             showingManualEntry = true
                         }) {
                             HStack {
-                                Image(systemName: "square.and.pencil")
+                                Image(systemName: "plus.circle")
                                     .foregroundColor(Theme.textSecondary)
 
-                                Text("Not here? Add it")
+                                Text("Add something else")
                                     .font(Theme.bodyFont)
                                     .foregroundColor(Theme.textSecondary)
 
