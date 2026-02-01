@@ -95,6 +95,9 @@ struct Theme {
     static let cornerRadiusMD: CGFloat = 12
     static let cornerRadiusLG: CGFloat = 16
 
+    // MARK: - Field Heights
+    static let fieldHeight: CGFloat = 52
+
     // MARK: - Animation
     static let animationDuration: Double = 0.3
     static let springAnimation = Animation.spring(response: 0.4, dampingFraction: 0.8)

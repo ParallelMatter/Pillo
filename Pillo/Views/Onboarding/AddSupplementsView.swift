@@ -4,6 +4,7 @@ struct AddSupplementsView: View {
     @Bindable var viewModel: OnboardingViewModel
     @State private var showingManualEntry = false
     @State private var selectedReference: SupplementReference?
+    @State private var selectedEntryForInfo: OnboardingViewModel.SupplementEntry?
     @FocusState private var isSearchFocused: Bool
 
     var body: some View {
@@ -45,7 +46,7 @@ struct AddSupplementsView: View {
             .cornerRadius(Theme.cornerRadiusSM)
             .padding(.horizontal, Theme.spacingLG)
 
-            // Content
+            // Content - fills available space between header and button
             if !viewModel.searchQuery.isEmpty {
                 // Search Results
                 SearchResultsList(
@@ -54,11 +55,13 @@ struct AddSupplementsView: View {
                     showingManualEntry: $showingManualEntry
                 )
             } else {
-                // Selected Supplements
-                SelectedSupplementsList(viewModel: viewModel)
+                // Selected Supplements - centers content within available space
+                SelectedSupplementsList(
+                    viewModel: viewModel,
+                    selectedEntryForInfo: $selectedEntryForInfo
+                )
+                .frame(maxHeight: .infinity)
             }
-
-            Spacer()
 
             // Bottom Buttons - Progressive visibility based on state
             VStack(spacing: Theme.spacingMD) {
@@ -90,6 +93,15 @@ struct AddSupplementsView: View {
                 reference: reference,
                 viewModel: viewModel
             )
+        }
+        .sheet(item: $selectedEntryForInfo) { entry in
+            if let reference = entry.reference {
+                // Database item - show info sheet
+                OnboardingSupplementInfoSheet(reference: reference)
+            } else {
+                // Custom item - show edit sheet
+                EditCustomSupplementSheet(entry: entry, viewModel: viewModel)
+            }
         }
     }
 }
@@ -188,71 +200,170 @@ struct SearchResultsList: View {
     }
 }
 
+// Preference key for scroll tracking
+struct ScrollOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 struct SelectedSupplementsList: View {
     @Bindable var viewModel: OnboardingViewModel
+    @Binding var selectedEntryForInfo: OnboardingViewModel.SupplementEntry?
+    @State private var scrollOffset: CGFloat = 0
+    @State private var contentWidth: CGFloat = 0
+    @State private var containerWidth: CGFloat = 0
+
+    // Fixed height rows - prevents stretching
+    private let rows = [
+        GridItem(.fixed(72), spacing: Theme.spacingXS),
+        GridItem(.fixed(72), spacing: Theme.spacingXS)
+    ]
+
+    // Display oldest first (items are stored newest-first)
+    private var orderedItems: [OnboardingViewModel.SupplementEntry] {
+        Array(viewModel.selectedSupplements.reversed())
+    }
+
+    // Show left fade when scrolled away from start
+    private var showLeftFade: Bool {
+        scrollOffset < -10
+    }
+
+    // Show right fade when content extends beyond visible area
+    private var showRightFade: Bool {
+        contentWidth > containerWidth && (contentWidth + scrollOffset - containerWidth) > 10
+    }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: Theme.spacingSM) {
-                if viewModel.selectedSupplements.isEmpty {
-                    VStack(spacing: Theme.spacingMD) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 32))
-                            .foregroundColor(Theme.textSecondary.opacity(0.5))
+        if viewModel.selectedSupplements.isEmpty {
+            VStack(spacing: Theme.spacingMD) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 32))
+                    .foregroundColor(Theme.textSecondary.opacity(0.5))
 
-                        Text("Search for your supplements")
-                            .font(Theme.bodyFont)
-                            .foregroundColor(Theme.textPrimary)
+                Text("Search for your supplements")
+                    .font(Theme.bodyFont)
+                    .foregroundColor(Theme.textPrimary)
 
-                        Text("Add as many as you need")
-                            .font(Theme.captionFont)
-                            .foregroundColor(Theme.textSecondary)
-                    }
-                    .padding(.top, Theme.spacingXXL)
-                } else {
-                    ForEach(viewModel.selectedSupplements, id: \.id) { entry in
-                        HStack {
-                            VStack(alignment: .leading, spacing: Theme.spacingXS) {
-                                Text(entry.name)
-                                    .font(Theme.bodyFont)
-                                    .foregroundColor(Theme.textPrimary)
-
-                                HStack(spacing: Theme.spacingSM) {
-                                    Text(entry.category.displayName)
-                                        .font(Theme.captionFont)
-                                        .foregroundColor(Theme.textSecondary)
-
-                                    if let dosage = entry.dosage, let unit = entry.dosageUnit {
-                                        Text("•")
-                                            .foregroundColor(Theme.textSecondary)
-                                        Text("\(Int(dosage))\(unit)")
-                                            .font(Theme.captionFont)
-                                            .foregroundColor(Theme.textSecondary)
+                Text("Add as many as you need")
+                    .font(Theme.captionFont)
+                    .foregroundColor(Theme.textSecondary)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ZStack {
+                GeometryReader { containerGeometry in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHGrid(rows: rows, spacing: Theme.spacingSM) {
+                            ForEach(orderedItems, id: \.id) { entry in
+                                SupplementPill(
+                                    entry: entry,
+                                    onTap: { selectedEntryForInfo = entry },
+                                    onRemove: {
+                                        withAnimation { viewModel.removeSupplement(entry) }
                                     }
-                                }
-                            }
-
-                            Spacer()
-
-                            Button(action: {
-                                withAnimation {
-                                    viewModel.removeSupplement(entry)
-                                }
-                            }) {
-                                Image(systemName: "xmark")
-                                    .foregroundColor(Theme.textSecondary)
-                                    .padding(Theme.spacingSM)
+                                )
                             }
                         }
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
+                        .padding(.horizontal, Theme.spacingLG)
+                        .padding(.vertical, Theme.spacingSM)
+                        .background(
+                            GeometryReader { contentGeometry in
+                                Color.clear
+                                    .preference(
+                                        key: ScrollOffsetKey.self,
+                                        value: contentGeometry.frame(in: .named("scroll")).minX
+                                    )
+                                    .onAppear {
+                                        contentWidth = contentGeometry.size.width
+                                    }
+                                    .onChange(of: viewModel.selectedSupplements.count) {
+                                        // Update content width when items change
+                                        DispatchQueue.main.async {
+                                            contentWidth = contentGeometry.size.width
+                                        }
+                                    }
+                            }
+                        )
+                    }
+                    .coordinateSpace(name: "scroll")
+                    .onPreferenceChange(ScrollOffsetKey.self) { value in
+                        scrollOffset = value
+                    }
+                    .onAppear {
+                        containerWidth = containerGeometry.size.width
+                    }
+                }
+
+                // Bidirectional fade indicators
+                HStack {
+                    // Left fade (when scrolled away from start)
+                    if showLeftFade {
+                        LinearGradient(
+                            colors: [Theme.background, .clear],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .frame(width: 40)
+                        .allowsHitTesting(false)
+                    }
+
+                    Spacer()
+
+                    // Right fade (when more content exists to the right)
+                    if showRightFade {
+                        LinearGradient(
+                            colors: [.clear, Theme.background],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .frame(width: 40)
+                        .allowsHitTesting(false)
                     }
                 }
             }
-            .padding(.horizontal, Theme.spacingLG)
-            .padding(.top, Theme.spacingMD)
+            .frame(maxHeight: .infinity)
         }
+    }
+}
+
+struct SupplementPill: View {
+    let entry: OnboardingViewModel.SupplementEntry
+    let onTap: () -> Void
+    let onRemove: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: Theme.spacingSM) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(entry.name)
+                        .font(Theme.bodyFont)
+                        .foregroundColor(Theme.textPrimary)
+                        .lineLimit(1)
+
+                    Text(entry.category.displayName)
+                        .font(Theme.captionFont)
+                        .foregroundColor(Theme.textSecondary)
+                        .lineLimit(1)
+                }
+
+                Spacer(minLength: 0)
+
+                Button(action: onRemove) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(Theme.textSecondary)
+                }
+            }
+            .frame(width: 127)  // Fits 2 pills on iPhone SE (375pt)
+            .padding(.horizontal, Theme.spacingMD)
+            .padding(.vertical, Theme.spacingMD)  // Taller pills with more breathing room
+            .background(Theme.surface)
+            .cornerRadius(Theme.cornerRadiusLG)
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -290,6 +401,162 @@ struct ManualSupplementEntrySheet: View {
                                     .foregroundColor(Theme.textSecondary)
 
                                 TextField("What are you adding?", text: $name)
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textPrimary)
+                                    .padding(Theme.spacingMD)
+                                    .background(Theme.surface)
+                                    .cornerRadius(Theme.cornerRadiusSM)
+                            }
+
+                            // Category
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("CATEGORY")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Picker("Category", selection: $category) {
+                                    ForEach(SupplementCategory.allCases, id: \.self) { cat in
+                                        Text(cat.displayName).tag(cat)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(Theme.textPrimary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .frame(height: Theme.fieldHeight)
+                                .background(Theme.surface)
+                                .cornerRadius(Theme.cornerRadiusSM)
+                            }
+
+                            // Dosage
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("DOSAGE (OPTIONAL)")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                HStack(spacing: Theme.spacingMD) {
+                                    TextField("Amount", text: $dosageString)
+                                        .font(Theme.bodyFont)
+                                        .foregroundColor(Theme.textPrimary)
+                                        .keyboardType(.decimalPad)
+                                        .padding(.horizontal, Theme.spacingMD)
+                                        .frame(height: Theme.fieldHeight)
+                                        .background(Theme.surface)
+                                        .cornerRadius(Theme.cornerRadiusSM)
+
+                                    Picker("Unit", selection: $dosageUnit) {
+                                        ForEach(dosageUnits, id: \.self) { unit in
+                                            Text(unit).tag(unit)
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .tint(Theme.textPrimary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .frame(height: Theme.fieldHeight)
+                                    .background(Theme.surface)
+                                    .cornerRadius(Theme.cornerRadiusSM)
+                                }
+                            }
+
+                            // Time
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("TIME")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                DatePicker(
+                                    "Time",
+                                    selection: $customTime,
+                                    displayedComponents: .hourAndMinute
+                                )
+                                .datePickerStyle(.compact)
+                                .labelsHidden()
+                                .tint(Theme.accent)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .frame(height: Theme.fieldHeight)
+                                .background(Theme.surface)
+                                .cornerRadius(Theme.cornerRadiusSM)
+                            }
+                        }
+                        .padding(Theme.spacingLG)
+                    }
+                    .scrollDismissesKeyboard(.interactively)
+
+                    // Fixed button at bottom
+                    Button(action: {
+                        let dosage = Double(dosageString)
+                        viewModel.addManualSupplement(
+                            name: name,
+                            category: category,
+                            dosage: dosage,
+                            dosageUnit: dosage != nil ? dosageUnit : nil,
+                            customTime: customTimeString
+                        )
+                        viewModel.searchQuery = ""  // Clear search to show pills view
+                        dismiss()
+                    }) {
+                        Text("Add")
+                    }
+                    .buttonStyle(PrimaryButtonStyle())
+                    .disabled(name.isEmpty)
+                    .opacity(name.isEmpty ? 0.5 : 1)
+                    .padding(Theme.spacingLG)
+                }
+            }
+            .navigationTitle("Add Your Own")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .foregroundColor(Theme.textSecondary)
+                }
+            }
+        }
+        .presentationDetents([.large])
+    }
+}
+
+// MARK: - Edit Custom Supplement Sheet
+
+struct EditCustomSupplementSheet: View {
+    let entry: OnboardingViewModel.SupplementEntry
+    @Bindable var viewModel: OnboardingViewModel
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var name: String = ""
+    @State private var category: SupplementCategory = .other
+    @State private var dosageString: String = ""
+    @State private var dosageUnit: String = "mg"
+    @State private var customTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
+
+    let dosageUnits = ["mg", "mcg", "g", "IU", "ml", "serving", "capsule", "tablet", "softgel", "gummy", "billion CFU"]
+
+    private var customTimeString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: customTime)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Theme.background.ignoresSafeArea()
+
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(spacing: Theme.spacingLG) {
+                            // Name
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("NAME")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                TextField("Supplement name", text: $name)
                                     .font(Theme.bodyFont)
                                     .foregroundColor(Theme.textPrimary)
                                     .padding(Theme.spacingMD)
@@ -372,10 +639,11 @@ struct ManualSupplementEntrySheet: View {
                     }
                     .scrollDismissesKeyboard(.interactively)
 
-                    // Fixed button at bottom
+                    // Save button
                     Button(action: {
                         let dosage = Double(dosageString)
-                        viewModel.addManualSupplement(
+                        viewModel.updateSupplement(
+                            entry,
                             name: name,
                             category: category,
                             dosage: dosage,
@@ -384,7 +652,7 @@ struct ManualSupplementEntrySheet: View {
                         )
                         dismiss()
                     }) {
-                        Text("Add")
+                        Text("Save")
                     }
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(name.isEmpty)
@@ -392,7 +660,7 @@ struct ManualSupplementEntrySheet: View {
                     .padding(Theme.spacingLG)
                 }
             }
-            .navigationTitle("Add Your Own")
+            .navigationTitle("Edit Supplement")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -404,6 +672,22 @@ struct ManualSupplementEntrySheet: View {
             }
         }
         .presentationDetents([.large])
+        .onAppear {
+            // Pre-populate with current values
+            name = entry.name
+            category = entry.category
+            dosageString = entry.dosage.map { String($0) } ?? ""
+            dosageUnit = entry.dosageUnit ?? "mg"
+
+            // Parse customTime string to Date
+            if let timeString = entry.customTime {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "HH:mm"
+                if let date = formatter.date(from: timeString) {
+                    customTime = date
+                }
+            }
+        }
     }
 }
 
@@ -524,6 +808,121 @@ struct OnboardingSupplementDetailSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .foregroundColor(Theme.textPrimary)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Info-Only Sheet (for viewing already-selected supplements)
+
+struct OnboardingSupplementInfoSheet: View {
+    let reference: SupplementReference
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Theme.background.ignoresSafeArea()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: Theme.spacingLG) {
+                        // Header
+                        VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                            Text(reference.primaryName.uppercased())
+                                .font(Theme.titleFont)
+                                .tracking(1)
+                                .foregroundColor(Theme.textPrimary)
+
+                            Text(reference.supplementCategory.displayName)
+                                .font(Theme.bodyFont)
+                                .foregroundColor(Theme.textSecondary)
+
+                            Text("Typical dose: \(reference.displayDosageRange)")
+                                .font(Theme.bodyFont)
+                                .foregroundColor(Theme.textSecondary)
+                        }
+
+                        Divider()
+                            .background(Theme.border)
+
+                        if !reference.benefits.isEmpty {
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("WHY IT MATTERS")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Text(reference.benefits)
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textPrimary)
+                                    .lineSpacing(4)
+                            }
+                        }
+
+                        if !reference.absorptionNotes.isEmpty {
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("BEST TIME TO TAKE")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Text(reference.absorptionNotes)
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textPrimary)
+                                    .lineSpacing(4)
+                            }
+                        }
+
+                        if !reference.avoidWith.isEmpty {
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("WHAT TO AVOID")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                ForEach(reference.avoidWith, id: \.self) { avoid in
+                                    HStack(alignment: .top, spacing: Theme.spacingSM) {
+                                        Text("\u{2022}")
+                                            .foregroundColor(Theme.warning)
+                                        Text("Don't take with \(avoid.replacingOccurrences(of: "_", with: " ").capitalized)")
+                                            .font(Theme.bodyFont)
+                                            .foregroundColor(Theme.textPrimary)
+                                    }
+                                }
+                            }
+                        }
+
+                        if !reference.pairsWith.isEmpty {
+                            VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                                Text("PAIRS WELL WITH")
+                                    .font(Theme.headerFont)
+                                    .tracking(1)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                ForEach(reference.pairsWith, id: \.self) { pair in
+                                    HStack(alignment: .top, spacing: Theme.spacingSM) {
+                                        Text("\u{2022}")
+                                            .foregroundColor(Theme.success)
+                                        Text(pair.replacingOccurrences(of: "_", with: " ").capitalized)
+                                            .font(Theme.bodyFont)
+                                            .foregroundColor(Theme.textPrimary)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding(Theme.spacingLG)
+                }
+            }
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         dismiss()
                     }

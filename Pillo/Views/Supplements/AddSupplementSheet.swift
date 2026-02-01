@@ -312,7 +312,7 @@ struct ManualEntrySheet: View {
                                 .pickerStyle(.menu)
                                 .tint(Theme.textPrimary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(Theme.spacingMD)
+                                .frame(height: Theme.fieldHeight)
                                 .background(Theme.surface)
                                 .cornerRadius(Theme.cornerRadiusSM)
                             }
@@ -329,7 +329,8 @@ struct ManualEntrySheet: View {
                                         .font(Theme.bodyFont)
                                         .foregroundColor(Theme.textPrimary)
                                         .keyboardType(.decimalPad)
-                                        .padding(Theme.spacingMD)
+                                        .padding(.horizontal, Theme.spacingMD)
+                                        .frame(height: Theme.fieldHeight)
                                         .background(Theme.surface)
                                         .cornerRadius(Theme.cornerRadiusSM)
 
@@ -341,7 +342,7 @@ struct ManualEntrySheet: View {
                                     .pickerStyle(.menu)
                                     .tint(Theme.textPrimary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(Theme.spacingMD)
+                                    .frame(height: Theme.fieldHeight)
                                     .background(Theme.surface)
                                     .cornerRadius(Theme.cornerRadiusSM)
                                 }
@@ -363,7 +364,7 @@ struct ManualEntrySheet: View {
                                 .labelsHidden()
                                 .tint(Theme.accent)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(Theme.spacingMD)
+                                .frame(height: Theme.fieldHeight)
                                 .background(Theme.surface)
                                 .cornerRadius(Theme.cornerRadiusSM)
                             }
@@ -383,7 +384,7 @@ struct ManualEntrySheet: View {
                                 .pickerStyle(.menu)
                                 .tint(Theme.textPrimary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(Theme.spacingMD)
+                                .frame(height: Theme.fieldHeight)
                                 .background(Theme.surface)
                                 .cornerRadius(Theme.cornerRadiusSM)
 

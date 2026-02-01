@@ -85,7 +85,8 @@ private struct FrequencyTypeRow: View {
             .pickerStyle(.menu)
             .tint(Theme.textSecondary)
         }
-        .padding(Theme.spacingMD)
+        .frame(height: Theme.fieldHeight)
+        .padding(.horizontal, Theme.spacingMD)
         .background(Theme.surface)
         .cornerRadius(Theme.cornerRadiusMD)
     }
