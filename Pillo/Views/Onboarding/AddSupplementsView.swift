@@ -126,7 +126,7 @@ struct SearchResultsList: View {
                         }) {
                             HStack(spacing: Theme.spacingSM) {
                                 Image(systemName: "plus.circle.fill")
-                                Text("Create new")
+                                Text("Add your own")
                             }
                         }
                         .buttonStyle(PrimaryButtonStyle())
@@ -289,7 +289,7 @@ struct ManualSupplementEntrySheet: View {
                                     .tracking(1)
                                     .foregroundColor(Theme.textSecondary)
 
-                                TextField("Supplement name", text: $name)
+                                TextField("What are you adding?", text: $name)
                                     .font(Theme.bodyFont)
                                     .foregroundColor(Theme.textPrimary)
                                     .padding(Theme.spacingMD)
@@ -384,7 +384,7 @@ struct ManualSupplementEntrySheet: View {
                         )
                         dismiss()
                     }) {
-                        Text("Add supplement")
+                        Text("Add")
                     }
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(name.isEmpty)
@@ -392,7 +392,7 @@ struct ManualSupplementEntrySheet: View {
                     .padding(Theme.spacingLG)
                 }
             }
-            .navigationTitle("Add Manually")
+            .navigationTitle("Add Your Own")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

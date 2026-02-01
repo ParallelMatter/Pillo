@@ -102,7 +102,7 @@ struct AddSupplementSheet: View {
                             Button(action: {
                                 showingManualEntry = true
                             }) {
-                                Text("Add manually")
+                                Text("Add your own")
                             }
                             .buttonStyle(SecondaryButtonStyle())
                         }
@@ -289,7 +289,7 @@ struct ManualEntrySheet: View {
                                     .tracking(1)
                                     .foregroundColor(Theme.textSecondary)
 
-                                TextField("Supplement name", text: $name)
+                                TextField("What are you adding?", text: $name)
                                     .font(Theme.bodyFont)
                                     .foregroundColor(Theme.textPrimary)
                                     .padding(Theme.spacingMD)
@@ -476,7 +476,7 @@ struct ManualEntrySheet: View {
                             showDuplicateAlert = true
                         }
                     }) {
-                        Text("Add supplement")
+                        Text("Add")
                     }
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(name.isEmpty)
@@ -484,7 +484,7 @@ struct ManualEntrySheet: View {
                     .padding(Theme.spacingLG)
                 }
             }
-            .navigationTitle("Add Manually")
+            .navigationTitle("Add Your Own")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

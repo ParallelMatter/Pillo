@@ -243,6 +243,8 @@ class SchedulingService {
             return .withBreakfast
         case .aminoAcid:
             return .emptyStomach
+        case .medication:
+            return .withBreakfast
         case .other:
             return .withBreakfast
         }
