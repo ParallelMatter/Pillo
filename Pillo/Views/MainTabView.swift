@@ -44,7 +44,7 @@ struct MainTabView: View {
                     text: "Add more anytime here",
                     onDismiss: dismissHint
                 )
-                .transition(AnyTransition.opacity.combined(with: .scale))
+                .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .bottom).combined(with: .opacity)))
             }
         }
         .onAppear {
