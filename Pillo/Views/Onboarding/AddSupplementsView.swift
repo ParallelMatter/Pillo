@@ -86,24 +86,16 @@ struct AddSupplementsView: View {
                     }
                     .buttonStyle(PrimaryButtonStyle())
 
-                    // Secondary "Add manually" when supplements exist
+                    // Secondary "Add more" to return to search
                     Button(action: {
-                        showingManualEntry = true
+                        viewModel.searchQuery = ""
+                        isSearchFocused = true
                     }) {
-                        Text("Add manually")
+                        Text("Add more")
                     }
                     .buttonStyle(SecondaryButtonStyle())
-                } else if viewModel.searchQuery.isEmpty {
-                    // Subtle link when empty state (no supplements, no search)
-                    Button(action: {
-                        showingManualEntry = true
-                    }) {
-                        Text("Can't find yours? Add manually")
-                            .font(Theme.captionFont)
-                            .foregroundColor(Theme.textSecondary)
-                    }
                 }
-                // Note: When searching with no results, the button is shown inline in SearchResultsList
+                // Note: When searching with no results, the "Add it" button is shown inline in SearchResultsList
             }
             .padding(.horizontal, Theme.spacingLG)
             .padding(.bottom, Theme.spacingXL)
@@ -165,13 +157,17 @@ struct SearchResultsList: View {
                             .font(Theme.bodyFont)
                             .foregroundColor(Theme.textSecondary)
 
+                        Text("Not here?")
+                            .font(Theme.captionFont)
+                            .foregroundColor(Theme.textSecondary)
+                            .padding(.top, Theme.spacingSM)
+
                         Button(action: {
                             showingManualEntry = true
                         }) {
-                            Text("Add manually")
+                            Text("Add it")
                         }
                         .buttonStyle(PrimaryButtonStyle())
-                        .padding(.top, Theme.spacingSM)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.top, Theme.spacingXXL)

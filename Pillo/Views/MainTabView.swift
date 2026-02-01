@@ -3,6 +3,7 @@ import SwiftData
 
 struct MainTabView: View {
     @Binding var selectedTab: Int
+    @State private var showRoutineHint = false
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -37,6 +38,41 @@ struct MainTabView: View {
                 .tag(4)
         }
         .tint(Theme.textPrimary)
+        .overlay {
+            if showRoutineHint {
+                TabTooltip(
+                    text: "Add more anytime here",
+                    onDismiss: dismissHint
+                )
+                .transition(AnyTransition.opacity.combined(with: .scale))
+            }
+        }
+        .onAppear {
+            checkAndShowHint()
+        }
+    }
+
+    private func checkAndShowHint() {
+        guard !SharedContainer.hasSeenRoutineHint() else { return }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation(Theme.springAnimation) {
+                showRoutineHint = true
+            }
+            // Auto-dismiss after 4 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                if showRoutineHint {
+                    dismissHint()
+                }
+            }
+        }
+    }
+
+    private func dismissHint() {
+        withAnimation(Theme.springAnimation) {
+            showRoutineHint = false
+        }
+        SharedContainer.setRoutineHintSeen()
     }
 }
 

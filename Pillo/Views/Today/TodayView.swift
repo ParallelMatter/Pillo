@@ -143,15 +143,6 @@ struct TodayView: View {
                                 }
                             )
                             .padding(.horizontal, Theme.spacingLG)
-                            .sheet(isPresented: $showingCalendar) {
-                                CalendarSheet(
-                                    intakeLogs: Array(intakeLogs),
-                                    slots: Array(user.scheduleSlots ?? []),
-                                    supplements: Array(supplements),
-                                    trackingStartDate: user.createdAt,
-                                    user: user
-                                )
-                            }
 
                             // Progress Card
                             ProgressCard(
@@ -208,6 +199,15 @@ struct TodayView: View {
                         }
                     }
                     .id(refreshID)
+                    .sheet(isPresented: $showingCalendar) {
+                        CalendarSheet(
+                            intakeLogs: Array(intakeLogs),
+                            slots: Array(user.scheduleSlots ?? []),
+                            supplements: Array(supplements),
+                            trackingStartDate: user.createdAt,
+                            user: user
+                        )
+                    }
                 } else {
                     Text("No schedule found")
                         .foregroundColor(Theme.textSecondary)

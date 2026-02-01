@@ -17,6 +17,7 @@ struct SharedContainer {
         static let nextDoseSupplements = "nextDoseSupplements"
         static let nextDoseContext = "nextDoseContext"
         static let lastUpdated = "lastUpdated"
+        static let hasSeenRoutineHint = "hasSeenRoutineHint"
     }
 
     // MARK: - Today Progress
@@ -58,6 +59,15 @@ struct SharedContainer {
     // MARK: - Last Updated
     static func getLastUpdated() -> Date? {
         sharedDefaults?.object(forKey: Keys.lastUpdated) as? Date
+    }
+
+    // MARK: - Routine Hint
+    static func hasSeenRoutineHint() -> Bool {
+        sharedDefaults?.bool(forKey: Keys.hasSeenRoutineHint) ?? false
+    }
+
+    static func setRoutineHintSeen() {
+        sharedDefaults?.set(true, forKey: Keys.hasSeenRoutineHint)
     }
 
     // MARK: - Clear All

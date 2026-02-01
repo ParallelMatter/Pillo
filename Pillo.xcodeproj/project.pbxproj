@@ -16,6 +16,7 @@
 		4FCF1B5D2F272874007C5ED8 /* RemindMeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF1B5B2F272874007C5ED8 /* RemindMeSheet.swift */; };
 		4FCF1B5E2F272874007C5ED8 /* TimePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF1B5C2F272874007C5ED8 /* TimePickerSheet.swift */; };
 		4FCF1B602F2739F6007C5ED8 /* SupplementReferenceDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF1B5F2F2739F6007C5ED8 /* SupplementReferenceDetailSheet.swift */; };
+		4FCF1B8A2F2ED1CC007C5ED8 /* TabTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF1B892F2ED1CC007C5ED8 /* TabTooltip.swift */; };
 		CA1000000000000000000001 /* CalendarSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000001 /* CalendarSheet.swift */; };
 		CA1000000000000000000002 /* MonthCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000002 /* MonthCalendarView.swift */; };
 		CA1000000000000000000003 /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000003 /* CalendarDayCell.swift */; };
@@ -116,6 +117,7 @@
 		4FCF1B5B2F272874007C5ED8 /* RemindMeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindMeSheet.swift; sourceTree = "<group>"; };
 		4FCF1B5C2F272874007C5ED8 /* TimePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePickerSheet.swift; sourceTree = "<group>"; };
 		4FCF1B5F2F2739F6007C5ED8 /* SupplementReferenceDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementReferenceDetailSheet.swift; sourceTree = "<group>"; };
+		4FCF1B892F2ED1CC007C5ED8 /* TabTooltip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabTooltip.swift; sourceTree = "<group>"; };
 		CA2000000000000000000001 /* CalendarSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSheet.swift; sourceTree = "<group>"; };
 		CA2000000000000000000002 /* MonthCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCalendarView.swift; sourceTree = "<group>"; };
 		CA2000000000000000000003 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
@@ -440,6 +442,7 @@
 		F71000000000000000000001 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4FCF1B892F2ED1CC007C5ED8 /* TabTooltip.swift */,
 				4FCF18492F249C81007C5ED8 /* ScheduleFrequencyPicker.swift */,
 				F21000000000000000000004 /* BarcodeScannerView.swift */,
 			);
@@ -635,6 +638,7 @@
 				E10000000000000000000006 /* Supplement.swift in Sources */,
 				4FCF1B602F2739F6007C5ED8 /* SupplementReferenceDetailSheet.swift in Sources */,
 				E10000000000000000000007 /* ScheduleSlot.swift in Sources */,
+				4FCF1B8A2F2ED1CC007C5ED8 /* TabTooltip.swift in Sources */,
 				E10000000000000000000008 /* IntakeLog.swift in Sources */,
 				E10000000000000000000009 /* SupplementReference.swift in Sources */,
 				E10000000000000000000010 /* Goal.swift in Sources */,

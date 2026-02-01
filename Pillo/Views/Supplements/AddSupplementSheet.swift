@@ -7,7 +7,6 @@ struct AddSupplementSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
-    @State private var showingSearch = false
     @State private var searchQuery = ""
     @State private var showingManualEntry = false
     @State private var showingBarcodeScanner = false
@@ -24,26 +23,15 @@ struct AddSupplementSheet: View {
                 Theme.background.ignoresSafeArea()
 
                 VStack(spacing: Theme.spacingMD) {
-                    if showingSearch {
-                        // Search Mode
-                        searchView
-                    } else {
-                        // Menu Mode - Show options
-                        menuView
-                    }
+                    searchView
                 }
             }
             .navigationTitle("Add to Routine")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(showingSearch ? "Back" : "Cancel") {
-                        if showingSearch {
-                            showingSearch = false
-                            searchQuery = ""
-                        } else {
-                            dismiss()
-                        }
+                    Button("Cancel") {
+                        dismiss()
                     }
                     .foregroundColor(Theme.textSecondary)
                 }
@@ -69,9 +57,8 @@ struct AddSupplementSheet: View {
                                 showDuplicateAlert = true
                             }
                         } else {
-                            // Pre-fill search and show search view
+                            // Pre-fill search with scanned product name
                             searchQuery = product.displayTitle
-                            showingSearch = true
                         }
                     },
                     onManualEntry: { _ in
@@ -95,217 +82,181 @@ struct AddSupplementSheet: View {
         }
     }
 
-    // MARK: - Menu View
-
-    private var menuView: some View {
-        VStack(spacing: Theme.spacingSM) {
-            // Search supplements option
-            Button(action: {
-                showingSearch = true
-            }) {
-                HStack(spacing: Theme.spacingMD) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 20))
-                        .foregroundColor(Theme.accent)
-                        .frame(width: 32)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Search supplements")
-                            .font(Theme.bodyFont)
-                            .foregroundColor(Theme.textPrimary)
-
-                        Text("Browse our database of 199+ supplements")
-                            .font(Theme.captionFont)
-                            .foregroundColor(Theme.textSecondary)
-                    }
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14))
-                        .foregroundColor(Theme.textSecondary)
-                }
-                .padding(Theme.spacingMD)
-                .background(Theme.surface)
-                .cornerRadius(Theme.cornerRadiusSM)
-            }
-
-            // Add personal item option
-            Button(action: {
-                showingManualEntry = true
-            }) {
-                HStack(spacing: Theme.spacingMD) {
-                    Image(systemName: "square.and.pencil")
-                        .font(.system(size: 20))
-                        .foregroundColor(Theme.accent)
-                        .frame(width: 32)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Add personal item")
-                            .font(Theme.bodyFont)
-                            .foregroundColor(Theme.textPrimary)
-
-                        Text("Create a custom supplement entry")
-                            .font(Theme.captionFont)
-                            .foregroundColor(Theme.textSecondary)
-                    }
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14))
-                        .foregroundColor(Theme.textSecondary)
-                }
-                .padding(Theme.spacingMD)
-                .background(Theme.surface)
-                .cornerRadius(Theme.cornerRadiusSM)
-            }
-
-            // Scan barcode option
-            Button(action: {
-                showingBarcodeScanner = true
-            }) {
-                HStack(spacing: Theme.spacingMD) {
-                    Image(systemName: "barcode.viewfinder")
-                        .font(.system(size: 20))
-                        .foregroundColor(Theme.accent)
-                        .frame(width: 32)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Scan barcode")
-                            .font(Theme.bodyFont)
-                            .foregroundColor(Theme.textPrimary)
-
-                        Text("Identify supplements from packaging")
-                            .font(Theme.captionFont)
-                            .foregroundColor(Theme.textSecondary)
-                    }
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14))
-                        .foregroundColor(Theme.textSecondary)
-                }
-                .padding(Theme.spacingMD)
-                .background(Theme.surface)
-                .cornerRadius(Theme.cornerRadiusSM)
-            }
-
-            Spacer()
-        }
-        .padding(.horizontal, Theme.spacingLG)
-        .padding(.top, Theme.spacingLG)
-    }
-
     // MARK: - Search View
+
+    @FocusState private var isSearchFocused: Bool
 
     private var searchView: some View {
         VStack(spacing: Theme.spacingMD) {
-            // Search Bar
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(Theme.textSecondary)
+            // Search Bar with Barcode Button
+            HStack(spacing: Theme.spacingSM) {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(Theme.textSecondary)
 
-                TextField("Search supplements", text: $searchQuery)
-                    .foregroundColor(Theme.textPrimary)
+                    TextField("Search supplements", text: $searchQuery)
+                        .foregroundColor(Theme.textPrimary)
+                        .focused($isSearchFocused)
 
-                if !searchQuery.isEmpty {
-                    Button(action: { searchQuery = "" }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(Theme.textSecondary)
+                    if !searchQuery.isEmpty {
+                        Button(action: { searchQuery = "" }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(Theme.textSecondary)
+                        }
                     }
                 }
+                .padding(Theme.spacingMD)
+                .background(Theme.surface)
+                .cornerRadius(Theme.cornerRadiusSM)
+
+                // Barcode Scanner Button
+                Button(action: {
+                    showingBarcodeScanner = true
+                }) {
+                    Image(systemName: "barcode.viewfinder")
+                        .font(.system(size: 20))
+                        .foregroundColor(Theme.textPrimary)
+                        .frame(width: 48, height: 48)
+                        .background(Theme.surface)
+                        .cornerRadius(Theme.cornerRadiusSM)
+                }
             }
-            .padding(Theme.spacingMD)
-            .background(Theme.surface)
-            .cornerRadius(Theme.cornerRadiusSM)
             .padding(.horizontal, Theme.spacingLG)
 
             // Results
             ScrollView {
                 LazyVStack(spacing: Theme.spacingSM) {
-                    ForEach(searchResults) { result in
-                        HStack {
-                            // Main content - tap to open detail sheet
-                            Button(action: {
-                                selectedReference = result.supplement
-                            }) {
-                                VStack(alignment: .leading, spacing: Theme.spacingXS) {
-                                    Text(result.supplement.primaryName)
-                                        .font(Theme.bodyFont)
-                                        .foregroundColor(Theme.textPrimary)
+                    if searchQuery.isEmpty {
+                        // Empty state - prompt to search
+                        VStack(spacing: Theme.spacingMD) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 32))
+                                .foregroundColor(Theme.textSecondary.opacity(0.5))
 
-                                    Text(result.supplement.supplementCategory.displayName)
-                                        .font(Theme.captionFont)
-                                        .foregroundColor(Theme.textSecondary)
+                            Text("Search for your supplements")
+                                .font(Theme.bodyFont)
+                                .foregroundColor(Theme.textPrimary)
 
-                                    // Show match context for keyword/goal matches
-                                    if !searchQuery.isEmpty && !result.matchedTerms.isEmpty && result.matchType != .exactName && result.matchType != .partialName {
-                                        Text("matches: \(result.matchedTerms.joined(separator: ", "))")
-                                            .font(Theme.captionFont)
-                                            .foregroundColor(Theme.accent)
-                                            .italic()
-                                    }
-                                }
-                            }
-                            .buttonStyle(.plain)
-
-                            Spacer()
-
-                            Text(result.supplement.displayDosageRange)
+                            Text("Add as many as you need")
                                 .font(Theme.captionFont)
                                 .foregroundColor(Theme.textSecondary)
-
-                            // Quick add button - separate tap target
-                            Button(action: {
-                                let added = viewModel.addSupplement(
-                                    from: result.supplement,
-                                    dosage: result.supplement.defaultDosageMin,
-                                    dosageUnit: result.supplement.defaultDosageUnit,
-                                    to: user,
-                                    modelContext: modelContext
-                                )
-                                if added {
-                                    dismiss()
-                                } else {
-                                    showDuplicateAlert = true
-                                }
-                            }) {
-                                Image(systemName: "plus.circle.fill")
-                                    .font(.system(size: 24))
-                                    .foregroundColor(Theme.accent)
-                            }
-                            .buttonStyle(.plain)
                         }
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-                    }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, Theme.spacingXXL)
+                    } else if searchResults.isEmpty {
+                        // No results state
+                        VStack(spacing: Theme.spacingMD) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 32))
+                                .foregroundColor(Theme.textSecondary.opacity(0.5))
 
-                    // Manual Entry Option at bottom of search results
-                    Button(action: {
-                        showingManualEntry = true
-                    }) {
-                        HStack {
-                            Image(systemName: "square.and.pencil")
-                                .foregroundColor(Theme.textSecondary)
-
-                            Text("Can't find it? Add manually")
+                            Text("No matches found")
                                 .font(Theme.bodyFont)
                                 .foregroundColor(Theme.textSecondary)
 
-                            Spacer()
+                            Text("Not here?")
+                                .font(Theme.captionFont)
+                                .foregroundColor(Theme.textSecondary)
+                                .padding(.top, Theme.spacingSM)
+
+                            Button(action: {
+                                showingManualEntry = true
+                            }) {
+                                Text("Add it")
+                            }
+                            .buttonStyle(PrimaryButtonStyle())
                         }
-                        .padding(Theme.spacingMD)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, Theme.spacingXXL)
+                    } else {
+                        ForEach(searchResults) { result in
+                            HStack {
+                                // Main content - tap to open detail sheet
+                                Button(action: {
+                                    selectedReference = result.supplement
+                                }) {
+                                    VStack(alignment: .leading, spacing: Theme.spacingXS) {
+                                        Text(result.supplement.primaryName)
+                                            .font(Theme.bodyFont)
+                                            .foregroundColor(Theme.textPrimary)
+
+                                        Text(result.supplement.supplementCategory.displayName)
+                                            .font(Theme.captionFont)
+                                            .foregroundColor(Theme.textSecondary)
+
+                                        // Show match context for keyword/goal matches
+                                        if !searchQuery.isEmpty && !result.matchedTerms.isEmpty && result.matchType != .exactName && result.matchType != .partialName {
+                                            Text("matches: \(result.matchedTerms.joined(separator: ", "))")
+                                                .font(Theme.captionFont)
+                                                .foregroundColor(Theme.accent)
+                                                .italic()
+                                        }
+                                    }
+                                }
+                                .buttonStyle(.plain)
+
+                                Spacer()
+
+                                Text(result.supplement.displayDosageRange)
+                                    .font(Theme.captionFont)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                // Quick add button - separate tap target
+                                Button(action: {
+                                    let added = viewModel.addSupplement(
+                                        from: result.supplement,
+                                        dosage: result.supplement.defaultDosageMin,
+                                        dosageUnit: result.supplement.defaultDosageUnit,
+                                        to: user,
+                                        modelContext: modelContext
+                                    )
+                                    if added {
+                                        dismiss()
+                                    } else {
+                                        showDuplicateAlert = true
+                                    }
+                                }) {
+                                    Image(systemName: "plus.circle.fill")
+                                        .font(.system(size: 24))
+                                        .foregroundColor(Theme.accent)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            .padding(Theme.spacingMD)
+                            .background(Theme.surface)
+                            .cornerRadius(Theme.cornerRadiusSM)
+                        }
+
+                        // Manual Entry Option at bottom of search results
+                        Button(action: {
+                            showingManualEntry = true
+                        }) {
+                            HStack {
+                                Image(systemName: "square.and.pencil")
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Text("Not here? Add it")
+                                    .font(Theme.bodyFont)
+                                    .foregroundColor(Theme.textSecondary)
+
+                                Spacer()
+                            }
+                            .padding(Theme.spacingMD)
+                            .background(Theme.surface)
+                            .cornerRadius(Theme.cornerRadiusSM)
+                        }
                     }
                 }
                 .padding(.horizontal, Theme.spacingLG)
             }
         }
         .padding(.top, Theme.spacingLG)
+        .onAppear {
+            // Auto-focus search field
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                isSearchFocused = true
+            }
+        }
     }
 }
 
