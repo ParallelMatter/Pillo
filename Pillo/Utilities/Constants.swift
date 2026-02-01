@@ -35,11 +35,11 @@ struct Constants {
 
         // Value Proposition Pages
         static let valueProp1Headline = "SMART\nTIMING"
-        static let valueProp1Subtitle = "Scheduled around your meals\nfor optimal absorption."
-        static let valueProp2Headline = "NEVER\nCOMPETE"
-        static let valueProp2Subtitle = "Some supplements cancel each other out.\nWe keep them apart."
+        static let valueProp1Subtitle = "Timed to your day,\nfor full absorption."
+        static let valueProp2Headline = "AVOID\nCONFLICTS"
+        static let valueProp2Subtitle = "Some supplements block each other.\nWe space them out."
         static let valueProp3Headline = "BETTER\nTOGETHER"
-        static let valueProp3Subtitle = "Vitamin D paired with K2.\nIron paired with Vitamin C."
+        static let valueProp3Subtitle = "Some supplements boost each other.\nWe pair them up."
 
         static let addSupplementsTitle = "WHAT DO YOU TAKE?"
         static let addSupplementsSubtitle = "We'll make it all work. At the right time."
