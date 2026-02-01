@@ -3,10 +3,15 @@ import SwiftUI
 /// A tooltip view that points to a specific tab in the tab bar
 struct TabTooltip: View {
     let text: String
+    let tabIndex: Int
+    let totalTabs: Int
     let onDismiss: () -> Void
 
     var body: some View {
         GeometryReader { geometry in
+            let tabWidth = geometry.size.width / CGFloat(totalTabs)
+            let tabCenterX = tabWidth * (CGFloat(tabIndex) + 0.5)
+
             VStack(spacing: 0) {
                 // Tooltip bubble
                 Text(text)
@@ -25,8 +30,8 @@ struct TabTooltip: View {
                     .frame(width: 14, height: 8)
             }
             .position(
-                x: geometry.size.width * 0.3, // Routine tab is ~30% from left (2nd of 5 tabs)
-                y: geometry.size.height - 70  // Above tab bar
+                x: tabCenterX,
+                y: geometry.size.height - 70
             )
         }
         .contentShape(Rectangle())
@@ -49,6 +54,6 @@ struct Triangle: Shape {
 #Preview {
     ZStack {
         Color.black.ignoresSafeArea()
-        TabTooltip(text: "Add more anytime here", onDismiss: {})
+        TabTooltip(text: "Add more anytime here", tabIndex: 1, totalTabs: 5, onDismiss: {})
     }
 }

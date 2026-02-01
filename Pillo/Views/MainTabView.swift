@@ -42,9 +42,11 @@ struct MainTabView: View {
             if showRoutineHint {
                 TabTooltip(
                     text: "Add more anytime here",
+                    tabIndex: 1,
+                    totalTabs: 5,
                     onDismiss: dismissHint
                 )
-                .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .bottom).combined(with: .opacity)))
+                .transition(.opacity)
             }
         }
         .onAppear {
@@ -56,7 +58,7 @@ struct MainTabView: View {
         guard !SharedContainer.hasSeenRoutineHint() else { return }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            withAnimation(Theme.springAnimation) {
+            withAnimation(.easeOut(duration: 0.3)) {
                 showRoutineHint = true
             }
             // Auto-dismiss after 4 seconds
@@ -69,7 +71,7 @@ struct MainTabView: View {
     }
 
     private func dismissHint() {
-        withAnimation(Theme.springAnimation) {
+        withAnimation(.easeOut(duration: 0.4)) {
             showRoutineHint = false
         }
         SharedContainer.setRoutineHintSeen()
