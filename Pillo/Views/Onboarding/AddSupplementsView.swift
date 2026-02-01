@@ -269,7 +269,7 @@ struct SelectedSupplementsList: View {
                         }
                         .padding(.horizontal, Theme.spacingLG)
                         .padding(.vertical, Theme.spacingSM)
-                        .background(
+                        .overlay(
                             GeometryReader { contentGeometry in
                                 Color.clear
                                     .preference(
@@ -278,9 +278,12 @@ struct SelectedSupplementsList: View {
                                     )
                                     .onAppear {
                                         contentWidth = contentGeometry.size.width
+                                        scrollOffset = contentGeometry.frame(in: .named("scroll")).minX
+                                    }
+                                    .onChange(of: contentGeometry.frame(in: .named("scroll")).minX) { _, newValue in
+                                        scrollOffset = newValue
                                     }
                                     .onChange(of: viewModel.selectedSupplements.count) {
-                                        // Update content width when items change
                                         DispatchQueue.main.async {
                                             contentWidth = contentGeometry.size.width
                                         }
@@ -289,9 +292,6 @@ struct SelectedSupplementsList: View {
                         )
                     }
                     .coordinateSpace(name: "scroll")
-                    .onPreferenceChange(ScrollOffsetKey.self) { value in
-                        scrollOffset = value
-                    }
                     .onAppear {
                         containerWidth = containerGeometry.size.width
                     }
