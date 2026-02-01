@@ -117,17 +117,16 @@ struct SearchResultsList: View {
                             .font(Theme.bodyFont)
                             .foregroundColor(Theme.textSecondary)
 
-                        Text("Not here?")
-                            .font(Theme.captionFont)
+                        Text("Can't find yours?")
+                            .font(Theme.bodyFont)
                             .foregroundColor(Theme.textSecondary)
-                            .padding(.top, Theme.spacingSM)
 
                         Button(action: {
                             showingManualEntry = true
                         }) {
                             HStack(spacing: Theme.spacingSM) {
                                 Image(systemName: "plus.circle.fill")
-                                Text("Add manually")
+                                Text("Create new")
                             }
                         }
                         .buttonStyle(PrimaryButtonStyle())
