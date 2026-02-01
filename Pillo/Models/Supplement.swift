@@ -32,7 +32,6 @@ final class Supplement {
     var category: SupplementCategory
     var dosage: Double?
     var dosageUnit: String?
-    var barcode: String?
     var isActive: Bool = true
     var isArchived: Bool = false  // When true, supplement is hidden but preserved for historical records
     var archivedAt: Date?         // When the supplement was archived
@@ -61,7 +60,6 @@ final class Supplement {
         category: SupplementCategory,
         dosage: Double? = nil,
         dosageUnit: String? = nil,
-        barcode: String? = nil,
         isActive: Bool = true,
         isArchived: Bool = false,
         archivedAt: Date? = nil,
@@ -75,7 +73,6 @@ final class Supplement {
         self.category = category
         self.dosage = dosage
         self.dosageUnit = dosageUnit
-        self.barcode = barcode
         self.isActive = isActive
         self.isArchived = isArchived
         self.archivedAt = archivedAt

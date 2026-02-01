@@ -9,7 +9,6 @@ struct AddSupplementSheet: View {
 
     @State private var searchQuery = ""
     @State private var showingManualEntry = false
-    @State private var showingBarcodeScanner = false
     @State private var showDuplicateAlert = false
     @State private var selectedReference: SupplementReference?
 
@@ -39,33 +38,6 @@ struct AddSupplementSheet: View {
             .sheet(isPresented: $showingManualEntry) {
                 ManualEntrySheet(viewModel: viewModel, user: user)
             }
-            .sheet(isPresented: $showingBarcodeScanner) {
-                BarcodeScannerView(
-                    onProductFound: { product in
-                        // Try to find a matching supplement in the database
-                        if let reference = SupplementDatabaseService.shared.getSupplement(byName: product.name) {
-                            let added = viewModel.addSupplement(
-                                from: reference,
-                                dosage: reference.defaultDosageMin,
-                                dosageUnit: reference.defaultDosageUnit,
-                                to: user,
-                                modelContext: modelContext
-                            )
-                            if added {
-                                dismiss()
-                            } else {
-                                showDuplicateAlert = true
-                            }
-                        } else {
-                            // Pre-fill search with scanned product name
-                            searchQuery = product.displayTitle
-                        }
-                    },
-                    onManualEntry: { _ in
-                        showingManualEntry = true
-                    }
-                )
-            }
             .alert("Already added", isPresented: $showDuplicateAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -88,39 +60,25 @@ struct AddSupplementSheet: View {
 
     private var searchView: some View {
         VStack(spacing: Theme.spacingMD) {
-            // Search Bar with Barcode Button
-            HStack(spacing: Theme.spacingSM) {
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(Theme.textSecondary)
+            // Search Bar
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(Theme.textSecondary)
 
-                    TextField("Search supplements", text: $searchQuery)
-                        .foregroundColor(Theme.textPrimary)
-                        .focused($isSearchFocused)
+                TextField("Search supplements", text: $searchQuery)
+                    .foregroundColor(Theme.textPrimary)
+                    .focused($isSearchFocused)
 
-                    if !searchQuery.isEmpty {
-                        Button(action: { searchQuery = "" }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(Theme.textSecondary)
-                        }
+                if !searchQuery.isEmpty {
+                    Button(action: { searchQuery = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(Theme.textSecondary)
                     }
                 }
-                .padding(Theme.spacingMD)
-                .background(Theme.surface)
-                .cornerRadius(Theme.cornerRadiusSM)
-
-                // Barcode Scanner Button
-                Button(action: {
-                    showingBarcodeScanner = true
-                }) {
-                    Image(systemName: "barcode.viewfinder")
-                        .font(.system(size: 20))
-                        .foregroundColor(Theme.textPrimary)
-                        .frame(width: 48, height: 48)
-                        .background(Theme.surface)
-                        .cornerRadius(Theme.cornerRadiusSM)
-                }
             }
+            .padding(Theme.spacingMD)
+            .background(Theme.surface)
+            .cornerRadius(Theme.cornerRadiusSM)
             .padding(.horizontal, Theme.spacingLG)
 
             // Results

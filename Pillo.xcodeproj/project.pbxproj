@@ -60,10 +60,7 @@
 		E10000000000000000000052 /* SupplementDatabaseServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000052 /* SupplementDatabaseServiceTests.swift */; };
 		E10000000000000000000060 /* PilloUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000060 /* PilloUITests.swift */; };
 		F11000000000000000000001 /* StreakService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000001 /* StreakService.swift */; };
-		F11000000000000000000002 /* BarcodeScannerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000002 /* BarcodeScannerService.swift */; };
 		F11000000000000000000003 /* StreakCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000003 /* StreakCard.swift */; };
-		F11000000000000000000004 /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000004 /* BarcodeScannerView.swift */; };
-		F11000000000000000000005 /* OpenFoodFactsProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000005 /* OpenFoodFactsProduct.swift */; };
 		F11000000000000000000006 /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21000000000000000000006 /* SharedContainer.swift */; };
 /* End PBXBuildFile section */
 
@@ -161,10 +158,7 @@
 		E20000000000000000000052 /* SupplementDatabaseServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementDatabaseServiceTests.swift; sourceTree = "<group>"; };
 		E20000000000000000000060 /* PilloUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilloUITests.swift; sourceTree = "<group>"; };
 		F21000000000000000000001 /* StreakService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakService.swift; sourceTree = "<group>"; };
-		F21000000000000000000002 /* BarcodeScannerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerService.swift; sourceTree = "<group>"; };
 		F21000000000000000000003 /* StreakCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakCard.swift; sourceTree = "<group>"; };
-		F21000000000000000000004 /* BarcodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerView.swift; sourceTree = "<group>"; };
-		F21000000000000000000005 /* OpenFoodFactsProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFoodFactsProduct.swift; sourceTree = "<group>"; };
 		F21000000000000000000006 /* SharedContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedContainer.swift; sourceTree = "<group>"; };
 		F50000000000000000000001 /* Pillo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pillo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F50000000000000000000002 /* PilloTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PilloTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -286,7 +280,6 @@
 				E20000000000000000000008 /* IntakeLog.swift */,
 				E20000000000000000000009 /* SupplementReference.swift */,
 				E20000000000000000000010 /* Goal.swift */,
-				F21000000000000000000005 /* OpenFoodFactsProduct.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -324,7 +317,6 @@
 				E20000000000000000000012 /* SchedulingService.swift */,
 				E20000000000000000000013 /* NotificationService.swift */,
 				F21000000000000000000001 /* StreakService.swift */,
-				F21000000000000000000002 /* BarcodeScannerService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -444,7 +436,6 @@
 			children = (
 				4FCF1B892F2ED1CC007C5ED8 /* TabTooltip.swift */,
 				4FCF18492F249C81007C5ED8 /* ScheduleFrequencyPicker.swift */,
-				F21000000000000000000004 /* BarcodeScannerView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -623,12 +614,9 @@
 			files = (
 				4F2104522F234F9400ECE341 /* DayData.swift in Sources */,
 				F11000000000000000000001 /* StreakService.swift in Sources */,
-				F11000000000000000000002 /* BarcodeScannerService.swift in Sources */,
 				F11000000000000000000003 /* StreakCard.swift in Sources */,
 				4FCF1B5D2F272874007C5ED8 /* RemindMeSheet.swift in Sources */,
 				4FCF1B5E2F272874007C5ED8 /* TimePickerSheet.swift in Sources */,
-				F11000000000000000000004 /* BarcodeScannerView.swift in Sources */,
-				F11000000000000000000005 /* OpenFoodFactsProduct.swift in Sources */,
 				F11000000000000000000006 /* SharedContainer.swift in Sources */,
 				E10000000000000000000001 /* PilloApp.swift in Sources */,
 				E10000000000000000000002 /* ContentView.swift in Sources */,
